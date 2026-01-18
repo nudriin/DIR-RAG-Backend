@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Tuple
-import os
 
-from langchain_community.llms import Replicate
+import time
+import replicate
 from langchain_core.documents import Document
 
 from app.core.config import get_settings
@@ -49,32 +49,58 @@ def generate_answer(
     context_text = format_context(documents)
     prompt = build_prompt(query=query, context_text=context_text)
 
-    if settings.replicate_api_token:
-        os.environ["REPLICATE_API_TOKEN"] = settings.replicate_api_token
-
-    llm = Replicate(
-        model=settings.llm_model,
-        model_kwargs={
-            "temperature": 0.1,
-        },
-        replicate_api_token=settings.replicate_api_token,
-    )
-
-    try:
-        answer_text = llm.invoke(prompt)
-    except Exception as exc:
-        logger.error(
-            "LLM generation failed",
-            extra={
-                "error": str(exc),
-                "llm_backend": "replicate",
-                "replicate_model": settings.llm_model,
-            },
-        )
+    if not settings.replicate_api_token:
+        logger.error("Missing REPLICATE_API_TOKEN")
         answer_text = (
-            "Maaf, terjadi kesalahan teknis saat menghubungi model bahasa. "
-            "Silakan coba lagi beberapa saat lagi."
+            "Konfigurasi token Replicate belum diatur. "
+            "Silakan set REPLICATE_API_TOKEN terlebih dahulu."
         )
+    else:
+        client = replicate.Client(api_token=settings.replicate_api_token)
+        max_attempts = 3
+        last_exception: Exception | None = None
+
+        for attempt in range(1, max_attempts + 1):
+            try:
+                output = client.run(
+                    settings.llm_model,
+                    input={
+                        "prompt": prompt,
+                        "temperature": 0.1,
+                    },
+                )
+                if isinstance(output, str):
+                    answer_text = output
+                elif isinstance(output, list):
+                    answer_text = "".join(str(part) for part in output)
+                else:
+                    answer_text = str(output)
+                break
+            except Exception as exc:
+                last_exception = exc
+                message = str(exc)
+                logger.error(
+                    f"LLM generation failed on attempt {attempt}: {message}",
+                    extra={
+                        "error": message,
+                        "llm_backend": "replicate",
+                        "replicate_model": settings.llm_model,
+                        "attempt": attempt,
+                    },
+                )
+                if (
+                    ("429" in message or "throttled" in message or "E001" in message)
+                    and attempt < max_attempts
+                ):
+                    time.sleep(4)
+                    continue
+                break
+
+        if last_exception is not None and "answer_text" not in locals():
+            answer_text = (
+                "Maaf, terjadi kesalahan teknis saat menghubungi model bahasa. "
+                "Silakan coba lagi beberapa saat lagi."
+            )
 
     sources: List[Dict[str, Any]] = []
     for i, doc in enumerate(documents):

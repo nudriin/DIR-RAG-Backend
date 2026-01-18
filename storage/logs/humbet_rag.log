@@ -107,3 +107,210 @@
 2026-01-19 00:58:56 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
 2026-01-19 00:58:56 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
 2026-01-19 00:59:04 | WARNING | huggingface_hub.file_download | Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2026-01-19 01:03:36 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-19 01:03:38 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-19 01:07:19 | INFO | app.main | Application startup
+2026-01-19 01:07:43 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-19 01:07:43 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-19 01:07:52 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-19 01:07:53 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-19 01:07:53 | INFO | app.api.ingest | Document ingested
+2026-01-19 01:11:11 | INFO | app.main | Application startup
+2026-01-19 01:11:26 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-19 01:11:26 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-19 01:11:36 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-19 01:11:37 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-19 01:11:37 | INFO | app.api.ingest | Document ingested
+2026-01-19 01:13:19 | INFO | app.api.ingest | Document ingested
+2026-01-19 01:13:40 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:13:40 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:13:43 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:13:47 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 01:13:47 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 201 Created"
+2026-01-19 01:13:48 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/n6egf41cj5rmy0cvt98a05fbwm "HTTP/1.1 200 OK"
+2026-01-19 01:13:49 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/n6egf41cj5rmy0cvt98a05fbwm "HTTP/1.1 200 OK"
+2026-01-19 01:13:49 | ERROR | app.rag.generator | LLM generation failed
+2026-01-19 01:13:49 | INFO | app.rag.generator | Generated answer
+2026-01-19 01:13:49 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:13:49 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:13:52 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:13:53 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 01:13:53 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-19 01:13:53 | ERROR | app.rag.generator | LLM generation failed
+2026-01-19 01:13:53 | INFO | app.rag.generator | Generated answer
+2026-01-19 01:13:53 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:13:53 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:13:53 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:13:54 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 01:13:54 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-19 01:13:54 | ERROR | app.rag.generator | LLM generation failed
+2026-01-19 01:13:54 | INFO | app.rag.generator | Generated answer
+2026-01-19 01:13:55 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 01:13:57 | INFO | app.api.chat | Chat request handled
+2026-01-19 01:20:23 | INFO | app.api.ingest | Document ingested
+2026-01-19 01:24:27 | INFO | app.api.ingest | Document ingested
+2026-01-19 01:25:09 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:25:09 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:25:21 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:25:22 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 01:25:23 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 201 Created"
+2026-01-19 01:25:24 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/6zpqryy9mxrmr0cvt9daxxbph8 "HTTP/1.1 200 OK"
+2026-01-19 01:25:25 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/6zpqryy9mxrmr0cvt9daxxbph8 "HTTP/1.1 200 OK"
+2026-01-19 01:25:29 | ERROR | app.rag.generator | LLM generation failed
+2026-01-19 01:25:29 | INFO | app.rag.generator | Generated answer
+2026-01-19 01:25:29 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:25:29 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:25:58 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:25:59 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 01:25:59 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 201 Created"
+2026-01-19 01:26:00 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/vxt4hnjrh1rmw0cvt9ds5pedcm "HTTP/1.1 200 OK"
+2026-01-19 01:26:01 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/vxt4hnjrh1rmw0cvt9ds5pedcm "HTTP/1.1 200 OK"
+2026-01-19 01:26:01 | ERROR | app.rag.generator | LLM generation failed
+2026-01-19 01:26:01 | INFO | app.rag.generator | Generated answer
+2026-01-19 01:26:01 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:26:01 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:26:02 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:26:02 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 01:26:03 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-19 01:26:03 | ERROR | app.rag.generator | LLM generation failed
+2026-01-19 01:26:03 | INFO | app.rag.generator | Generated answer
+2026-01-19 01:26:03 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 01:26:03 | INFO | app.api.chat | Chat request handled
+2026-01-19 01:33:03 | INFO | app.main | Application startup
+2026-01-19 01:34:37 | INFO | app.main | Application startup
+2026-01-19 01:35:16 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:35:16 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:35:16 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-19 01:35:16 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-19 01:35:22 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-19 01:35:22 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-19 01:35:35 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:35:40 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 201 Created"
+2026-01-19 01:35:40 | ERROR | app.rag.generator | LLM generation failed: An error occurred while processing your request (E001) (1cah9wlWR9)
+2026-01-19 01:35:40 | INFO | app.rag.generator | Generated answer
+2026-01-19 01:35:40 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:35:40 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:35:43 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:35:44 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-19 01:35:44 | ERROR | app.rag.generator | LLM generation failed: ReplicateError Details:
+status: 429
+detail: Request was throttled. Your rate limit for creating predictions is reduced to 6 requests per minute with a burst of 1 requests while you have less than $5.0 in credit. Your rate limit resets in ~4s.
+2026-01-19 01:35:44 | INFO | app.rag.generator | Generated answer
+2026-01-19 01:35:44 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:35:44 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:35:46 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:35:47 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-19 01:35:47 | ERROR | app.rag.generator | LLM generation failed: ReplicateError Details:
+status: 429
+detail: Request was throttled. Your rate limit for creating predictions is reduced to 6 requests per minute with a burst of 1 requests while you have less than $5.0 in credit. Your rate limit resets in ~1s.
+2026-01-19 01:35:47 | INFO | app.rag.generator | Generated answer
+2026-01-19 01:35:47 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 01:35:47 | INFO | app.api.chat | Chat request handled
+2026-01-19 01:40:32 | INFO | app.main | Application startup
+2026-01-19 01:41:04 | INFO | app.main | Application startup
+2026-01-19 01:46:12 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:46:12 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:46:12 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-19 01:46:12 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-19 01:46:19 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-19 01:46:20 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-19 01:46:24 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:46:24 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:46:24 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:46:28 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:46:28 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:46:28 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:46:28 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:46:33 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 201 Created"
+2026-01-19 01:46:33 | ERROR | app.rag.generator | LLM generation failed on attempt 1: An error occurred while processing your request (E001) (1cah9wlWR9)
+2026-01-19 01:46:38 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-19 01:46:38 | ERROR | app.rag.generator | LLM generation failed on attempt 2: ReplicateError Details:
+status: 429
+detail: Request was throttled. Your rate limit for creating predictions is reduced to 6 requests per minute with a burst of 1 requests while you have less than $5.0 in credit. Your rate limit resets in ~4s.
+2026-01-19 01:46:44 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 201 Created"
+2026-01-19 01:46:44 | ERROR | app.rag.generator | LLM generation failed on attempt 3: An error occurred while processing your request (E001) (1cah9wlWR9)
+2026-01-19 01:46:44 | INFO | app.rag.generator | Generated answer
+2026-01-19 01:46:44 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 01:46:44 | INFO | app.api.chat | Chat request handled
+2026-01-19 01:54:15 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:54:15 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:54:20 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:54:20 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:54:20 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:54:26 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:54:26 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:54:26 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:54:28 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:54:32 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 201 Created"
+2026-01-19 01:54:32 | ERROR | app.rag.generator | LLM generation failed on attempt 1: An error occurred while processing your request (E001) (1cah9wlWR9)
+2026-01-19 01:54:36 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-19 01:54:36 | ERROR | app.rag.generator | LLM generation failed on attempt 2: ReplicateError Details:
+status: 429
+detail: Request was throttled. Your rate limit for creating predictions is reduced to 6 requests per minute with a burst of 1 requests while you have less than $5.0 in credit. Your rate limit resets in ~4s.
+2026-01-19 01:54:43 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 201 Created"
+2026-01-19 01:54:43 | ERROR | app.rag.generator | LLM generation failed on attempt 3: An error occurred while processing your request (E001) (1cah9wlWR9)
+2026-01-19 01:54:43 | INFO | app.rag.generator | Generated answer
+2026-01-19 01:54:43 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 01:54:43 | INFO | app.api.chat | Chat request handled
+2026-01-19 01:55:38 | INFO | app.main | Application startup
+2026-01-19 01:55:44 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:55:44 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:55:44 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-19 01:55:44 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-19 01:55:50 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-19 01:55:50 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-19 01:55:54 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:55:54 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:55:54 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:55:56 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:55:56 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 01:55:56 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 01:55:56 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 01:56:09 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 01:56:09 | INFO | app.rag.generator | Generated answer
+2026-01-19 01:56:09 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 01:56:09 | INFO | app.api.chat | Chat request handled
+2026-01-19 01:57:55 | INFO | app.api.ingest | Document ingested
+2026-01-19 01:59:23 | INFO | app.api.ingest | Document ingested
+2026-01-19 02:00:39 | INFO | app.api.ingest | Document ingested
+2026-01-19 02:10:20 | INFO | app.api.ingest | Document ingested
+2026-01-19 02:10:47 | INFO | app.api.ingest | Document ingested
+2026-01-19 02:11:21 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 02:11:21 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 02:11:28 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 02:11:28 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 02:11:28 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 02:11:31 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 02:11:31 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 02:11:31 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 02:11:33 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 02:11:50 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 02:11:50 | INFO | app.rag.generator | Generated answer
+2026-01-19 02:11:50 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 02:11:50 | INFO | app.api.chat | Chat request handled
+2026-01-19 02:12:39 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 02:12:39 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 02:12:39 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 02:12:39 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 02:12:39 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 02:12:40 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 02:12:40 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 02:12:40 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 02:12:40 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 02:12:48 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 02:12:48 | INFO | app.rag.generator | Generated answer
+2026-01-19 02:12:48 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 02:12:48 | INFO | app.api.chat | Chat request handled
+2026-01-19 02:14:47 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 02:14:47 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 02:14:52 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 02:14:52 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 02:14:52 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 02:14:56 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 02:14:56 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 02:14:56 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 02:15:01 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 02:15:11 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 02:15:11 | INFO | app.rag.generator | Generated answer
+2026-01-19 02:15:11 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 02:15:11 | INFO | app.api.chat | Chat request handled

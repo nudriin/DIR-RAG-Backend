@@ -60,10 +60,9 @@ async def ingest_endpoint(file: UploadFile = File(...)) -> IngestResponse:
     logger.info(
         "Document ingested",
         extra={
-            "filename": filename,
-            "num_chunks": num_chunks,
+            "document_filename": filename,
+            "document_num_chunks": num_chunks,
         },
     )
 
     return IngestResponse(source=filename, num_chunks=num_chunks)
-
