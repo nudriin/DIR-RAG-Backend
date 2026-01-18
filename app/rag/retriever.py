@@ -1,6 +1,6 @@
 from typing import List
 
-from langchain.docstore.document import Document
+from langchain_core.documents import Document
 
 from app.core.config import get_settings
 from app.core.logging import get_logger
@@ -28,4 +28,3 @@ def retrieve_documents(query: str) -> List[Document]:
     )
 
     return documents
-

@@ -2,7 +2,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseSettings, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -26,6 +27,9 @@ class Settings(BaseSettings):
     llm_model: str = Field(default="gpt-4", env="LLM_MODEL")
 
     openai_api_key: str | None = Field(default=None, env="OPENAI_API_KEY")
+    replicate_api_token: str | None = Field(
+        default=None, env="REPLICATE_API_TOKEN"
+    )
 
     max_iterations: int = Field(default=3, env="MAX_ITERATIONS")
     similarity_top_k: int = Field(default=5, env="SIMILARITY_TOP_K")

@@ -1,0 +1,109 @@
+2026-01-17 17:23:26 | INFO | app.main | Application startup
+2026-01-17 17:25:23 | INFO | app.main | Application startup
+2026-01-17 17:30:57 | INFO | app.rag.query_refinement | Refined query
+2026-01-17 17:30:57 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-17 17:33:51 | INFO | app.rag.query_refinement | Refined query
+2026-01-17 17:33:51 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-17 17:36:05 | INFO | app.main | Application startup
+2026-01-17 17:36:10 | INFO | app.rag.query_refinement | Refined query
+2026-01-17 17:36:10 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-17 17:36:25 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-17 17:36:25 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-17 17:38:27 | INFO | app.main | Application startup
+2026-01-17 17:38:27 | INFO | app.rag.query_refinement | Refined query
+2026-01-17 17:38:27 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-17 17:38:27 | INFO | app.rag.retriever | Retrieved documents
+2026-01-17 17:40:07 | INFO | app.main | Application startup
+2026-01-17 17:40:07 | INFO | app.rag.query_refinement | Refined query
+2026-01-17 17:40:07 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-17 17:40:07 | INFO | app.rag.retriever | Retrieved documents
+2026-01-17 17:40:11 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 404 Not Found"
+2026-01-17 18:21:13 | INFO | app.main | Application startup
+2026-01-17 18:21:48 | INFO | app.rag.query_refinement | Refined query
+2026-01-17 18:21:48 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-17 18:21:48 | INFO | app.rag.retriever | Retrieved documents
+2026-01-17 18:21:58 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 401 Unauthorized"
+2026-01-19 00:35:42 | INFO | app.main | Application startup
+2026-01-19 00:36:06 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 00:36:06 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 00:36:06 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 00:38:24 | INFO | app.main | Application startup
+2026-01-19 00:38:24 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 00:38:24 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 00:38:24 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 00:38:26 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 401 Unauthorized"
+2026-01-19 00:40:57 | INFO | app.main | Application startup
+2026-01-19 00:40:57 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 00:40:57 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 00:40:57 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 00:40:59 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 00:40:59 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 201 Created"
+2026-01-19 00:41:00 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/8ay11y95d1rmt0cvt8saf0rvj0 "HTTP/1.1 200 OK"
+2026-01-19 00:41:01 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/8ay11y95d1rmt0cvt8saf0rvj0 "HTTP/1.1 200 OK"
+2026-01-19 00:43:51 | INFO | app.main | Application startup
+2026-01-19 00:44:37 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 00:44:37 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 00:44:37 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 00:44:39 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 00:44:39 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 201 Created"
+2026-01-19 00:44:40 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/qax06cvzr1rmr0cvt8ts54npnc "HTTP/1.1 200 OK"
+2026-01-19 00:44:41 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/qax06cvzr1rmr0cvt8ts54npnc "HTTP/1.1 200 OK"
+2026-01-19 00:46:32 | INFO | app.main | Application startup
+2026-01-19 00:46:32 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 00:46:32 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 00:46:32 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 00:46:34 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 00:46:34 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 201 Created"
+2026-01-19 00:46:35 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/sr1bvpt1z5rmw0cvt8vsd1n7m4 "HTTP/1.1 200 OK"
+2026-01-19 00:46:36 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/sr1bvpt1z5rmw0cvt8vsd1n7m4 "HTTP/1.1 200 OK"
+2026-01-19 00:46:36 | ERROR | app.rag.generator | LLM generation failed
+2026-01-19 00:46:36 | INFO | app.rag.generator | Generated answer
+2026-01-19 00:46:36 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 00:46:36 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 00:46:36 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 00:46:36 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 00:46:37 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-19 00:46:37 | ERROR | app.rag.generator | LLM generation failed
+2026-01-19 00:46:37 | INFO | app.rag.generator | Generated answer
+2026-01-19 00:46:37 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 00:46:37 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 00:46:37 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 00:46:37 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 00:46:38 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-19 00:46:38 | ERROR | app.rag.generator | LLM generation failed
+2026-01-19 00:46:38 | INFO | app.rag.generator | Generated answer
+2026-01-19 00:46:38 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 00:46:38 | INFO | app.api.chat | Chat request handled
+2026-01-19 00:47:26 | INFO | app.main | Application startup
+2026-01-19 00:47:56 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 00:47:56 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 00:47:56 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 00:47:57 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 00:47:58 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 201 Created"
+2026-01-19 00:47:59 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/x6qvsf490xrmy0cvt8w9470fdr "HTTP/1.1 200 OK"
+2026-01-19 00:48:00 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/x6qvsf490xrmy0cvt8w9470fdr "HTTP/1.1 200 OK"
+2026-01-19 00:48:00 | ERROR | app.rag.generator | LLM generation failed
+2026-01-19 00:48:00 | INFO | app.rag.generator | Generated answer
+2026-01-19 00:48:00 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 00:48:00 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 00:48:00 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 00:48:00 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 00:48:01 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-19 00:48:01 | ERROR | app.rag.generator | LLM generation failed
+2026-01-19 00:48:01 | INFO | app.rag.generator | Generated answer
+2026-01-19 00:48:01 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 00:48:01 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 00:48:01 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 00:48:01 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/models/openai/gpt-4.1-nano "HTTP/1.1 200 OK"
+2026-01-19 00:48:01 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/openai/gpt-4.1-nano/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-19 00:48:01 | ERROR | app.rag.generator | LLM generation failed
+2026-01-19 00:48:01 | INFO | app.rag.generator | Generated answer
+2026-01-19 00:48:01 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 00:48:01 | INFO | app.api.chat | Chat request handled
+2026-01-19 00:52:08 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 401 Unauthorized"
+2026-01-19 00:55:05 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 401 Unauthorized"
+2026-01-19 00:56:03 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 401 Unauthorized"
+2026-01-19 00:58:40 | INFO | app.main | Application startup
+2026-01-19 00:58:56 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-19 00:58:56 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-19 00:59:04 | WARNING | huggingface_hub.file_download | Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
