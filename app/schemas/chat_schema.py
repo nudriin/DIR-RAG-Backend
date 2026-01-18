@@ -47,6 +47,18 @@ class VectorSourceListResponse(BaseModel):
     sources: List[VectorSourceInfo]
 
 
+class VectorSourceChunk(BaseModel):
+    doc_id: str
+    chunk_id: Optional[str]
+    content: str
+
+
+class VectorSourceDetailResponse(BaseModel):
+    source: str
+    num_chunks: int
+    chunks: List[VectorSourceChunk]
+
+
 class EvaluateRequest(BaseModel):
     questions: List[str]
     ground_truth_answers: Optional[List[str]] = None

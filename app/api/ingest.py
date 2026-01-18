@@ -11,6 +11,8 @@ from app.schemas.chat_schema import (
     VectorResetResponse,
     VectorSourceInfo,
     VectorSourceListResponse,
+    VectorSourceDetailResponse,
+    VectorSourceChunk,
 )
 
 
@@ -115,3 +117,32 @@ async def list_vector_sources() -> VectorSourceListResponse:
         },
     )
     return VectorSourceListResponse(sources=items)
+
+
+@router.get(
+    "/vectors/source-detail",
+    response_model=VectorSourceDetailResponse,
+)
+async def get_vector_source_detail(source: str) -> VectorSourceDetailResponse:
+    docs = vector_store_manager.get_documents_by_source(source)
+    chunks = []
+    for doc_id, doc in docs:
+        chunks.append(
+            VectorSourceChunk(
+                doc_id=doc_id,
+                chunk_id=doc.metadata.get("chunk_id"),
+                content=doc.page_content,
+            )
+        )
+    logger.info(
+        "Vector source detail fetched",
+        extra={
+            "source": source,
+            "num_chunks": len(chunks),
+        },
+    )
+    return VectorSourceDetailResponse(
+        source=source,
+        num_chunks=len(chunks),
+        chunks=chunks,
+    )

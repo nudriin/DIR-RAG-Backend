@@ -155,5 +155,19 @@ class VectorStoreManager:
                 counts[src] = counts.get(src, 0) + 1
         return sorted(counts.items(), key=lambda x: x[0].lower())
 
+    def get_documents_by_source(self, source: str) -> List[Tuple[str, Document]]:
+        store = self.vector_store
+        if store is None:
+            return []
+        try:
+            docstore = store.docstore
+        except AttributeError:
+            return []
+        results: List[Tuple[str, Document]] = []
+        for doc_id, doc in getattr(docstore, "_dict", {}).items():
+            if isinstance(doc, Document) and doc.metadata.get("source") == source:
+                results.append((doc_id, doc))
+        return results
+
 
 vector_store_manager = VectorStoreManager()
