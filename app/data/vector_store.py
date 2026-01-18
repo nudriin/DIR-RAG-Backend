@@ -138,5 +138,22 @@ class VectorStoreManager:
         self.persist()
         return len(ids_to_delete)
 
+    def list_sources(self) -> List[tuple[str, int]]:
+        store = self.vector_store
+        if store is None:
+            return []
+        try:
+            docstore = store.docstore
+        except AttributeError:
+            return []
+        counts: dict[str, int] = {}
+        for doc in getattr(docstore, "_dict", {}).values():
+            if isinstance(doc, Document):
+                src = doc.metadata.get("source")
+                if not src:
+                    continue
+                counts[src] = counts.get(src, 0) + 1
+        return sorted(counts.items(), key=lambda x: x[0].lower())
+
 
 vector_store_manager = VectorStoreManager()

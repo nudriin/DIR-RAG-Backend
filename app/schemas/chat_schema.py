@@ -38,6 +38,15 @@ class VectorDeleteBySourceResponse(BaseModel):
     deleted_count: int
 
 
+class VectorSourceInfo(BaseModel):
+    source: str
+    num_chunks: int
+
+
+class VectorSourceListResponse(BaseModel):
+    sources: List[VectorSourceInfo]
+
+
 class EvaluateRequest(BaseModel):
     questions: List[str]
     ground_truth_answers: Optional[List[str]] = None

@@ -9,6 +9,8 @@ from app.schemas.chat_schema import (
     VectorDeleteBySourceRequest,
     VectorDeleteBySourceResponse,
     VectorResetResponse,
+    VectorSourceInfo,
+    VectorSourceListResponse,
 )
 
 
@@ -96,3 +98,20 @@ async def delete_vectors_by_source(
         },
     )
     return VectorDeleteBySourceResponse(source=body.source, deleted_count=deleted)
+
+
+@router.get(
+    "/vectors/sources",
+    response_model=VectorSourceListResponse,
+)
+async def list_vector_sources() -> VectorSourceListResponse:
+    items = []
+    for source, count in vector_store_manager.list_sources():
+        items.append(VectorSourceInfo(source=source, num_chunks=count))
+    logger.info(
+        "Vector sources listed",
+        extra={
+            "num_sources": len(items),
+        },
+    )
+    return VectorSourceListResponse(sources=items)

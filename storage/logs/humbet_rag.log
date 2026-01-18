@@ -321,3 +321,6 @@ detail: Request was throttled. Your rate limit for creating predictions is reduc
 2026-01-19 02:35:25 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
 2026-01-19 02:35:25 | INFO | app.api.ingest | Vector chunks deleted by source
 2026-01-19 02:35:45 | INFO | app.api.ingest | Vector store reset
+2026-01-19 02:38:44 | INFO | app.main | Application startup
+2026-01-19 02:38:44 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-19 02:38:44 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
