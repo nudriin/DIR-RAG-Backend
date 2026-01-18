@@ -104,5 +104,39 @@ class VectorStoreManager:
             return []
         return self.vector_store.similarity_search_with_score(query, k=top_k)
 
+    def reset_vectors(self) -> None:
+        self._vector_store = None
+        if self.vector_store_path.exists():
+            for path in self.vector_store_path.parent.glob("faiss_index*"):
+                if path.is_file() or path.is_dir():
+                    try:
+                        if path.is_dir():
+                            for child in path.glob("**/*"):
+                                if child.is_file():
+                                    child.unlink(missing_ok=True)
+                            path.rmdir()
+                        else:
+                            path.unlink(missing_ok=True)
+                    except FileNotFoundError:
+                        continue
+
+    def delete_by_source(self, source: str) -> int:
+        store = self.vector_store
+        if store is None:
+            return 0
+        try:
+            docstore = store.docstore
+        except AttributeError:
+            return 0
+        ids_to_delete: List[str] = []
+        for doc_id, doc in getattr(docstore, "_dict", {}).items():
+            if isinstance(doc, Document) and doc.metadata.get("source") == source:
+                ids_to_delete.append(doc_id)
+        if not ids_to_delete:
+            return 0
+        store.delete(ids_to_delete)
+        self.persist()
+        return len(ids_to_delete)
+
 
 vector_store_manager = VectorStoreManager()

@@ -25,6 +25,19 @@ class IngestResponse(BaseModel):
     num_chunks: int
 
 
+class VectorResetResponse(BaseModel):
+    success: bool
+
+
+class VectorDeleteBySourceRequest(BaseModel):
+    source: str
+
+
+class VectorDeleteBySourceResponse(BaseModel):
+    source: str
+    deleted_count: int
+
+
 class EvaluateRequest(BaseModel):
     questions: List[str]
     ground_truth_answers: Optional[List[str]] = None
@@ -48,4 +61,3 @@ class DebugTrace(BaseModel):
 
 class ChatResponseWithTrace(ChatResponse):
     trace: List[DebugTrace]
-

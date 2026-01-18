@@ -4,7 +4,12 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 
 from app.core.logging import get_logger
 from app.data.vector_store import vector_store_manager
-from app.schemas.chat_schema import IngestResponse
+from app.schemas.chat_schema import (
+    IngestResponse,
+    VectorDeleteBySourceRequest,
+    VectorDeleteBySourceResponse,
+    VectorResetResponse,
+)
 
 
 logger = get_logger(__name__)
@@ -66,3 +71,28 @@ async def ingest_endpoint(file: UploadFile = File(...)) -> IngestResponse:
     )
 
     return IngestResponse(source=filename, num_chunks=num_chunks)
+
+
+@router.post("/vectors/reset", response_model=VectorResetResponse)
+async def reset_vectors() -> VectorResetResponse:
+    vector_store_manager.reset_vectors()
+    logger.info("Vector store reset")
+    return VectorResetResponse(success=True)
+
+
+@router.post(
+    "/vectors/delete-by-source",
+    response_model=VectorDeleteBySourceResponse,
+)
+async def delete_vectors_by_source(
+    body: VectorDeleteBySourceRequest,
+) -> VectorDeleteBySourceResponse:
+    deleted = vector_store_manager.delete_by_source(body.source)
+    logger.info(
+        "Vector chunks deleted by source",
+        extra={
+            "source": body.source,
+            "deleted_count": deleted,
+        },
+    )
+    return VectorDeleteBySourceResponse(source=body.source, deleted_count=deleted)
