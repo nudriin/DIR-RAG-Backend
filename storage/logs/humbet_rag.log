@@ -529,3 +529,485 @@ detail: Request was throttled. Your rate limit for creating predictions is reduc
 2026-01-19 03:24:21 | INFO | app.rag.generator | Generated answer
 2026-01-19 03:24:21 | INFO | app.rag.iter_retgen | RAG pipeline finished
 2026-01-19 03:24:21 | INFO | app.api.chat | Chat request handled
+2026-01-19 03:27:35 | INFO | app.main | Application startup
+2026-01-19 03:29:09 | INFO | app.main | Application startup
+2026-01-19 03:58:53 | INFO | app.main | Application startup
+2026-01-19 04:00:16 | INFO | app.main | Application startup
+2026-01-19 04:00:39 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 04:00:39 | ERROR | app.rag.query_refinement | LLM-based query refinement failed
+2026-01-19 04:00:39 | INFO | app.rag.query_refinement | Refined query (fallback after LLM error)
+2026-01-19 04:00:39 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 04:00:40 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-19 04:00:40 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-19 04:00:48 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-19 04:00:49 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-19 04:00:54 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 04:01:06 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 04:01:06 | ERROR | app.rag.query_refinement | LLM-based query refinement failed
+2026-01-19 04:01:06 | INFO | app.rag.query_refinement | Refined query (fallback after LLM error)
+2026-01-19 04:01:06 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 04:01:10 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 04:01:24 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 04:01:24 | ERROR | app.rag.query_refinement | LLM-based query refinement failed
+2026-01-19 04:01:24 | INFO | app.rag.query_refinement | Refined query (fallback after LLM error)
+2026-01-19 04:01:24 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 04:01:26 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 04:01:34 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 04:01:34 | INFO | app.rag.generator | Generated answer
+2026-01-19 04:01:34 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 04:01:34 | INFO | app.api.chat | Chat request handled
+2026-01-19 16:36:55 | INFO | app.main | Application startup
+2026-01-19 16:40:54 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:40:54 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:40:54 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-19 16:40:54 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-19 16:41:08 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-19 16:41:09 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-19 16:41:14 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:41:14 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:41:14 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:41:18 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:41:18 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:41:18 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:41:22 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:41:39 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 16:41:41 | INFO | app.rag.generator | Generated answer
+2026-01-19 16:41:41 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 16:41:41 | INFO | app.api.chat | Chat request handled
+2026-01-19 16:42:13 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:42:13 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:42:14 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:42:14 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:42:14 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:42:15 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:42:15 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:42:15 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:42:15 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:42:31 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 16:42:32 | INFO | app.rag.generator | Generated answer
+2026-01-19 16:42:32 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 16:42:32 | INFO | app.api.chat | Chat request handled
+2026-01-19 16:44:42 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:44:42 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:44:43 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:44:43 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:44:43 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:44:43 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:44:43 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:44:43 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:44:44 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:44:55 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 16:44:57 | INFO | app.rag.generator | Generated answer
+2026-01-19 16:44:57 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 16:44:57 | INFO | app.api.chat | Chat request handled
+2026-01-19 16:45:35 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:45:35 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:45:36 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:45:36 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:45:36 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:45:36 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:45:36 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:45:36 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:45:37 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:45:52 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 16:45:52 | INFO | app.rag.generator | Generated answer
+2026-01-19 16:45:52 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 16:45:52 | INFO | app.api.chat | Chat request handled
+2026-01-19 16:48:12 | INFO | app.main | Application startup
+2026-01-19 16:48:29 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:48:29 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:48:29 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-19 16:48:29 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-19 16:49:03 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-19 16:49:04 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-19 16:49:08 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:49:08 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:49:08 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:49:10 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:49:10 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:49:10 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:49:10 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:49:20 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 16:49:20 | INFO | app.rag.generator | Generated answer
+2026-01-19 16:49:20 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 16:49:20 | INFO | app.api.chat | Chat request handled
+2026-01-19 16:58:50 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:58:50 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:58:53 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:58:53 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:58:53 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:58:53 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:58:53 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 16:58:53 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 16:58:54 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 16:59:07 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 16:59:07 | INFO | app.rag.generator | Generated answer
+2026-01-19 16:59:07 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 16:59:07 | INFO | app.api.chat | Chat request handled
+2026-01-19 19:30:01 | INFO | app.main | Application startup
+2026-01-19 19:31:21 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-19 19:31:21 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-19 19:32:46 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-19 19:32:47 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-19 19:32:47 | INFO | app.api.ingest | Document ingested
+2026-01-19 19:33:27 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:33:27 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:33:30 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:33:30 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:33:30 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:33:31 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:33:31 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:33:31 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:33:31 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:33:44 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 19:33:44 | INFO | app.rag.generator | Generated answer
+2026-01-19 19:33:44 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 19:33:44 | INFO | app.api.chat | Chat request handled
+2026-01-19 19:34:24 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:34:24 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:34:26 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:34:26 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:34:26 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:34:27 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:34:27 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:34:27 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:34:27 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:34:36 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 19:34:36 | INFO | app.rag.generator | Generated answer
+2026-01-19 19:34:36 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 19:34:36 | INFO | app.api.chat | Chat request handled
+2026-01-19 19:35:18 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:35:18 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:35:18 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:35:18 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:35:18 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:35:18 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:35:18 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:35:18 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:35:19 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:35:28 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 19:35:28 | INFO | app.rag.generator | Generated answer
+2026-01-19 19:35:28 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 19:35:28 | INFO | app.api.chat | Chat request handled
+2026-01-19 19:36:02 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:36:02 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:36:02 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:36:02 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:36:02 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:36:02 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:36:02 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:36:02 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:36:03 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:36:15 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 19:36:15 | INFO | app.rag.generator | Generated answer
+2026-01-19 19:36:15 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 19:36:15 | INFO | app.api.chat | Chat request handled
+2026-01-19 19:37:17 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:37:17 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:37:17 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:37:17 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:37:17 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:37:18 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:37:18 | INFO | app.rag.query_refinement | Refined query
+2026-01-19 19:37:18 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-19 19:37:18 | INFO | app.rag.retriever | Retrieved documents
+2026-01-19 19:37:28 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-19 19:37:28 | INFO | app.rag.generator | Generated answer
+2026-01-19 19:37:28 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-19 19:37:28 | INFO | app.api.chat | Chat request handled
+2026-01-20 11:07:34 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:07:34 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:07:39 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:07:39 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:07:39 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:07:43 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:07:43 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:07:43 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:07:44 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:07:51 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 11:07:51 | INFO | app.rag.generator | Generated answer
+2026-01-20 11:07:51 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 11:07:51 | INFO | app.api.chat | Chat request handled
+2026-01-20 11:10:35 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:10:35 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:10:39 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:10:39 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:10:39 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:10:39 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:10:39 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:10:39 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:10:40 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:10:47 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 11:10:47 | INFO | app.rag.generator | Generated answer
+2026-01-20 11:10:47 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 11:10:47 | INFO | app.api.chat | Chat request handled
+2026-01-20 11:13:40 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:13:40 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:13:40 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:13:40 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:13:40 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:13:41 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:13:41 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:13:41 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:13:41 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:13:52 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 11:13:52 | INFO | app.rag.generator | Generated answer
+2026-01-20 11:13:52 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 11:13:52 | INFO | app.api.chat | Chat request handled
+2026-01-20 11:14:26 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:14:26 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:14:27 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:14:27 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:14:27 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:14:27 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:14:27 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:14:27 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:14:27 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:14:36 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 11:14:36 | INFO | app.rag.generator | Generated answer
+2026-01-20 11:14:36 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 11:14:36 | INFO | app.api.chat | Chat request handled
+2026-01-20 11:15:31 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:15:31 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:15:32 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:15:32 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:15:32 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:15:32 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:15:32 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:15:32 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:15:33 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:15:47 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 11:15:47 | INFO | app.rag.generator | Generated answer
+2026-01-20 11:15:47 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 11:15:47 | INFO | app.api.chat | Chat request handled
+2026-01-20 11:16:09 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:16:09 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:16:09 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:16:09 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:16:09 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:16:10 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:16:10 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:16:10 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:16:10 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:16:16 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 11:16:16 | INFO | app.rag.generator | Generated answer
+2026-01-20 11:16:16 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 11:16:16 | INFO | app.api.chat | Chat request handled
+2026-01-20 11:35:07 | INFO | app.main | Application startup
+2026-01-20 11:35:13 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:35:13 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:35:14 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-20 11:35:14 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-20 11:35:21 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-20 11:35:22 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-20 11:35:27 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:35:27 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:35:27 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:35:30 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:35:30 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:35:30 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:35:32 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:35:40 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 11:35:40 | INFO | app.rag.generator | Generated answer
+2026-01-20 11:35:40 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 11:35:40 | INFO | app.api.chat | Chat request handled
+2026-01-20 11:36:41 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:36:41 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:36:43 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:36:43 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:36:43 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:36:44 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:36:44 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:36:44 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:36:44 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:36:51 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 11:36:51 | INFO | app.rag.generator | Generated answer
+2026-01-20 11:36:51 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 11:36:51 | INFO | app.api.chat | Chat request handled
+2026-01-20 11:37:45 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:37:45 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:37:46 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:37:46 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:37:46 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:37:46 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:37:46 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:37:46 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:37:47 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:37:56 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 11:37:56 | INFO | app.rag.generator | Generated answer
+2026-01-20 11:37:56 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 11:37:56 | INFO | app.api.chat | Chat request handled
+2026-01-20 11:38:15 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:38:15 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:38:15 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:38:15 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:38:15 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:38:16 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:38:16 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:38:16 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:38:16 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:38:25 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 11:38:25 | INFO | app.rag.generator | Generated answer
+2026-01-20 11:38:25 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 11:38:25 | INFO | app.api.chat | Chat request handled
+2026-01-20 11:38:39 | INFO | app.api.ingest | Vector source detail fetched
+2026-01-20 11:38:48 | INFO | app.api.ingest | Vector sources listed
+2026-01-20 11:40:24 | INFO | app.api.ingest | Document ingested
+2026-01-20 11:41:16 | INFO | app.api.ingest | Vector sources listed
+2026-01-20 11:44:00 | INFO | app.api.ingest | Document ingested
+2026-01-20 11:45:28 | INFO | app.api.ingest | Document ingested
+2026-01-20 11:47:29 | INFO | app.api.ingest | Document ingested
+2026-01-20 11:47:29 | INFO | app.api.ingest | Vector sources listed
+2026-01-20 11:48:44 | INFO | app.api.ingest | Document ingested
+2026-01-20 11:49:16 | INFO | app.api.ingest | Document ingested
+2026-01-20 11:50:07 | INFO | app.api.ingest | Document ingested
+2026-01-20 11:50:33 | INFO | app.api.ingest | Vector sources listed
+2026-01-20 11:51:09 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:51:09 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:51:13 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:51:13 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:51:13 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:51:17 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:51:17 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:51:17 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:51:17 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:51:28 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 11:51:28 | INFO | app.rag.generator | Generated answer
+2026-01-20 11:51:28 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 11:51:28 | INFO | app.api.chat | Chat request handled
+2026-01-20 11:51:48 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:51:48 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:51:49 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:51:49 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:51:49 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:51:49 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:51:49 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:51:49 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:51:50 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:52:01 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 11:52:01 | INFO | app.rag.generator | Generated answer
+2026-01-20 11:52:01 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 11:52:01 | INFO | app.api.chat | Chat request handled
+2026-01-20 11:55:48 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:55:48 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:55:51 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:55:51 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:55:51 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:55:55 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:55:55 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 11:55:55 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 11:55:58 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 11:56:10 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 11:56:10 | INFO | app.rag.generator | Generated answer
+2026-01-20 11:56:10 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 11:56:10 | INFO | app.api.chat | Chat request handled
+2026-01-20 12:23:22 | INFO | app.api.ingest | Vector sources listed
+2026-01-20 16:53:15 | INFO | app.api.ingest | Document ingested
+2026-01-20 16:53:38 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 16:53:38 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 16:53:42 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 16:53:42 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 16:53:42 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 16:53:45 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 16:53:45 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 16:53:45 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 16:53:46 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 16:53:55 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 16:53:55 | INFO | app.rag.generator | Generated answer
+2026-01-20 16:53:55 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 16:53:55 | INFO | app.api.chat | Chat request handled
+2026-01-20 17:01:03 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:01:03 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:01:07 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:01:07 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:01:07 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:01:11 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:01:11 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:01:11 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:01:13 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:01:24 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 17:01:24 | INFO | app.rag.generator | Generated answer
+2026-01-20 17:01:24 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 17:01:24 | INFO | app.api.chat | Chat request handled
+2026-01-20 17:01:47 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:01:47 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:01:48 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:01:48 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:01:48 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:01:49 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:01:49 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:01:49 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:01:49 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:02:00 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 17:02:00 | INFO | app.rag.generator | Generated answer
+2026-01-20 17:02:00 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 17:02:00 | INFO | app.api.chat | Chat request handled
+2026-01-20 17:03:23 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:03:23 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:03:25 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:03:25 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:03:25 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:03:26 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:03:26 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:03:26 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:03:26 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:03:38 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 17:03:38 | INFO | app.rag.generator | Generated answer
+2026-01-20 17:03:38 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 17:03:38 | INFO | app.api.chat | Chat request handled
+2026-01-20 17:04:44 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:04:44 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:04:44 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:04:44 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:04:44 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:04:45 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:04:45 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:04:45 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:04:45 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:04:50 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 17:04:50 | INFO | app.rag.generator | Generated answer
+2026-01-20 17:04:50 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 17:04:50 | INFO | app.api.chat | Chat request handled
+2026-01-20 17:05:23 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:05:23 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:05:24 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:05:24 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:05:24 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:05:24 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:05:24 | INFO | app.rag.query_refinement | Refined query
+2026-01-20 17:05:24 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-20 17:05:24 | INFO | app.rag.retriever | Retrieved documents
+2026-01-20 17:05:35 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-20 17:05:35 | INFO | app.rag.generator | Generated answer
+2026-01-20 17:05:35 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-20 17:05:35 | INFO | app.api.chat | Chat request handled
+2026-01-21 16:26:47 | INFO | app.main | Application startup
+2026-01-21 16:26:51 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-21 16:26:51 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-21 16:27:12 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-21 16:27:13 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-21 16:27:13 | INFO | app.api.ingest | Vector sources listed
+2026-01-21 16:28:39 | INFO | app.main | Application startup
+2026-01-21 16:29:30 | INFO | app.main | Application startup
+2026-01-21 16:31:48 | INFO | app.main | Application startup
+2026-01-21 16:34:31 | INFO | app.main | Application startup
+2026-01-21 16:36:57 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-21 16:36:57 | INFO | app.rag.query_refinement | Refined query
+2026-01-21 16:36:57 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-21 16:36:57 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-21 16:36:57 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-21 16:37:17 | INFO | faiss.loader | Loading faiss with AVX2 support.
+2026-01-21 16:37:18 | INFO | faiss.loader | Successfully loaded faiss with AVX2 support.
+2026-01-21 16:37:24 | INFO | app.rag.retriever | Retrieved documents
+2026-01-21 16:37:34 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-21 16:37:34 | INFO | app.rag.query_refinement | Refined query
+2026-01-21 16:37:34 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-21 16:37:39 | INFO | app.rag.retriever | Retrieved documents
+2026-01-21 16:37:51 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-21 16:37:51 | INFO | app.rag.query_refinement | Refined query
+2026-01-21 16:37:51 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-21 16:37:54 | INFO | app.rag.retriever | Retrieved documents
+2026-01-21 16:38:11 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-21 16:38:33 | INFO | app.rag.generator | Generated answer
+2026-01-21 16:38:33 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-21 16:38:33 | INFO | app.api.chat | Chat request handled
