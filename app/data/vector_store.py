@@ -1,11 +1,12 @@
 from pathlib import Path
 from typing import Iterable, List, Tuple
+import shutil
 
 from langchain_core.documents import Document
 from langchain.embeddings.base import Embeddings
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores import Chroma
 from langchain_core.vectorstores import VectorStore
 from pydantic import BaseModel
 
@@ -41,22 +42,18 @@ class VectorStoreManager:
 
     @property
     def vector_store_path(self) -> Path:
-        return self.settings.vector_dir / "faiss_index"
+        # ChromaDB persistence directory
+        return self.settings.vector_dir / "chroma_db"
 
     @property
-    def vector_store(self) -> VectorStore | None:
-        if self._vector_store is None and self.vector_store_path.exists():
-            self._vector_store = FAISS.load_local(
-                str(self.vector_store_path),
-                self.embedding_model,
-                allow_dangerous_deserialization=True,
+    def vector_store(self) -> VectorStore:
+        if self._vector_store is None:
+            self._vector_store = Chroma(
+                persist_directory=str(self.vector_store_path),
+                embedding_function=self.embedding_model,
+                collection_metadata={"hnsw:space": "cosine"},
             )
         return self._vector_store
-
-    def persist(self) -> None:
-        if self._vector_store is not None:
-            self.vector_store_path.mkdir(parents=True, exist_ok=True)
-            self._vector_store.save_local(str(self.vector_store_path))
 
     def ingest_texts(
         self,
@@ -84,15 +81,8 @@ class VectorStoreManager:
         if not documents:
             return 0
 
-        if self._vector_store is None:
-            self._vector_store = FAISS.from_documents(
-                documents=documents,
-                embedding=self.embedding_model,
-            )
-        else:
-            self._vector_store.add_documents(documents)
-
-        self.persist()
+        # Chroma automatically persists
+        self.vector_store.add_documents(documents)
         return len(documents)
 
     def similarity_search_with_scores(
@@ -100,74 +90,81 @@ class VectorStoreManager:
         query: str,
         top_k: int,
     ) -> List[Tuple[Document, float]]:
-        if self.vector_store is None:
-            return []
+        # Chroma returns distance by default for cosine space (lower is better)
+        # We might want to convert to similarity score if needed, but standard RAG often uses distance directly or converts 1-distance.
+        # LangChain's similarity_search_with_score returns the raw score from the backend.
+        # For Chroma with "cosine", it returns cosine distance (0 to 2). 0 means identical.
         return self.vector_store.similarity_search_with_score(query, k=top_k)
 
     def reset_vectors(self) -> None:
         self._vector_store = None
         if self.vector_store_path.exists():
-            for path in self.vector_store_path.parent.glob("faiss_index*"):
-                if path.is_file() or path.is_dir():
-                    try:
-                        if path.is_dir():
-                            for child in path.glob("**/*"):
-                                if child.is_file():
-                                    child.unlink(missing_ok=True)
-                            path.rmdir()
-                        else:
-                            path.unlink(missing_ok=True)
-                    except FileNotFoundError:
-                        continue
+            # Delete the entire directory for Chroma
+            shutil.rmtree(self.vector_store_path, ignore_errors=True)
 
     def delete_by_source(self, source: str) -> int:
+        # Chroma allows deleting by metadata filter
         store = self.vector_store
-        if store is None:
-            return 0
+        # We need to find how many documents to delete first to return the count, 
+        # or just delete and return unknown count?
+        # The user interface expects a count.
+        
+        # Get ids to delete first
         try:
-            docstore = store.docstore
-        except AttributeError:
+            # Chroma specific method to get data
+            # Note: store is a langchain wrapper around chroma client
+            # Accessing internal client might be needed for complex queries or use get()
+            
+            # Using get() with filter
+            results = store.get(where={"source": source})
+            ids_to_delete = results["ids"]
+            
+            if not ids_to_delete:
+                return 0
+                
+            store.delete(ids=ids_to_delete)
+            return len(ids_to_delete)
+        except Exception:
+            # Fallback if get/delete fails
             return 0
-        ids_to_delete: List[str] = []
-        for doc_id, doc in getattr(docstore, "_dict", {}).items():
-            if isinstance(doc, Document) and doc.metadata.get("source") == source:
-                ids_to_delete.append(doc_id)
-        if not ids_to_delete:
-            return 0
-        store.delete(ids_to_delete)
-        self.persist()
-        return len(ids_to_delete)
 
     def list_sources(self) -> List[tuple[str, int]]:
         store = self.vector_store
-        if store is None:
-            return []
         try:
-            docstore = store.docstore
-        except AttributeError:
+            # Get all metadata
+            results = store.get(include=["metadatas"])
+            metadatas = results["metadatas"]
+            
+            counts: dict[str, int] = {}
+            for meta in metadatas:
+                if meta:
+                    src = meta.get("source")
+                    if src:
+                        counts[src] = counts.get(src, 0) + 1
+            return sorted(counts.items(), key=lambda x: x[0].lower())
+        except Exception:
             return []
-        counts: dict[str, int] = {}
-        for doc in getattr(docstore, "_dict", {}).values():
-            if isinstance(doc, Document):
-                src = doc.metadata.get("source")
-                if not src:
-                    continue
-                counts[src] = counts.get(src, 0) + 1
-        return sorted(counts.items(), key=lambda x: x[0].lower())
 
     def get_documents_by_source(self, source: str) -> List[Tuple[str, Document]]:
         store = self.vector_store
-        if store is None:
-            return []
         try:
-            docstore = store.docstore
-        except AttributeError:
+            results = store.get(where={"source": source}, include=["metadatas", "documents"])
+            output: List[Tuple[str, Document]] = []
+            
+            ids = results["ids"]
+            metadatas = results["metadatas"]
+            docs = results["documents"]
+            
+            for i, doc_id in enumerate(ids):
+                # Reconstruct Document
+                doc = Document(
+                    page_content=docs[i],
+                    metadata=metadatas[i] if metadatas[i] else {}
+                )
+                output.append((doc_id, doc))
+            return output
+        except Exception:
             return []
-        results: List[Tuple[str, Document]] = []
-        for doc_id, doc in getattr(docstore, "_dict", {}).items():
-            if isinstance(doc, Document) and doc.metadata.get("source") == source:
-                results.append((doc_id, doc))
-        return results
 
 
 vector_store_manager = VectorStoreManager()

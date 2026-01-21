@@ -1011,3 +1011,45 @@ detail: Request was throttled. Your rate limit for creating predictions is reduc
 2026-01-21 16:38:33 | INFO | app.rag.generator | Generated answer
 2026-01-21 16:38:33 | INFO | app.rag.iter_retgen | RAG pipeline finished
 2026-01-21 16:38:33 | INFO | app.api.chat | Chat request handled
+2026-01-21 20:45:16 | INFO | app.main | Application startup
+2026-01-21 20:46:16 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-21 20:46:16 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-21 20:46:28 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-21 20:46:29 | INFO | app.api.ingest | Vector sources listed
+2026-01-21 20:47:58 | INFO | app.api.ingest | Document ingested
+2026-01-21 20:48:19 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-21 20:48:19 | INFO | app.rag.query_refinement | Refined query
+2026-01-21 20:48:19 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-21 20:48:22 | INFO | app.rag.retriever | Retrieved documents
+2026-01-21 20:48:30 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-21 20:48:30 | INFO | app.rag.query_refinement | Refined query
+2026-01-21 20:48:30 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-21 20:48:34 | INFO | app.rag.retriever | Retrieved documents
+2026-01-21 20:48:41 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-21 20:48:41 | INFO | app.rag.query_refinement | Refined query
+2026-01-21 20:48:41 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-21 20:48:41 | INFO | app.rag.retriever | Retrieved documents
+2026-01-21 20:48:42 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-21 20:48:42 | ERROR | app.rag.generator | LLM generation failed on attempt 1: ReplicateError Details:
+status: 429
+detail: Request was throttled. Your rate limit for creating predictions is reduced to 6 requests per minute with a burst of 1 requests while you have less than $5.0 in credit. Your rate limit resets in ~3s.
+2026-01-21 20:48:54 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-21 20:48:54 | INFO | app.rag.generator | Generated answer
+2026-01-21 20:48:54 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-21 20:48:54 | INFO | app.api.chat | Chat request handled
+2026-01-21 20:50:31 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-21 20:50:31 | INFO | app.rag.query_refinement | Refined query
+2026-01-21 20:50:31 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-21 20:50:34 | INFO | app.rag.retriever | Retrieved documents
+2026-01-21 20:50:42 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-21 20:50:42 | INFO | app.rag.query_refinement | Refined query
+2026-01-21 20:50:42 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-21 20:50:45 | INFO | app.rag.retriever | Retrieved documents
+2026-01-21 20:50:54 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-21 20:50:54 | INFO | app.rag.query_refinement | Refined query
+2026-01-21 20:50:54 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-21 20:50:57 | INFO | app.rag.retriever | Retrieved documents
+2026-01-21 20:51:03 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-21 20:51:03 | INFO | app.rag.generator | Generated answer
+2026-01-21 20:51:03 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-21 20:51:03 | INFO | app.api.chat | Chat request handled

@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     )
 
     vector_backend: Literal["faiss", "chroma"] = Field(
-        default="faiss", env="VECTOR_BACKEND"
+        default="chroma", env="VECTOR_BACKEND"
     )
 
     embedding_model: str = Field(
