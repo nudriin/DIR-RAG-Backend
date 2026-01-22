@@ -78,6 +78,7 @@ class DebugTrace(BaseModel):
     retrieve: bool
     retrieval_confidence: float
     reason: str
+    raw_query: str | None
 
 
 class ChatResponseWithTrace(ChatResponse):

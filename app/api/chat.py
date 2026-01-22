@@ -26,6 +26,7 @@ async def chat_endpoint(payload: ChatRequest) -> ChatResponseWithTrace:
             retrieve=t.decision.retrieve,
             retrieval_confidence=t.decision.confidence,
             reason=t.decision.reason,
+            raw_query=t.decision.prompt,
         )
         for t in rag_result.traces
     ]
@@ -46,4 +47,3 @@ async def chat_endpoint(payload: ChatRequest) -> ChatResponseWithTrace:
         confidence=rag_result.confidence,
         trace=trace_models,
     )
-

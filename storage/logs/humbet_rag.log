@@ -1250,3 +1250,170 @@ detail: Request was throttled. Your rate limit for creating predictions is reduc
 2026-01-22 15:31:36 | INFO | app.rag.generator | Generated answer
 2026-01-22 15:31:36 | INFO | app.rag.iter_retgen | RAG pipeline finished
 2026-01-22 15:31:36 | INFO | app.api.chat | Chat request handled
+2026-01-22 16:14:13 | INFO | app.main | Application startup
+2026-01-22 16:16:26 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 16:16:26 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 16:16:30 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-22 16:16:32 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 16:16:32 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 16:16:53 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 16:22:12 | INFO | app.main | Application startup
+2026-01-22 16:22:34 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 16:22:34 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 16:22:37 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-22 16:22:40 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 16:22:40 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 16:22:49 | WARNING | urllib3.connectionpool | Retrying (Retry(total=1, connect=1, read=2, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x000001FDC2736A10>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed')': /batch/
+2026-01-22 16:22:53 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 16:22:54 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-22 16:22:55 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 16:22:55 | INFO | app.rag.generator | Generated answer
+2026-01-22 16:22:55 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-22 16:22:55 | INFO | app.api.chat | Chat request handled
+2026-01-22 16:27:05 | INFO | app.main | Application startup
+2026-01-22 16:28:17 | INFO | app.main | Application startup
+2026-01-22 16:29:14 | INFO | app.main | Application startup
+2026-01-22 16:30:13 | INFO | app.main | Application startup
+2026-01-22 16:31:11 | INFO | app.main | Application startup
+2026-01-22 16:32:01 | INFO | app.main | Application startup
+2026-01-22 16:33:45 | INFO | app.main | Application startup
+2026-01-22 16:34:06 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 16:34:06 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 16:34:09 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-22 16:34:12 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 16:34:12 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 16:34:23 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 16:34:23 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-22 16:34:24 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-22 16:34:24 | INFO | openai._base_client | Retrying request to /chat/completions in 8.184000 seconds
+2026-01-22 16:34:42 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 16:34:42 | INFO | app.rag.generator | Generated answer
+2026-01-22 16:34:42 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-22 16:34:42 | INFO | app.api.chat | Chat request handled
+2026-01-22 16:48:05 | INFO | app.main | Application startup
+2026-01-22 16:48:59 | INFO | app.main | Application startup
+2026-01-22 16:49:32 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 16:49:32 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 16:49:36 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-22 16:49:38 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 16:49:38 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 16:49:48 | WARNING | urllib3.connectionpool | Retrying (Retry(total=1, connect=1, read=2, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x0000019327FA4790>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed')': /batch/
+2026-01-22 16:49:50 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 16:49:51 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-22 16:51:20 | INFO | app.main | Application startup
+2026-01-22 16:51:44 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 16:51:44 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 16:51:47 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-22 16:51:49 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 16:51:49 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 16:52:01 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 16:52:01 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-22 16:52:02 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-22 16:52:02 | INFO | openai._base_client | Retrying request to /chat/completions in 13.080000 seconds
+2026-01-22 16:52:27 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 16:52:27 | INFO | app.rag.generator | Generated answer
+2026-01-22 16:52:27 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-22 16:52:27 | INFO | app.api.chat | Chat request handled
+2026-01-22 16:55:13 | INFO | app.main | Application startup
+2026-01-22 16:56:06 | INFO | app.main | Application startup
+2026-01-22 16:56:53 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 16:56:53 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 16:56:56 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-22 16:57:09 | INFO | openai._base_client | Retrying request to /embeddings in 0.465403 seconds
+2026-01-22 16:57:21 | INFO | openai._base_client | Retrying request to /embeddings in 0.868514 seconds
+2026-01-22 16:57:22 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 16:57:23 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 16:57:35 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 16:57:36 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-22 16:57:37 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-22 16:57:37 | INFO | openai._base_client | Retrying request to /chat/completions in 5.478000 seconds
+2026-01-22 16:57:53 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 16:57:53 | INFO | app.rag.generator | Generated answer
+2026-01-22 16:57:53 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-22 16:57:53 | INFO | app.api.chat | Chat request handled
+2026-01-22 17:01:19 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 17:01:19 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 17:01:20 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 17:01:20 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 17:01:35 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 17:01:40 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-22 17:01:52 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 17:01:52 | INFO | app.rag.generator | Generated answer
+2026-01-22 17:01:52 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-22 17:01:52 | INFO | app.api.chat | Chat request handled
+2026-01-22 17:07:06 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 17:07:06 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 17:07:07 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 17:07:07 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 17:07:10 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 17:07:11 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-22 17:07:21 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 17:07:21 | ERROR | app.rag.query_refinement | Query rewriting failed
+2026-01-22 17:07:32 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 17:07:32 | ERROR | app.rag.query_refinement | Query rewriting failed
+2026-01-22 17:07:44 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 17:07:44 | ERROR | app.rag.query_refinement | Query rewriting failed
+2026-01-22 17:07:44 | WARNING | app.rag.query_refinement | Fallback to rule-based query refinement
+2026-01-22 17:07:44 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 17:07:46 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 17:07:46 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 17:07:47 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-22 17:07:47 | INFO | openai._base_client | Retrying request to /chat/completions in 0.426112 seconds
+2026-01-22 17:07:47 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-22 17:07:47 | INFO | openai._base_client | Retrying request to /chat/completions in 0.808443 seconds
+2026-01-22 17:07:48 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-22 17:14:32 | INFO | app.main | Application startup
+2026-01-22 17:14:58 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-22 17:15:10 | INFO | openai._base_client | Retrying request to /embeddings in 0.411007 seconds
+2026-01-22 17:15:10 | WARNING | urllib3.connectionpool | Retrying (Retry(total=1, connect=1, read=2, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x0000019FB8518610>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed')': /batch/
+2026-01-22 17:15:12 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 17:15:12 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 17:15:13 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-22 17:16:08 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 17:16:08 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 17:16:14 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 17:16:14 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-22 17:17:30 | INFO | app.main | Application startup
+2026-01-22 17:18:00 | INFO | app.main | Application startup
+2026-01-22 17:18:13 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 17:18:13 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 17:18:15 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-22 17:18:16 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 17:18:16 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 17:18:24 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 17:18:24 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-22 17:18:36 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 17:18:36 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 17:18:37 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 17:18:37 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 17:18:38 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-22 17:18:38 | INFO | openai._base_client | Retrying request to /chat/completions in 0.436442 seconds
+2026-01-22 17:18:38 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-22 17:18:38 | INFO | openai._base_client | Retrying request to /chat/completions in 0.826545 seconds
+2026-01-22 17:18:40 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-22 17:21:58 | INFO | app.main | Application startup
+2026-01-22 17:22:16 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 17:22:16 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 17:22:18 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-22 17:22:19 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 17:22:19 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 17:22:24 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 17:22:24 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-22 17:22:34 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 17:22:34 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 17:22:35 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 17:22:35 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 17:22:35 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-22 17:23:19 | ERROR | app.rag.query_refinement | Query rewriting failed
+2026-01-22 17:23:30 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 17:23:30 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 17:23:34 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 17:23:34 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 17:23:39 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 17:23:39 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-22 17:23:40 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 17:23:40 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 17:23:48 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 17:23:48 | INFO | app.rag.generator | Generated answer
+2026-01-22 17:23:48 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-22 17:23:48 | INFO | app.api.chat | Chat request handled

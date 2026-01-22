@@ -5,7 +5,7 @@ from langchain_core.documents import Document
 
 from app.core.config import get_settings
 from app.core.logging import get_logger
-from app.rag.dynamic_decision import RetrievalDecision, decide_retrieval
+from app.rag.dynamic_decision import RetrievalDecision, decide_retrieval_dragin
 from app.rag.generator import generate_answer
 from app.rag.query_refinement import RefinedQuery, refine_query
 from app.rag.retriever import retrieve_documents
@@ -20,6 +20,7 @@ class IterationTrace:
     refined_query: str
     num_documents: int
     decision: RetrievalDecision
+    raw_query: str
 
 
 @dataclass
@@ -36,7 +37,7 @@ def run_rag_pipeline(query: str) -> RAGResult:
 
     if settings.rag_mode == "naive":
         refined: RefinedQuery = refine_query(query)
-        decision = decide_retrieval(refined["refined_query"])
+        decision = decide_retrieval_dragin(refined["refined_query"])
         if decision.retrieve:
             documents: List[Document] = retrieve_documents(refined["refined_query"])
         else:
@@ -47,13 +48,14 @@ def run_rag_pipeline(query: str) -> RAGResult:
             refined_query=refined["refined_query"],
             num_documents=len(documents),
             decision=decision,
+            raw_query=query,
         )
         traces = [trace]
         confidence = trace.decision.confidence
         iterations = 1
     elif settings.rag_mode == "advanced":
         refined: RefinedQuery = refine_query(query)
-        decision = decide_retrieval(refined["refined_query"])
+        decision = decide_retrieval_dragin(refined["refined_query"])
         if decision.retrieve:
             documents = retrieve_documents(refined["refined_query"])
         else:
@@ -64,6 +66,7 @@ def run_rag_pipeline(query: str) -> RAGResult:
             refined_query=refined["refined_query"],
             num_documents=len(documents),
             decision=decision,
+            raw_query=query,
         )
         traces = [trace]
         confidence = min(1.0, trace.decision.confidence + 0.05)
@@ -76,10 +79,11 @@ def run_rag_pipeline(query: str) -> RAGResult:
 
         for i in range(1, settings.max_iterations + 1):
             refined = refine_query(query)
-            decision = decide_retrieval(refined["refined_query"])
+            decision = decide_retrieval_dragin(query)
             if decision.retrieve:
                 documents = retrieve_documents(refined["refined_query"])
             else:
+                query = decision.prompt
                 documents = []
 
             trace = IterationTrace(
@@ -87,6 +91,7 @@ def run_rag_pipeline(query: str) -> RAGResult:
                 refined_query=refined["refined_query"],
                 num_documents=len(documents),
                 decision=decision,
+                raw_query=query,
             )
             traces.append(trace)
             last_documents = documents

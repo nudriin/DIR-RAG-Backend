@@ -34,6 +34,8 @@ class Settings(BaseSettings):
     max_iterations: int = Field(default=3, env="MAX_ITERATIONS")
     similarity_top_k: int = Field(default=5, env="SIMILARITY_TOP_K")
 
+    dragin_threshold: float = Field(default=0.5, env="DRAGIN_THRESHOLD")
+
     base_dir: Path = Path(__file__).resolve().parents[2]
     data_dir: Path = base_dir / "storage"
     vector_dir: Path = data_dir / "vectors"
