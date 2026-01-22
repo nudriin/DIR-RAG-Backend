@@ -25,11 +25,11 @@ class Settings(BaseSettings):
     use_bge: bool = Field(default=False, env="USE_BGE")
 
     llm_model: str = Field(default="gpt-4", env="LLM_MODEL")
+    gpt_model: str = Field(default="gpt-4", env="GPT_MODEL")
+    top_logprops: int = Field(default=5, env="TOP_LOGPROBS")
 
     openai_api_key: str | None = Field(default=None, env="OPENAI_API_KEY")
-    replicate_api_token: str | None = Field(
-        default=None, env="REPLICATE_API_TOKEN"
-    )
+    replicate_api_token: str | None = Field(default=None, env="REPLICATE_API_TOKEN")
 
     max_iterations: int = Field(default=3, env="MAX_ITERATIONS")
     similarity_top_k: int = Field(default=5, env="SIMILARITY_TOP_K")
@@ -51,4 +51,3 @@ def get_settings() -> Settings:
     settings.vector_dir.mkdir(parents=True, exist_ok=True)
     settings.log_dir.mkdir(parents=True, exist_ok=True)
     return settings
-

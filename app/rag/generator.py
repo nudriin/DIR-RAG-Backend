@@ -1,12 +1,12 @@
 from typing import Any, Dict, List, Tuple
-
 import time
-import replicate
+
 from langchain_core.documents import Document
+from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_openai import ChatOpenAI
 
 from app.core.config import get_settings
 from app.core.logging import get_logger
-
 
 logger = get_logger(__name__)
 
@@ -30,77 +30,69 @@ def format_context(docs: List[Document]) -> str:
     return "\n\n".join(blocks)
 
 
-def build_prompt(query: str, context_text: str) -> str:
+def build_user_prompt(query: str, context_text: str) -> str:
     return (
-        f"{build_system_prompt()}\n\n"
-        f"Berikut konteks dari dokumen:\n{context_text}\n\n"
-        f"Pertanyaan pengguna:\n{query}\n\n"
-        "Instruksi: Buat jawaban terstruktur, jelas, dan singkat dalam bahasa Indonesia. "
-        "Jawab hanya berdasarkan konteks. Jika informasi tidak ada di konteks, katakan bahwa kamu tidak tahu. "
-        "Di bagian akhir, tuliskan daftar sumber yang digunakan berdasarkan metadata sumber dan chunk."
+        "Berikut adalah konteks dari dokumen yang relevan:\n\n"
+        f"{context_text}\n\n"
+        "Pertanyaan pengguna:\n"
+        f"{query}\n\n"
+        "Instruksi:\n"
+        "- Jawab secara terstruktur, jelas, dan ringkas\n"
+        "- Gunakan hanya informasi dari konteks\n"
+        "- Jika jawaban tidak ditemukan di konteks, katakan bahwa kamu tidak tahu\n"
+        "- Di bagian akhir, tuliskan daftar sumber yang digunakan"
     )
 
 
 def generate_answer(
     query: str, documents: List[Document]
 ) -> Tuple[str, List[Dict[str, Any]]]:
+
     settings = get_settings()
 
     context_text = format_context(documents)
-    prompt = build_prompt(query=query, context_text=context_text)
+    system_prompt = build_system_prompt()
+    user_prompt = build_user_prompt(query=query, context_text=context_text)
 
-    if not settings.replicate_api_token:
-        logger.error("Missing REPLICATE_API_TOKEN")
-        answer_text = (
-            "Konfigurasi token Replicate belum diatur. "
-            "Silakan set REPLICATE_API_TOKEN terlebih dahulu."
-        )
-    else:
-        client = replicate.Client(api_token=settings.replicate_api_token)
-        max_attempts = 3
-        last_exception: Exception | None = None
+    llm = ChatOpenAI(
+        model=settings.gpt_model,
+        api_key=settings.openai_api_key,
+        temperature=0.1,
+    )
 
-        for attempt in range(1, max_attempts + 1):
-            try:
-                output = client.run(
-                    settings.llm_model,
-                    input={
-                        "prompt": prompt,
-                        "temperature": 0.1,
-                    },
-                )
-                if isinstance(output, str):
-                    answer_text = output
-                elif isinstance(output, list):
-                    answer_text = "".join(str(part) for part in output)
-                else:
-                    answer_text = str(output)
-                break
-            except Exception as exc:
-                last_exception = exc
-                message = str(exc)
-                logger.error(
-                    f"LLM generation failed on attempt {attempt}: {message}",
-                    extra={
-                        "error": message,
-                        "llm_backend": "replicate",
-                        "replicate_model": settings.llm_model,
-                        "attempt": attempt,
-                    },
-                )
-                if (
-                    ("429" in message or "throttled" in message or "E001" in message)
-                    and attempt < max_attempts
-                ):
-                    time.sleep(4)
-                    continue
-                break
+    max_attempts = 3
+    last_exception: Exception | None = None
 
-        if last_exception is not None and "answer_text" not in locals():
-            answer_text = (
-                "Maaf, terjadi kesalahan teknis saat menghubungi model bahasa. "
-                "Silakan coba lagi beberapa saat lagi."
+    for attempt in range(1, max_attempts + 1):
+        try:
+            response = llm.invoke(
+                [
+                    SystemMessage(content=system_prompt),
+                    HumanMessage(content=user_prompt),
+                ]
             )
+            answer_text = response.content
+            break
+
+        except Exception as exc:
+            last_exception = exc
+            logger.error(
+                f"LLM generation failed {str(exc)}",
+                extra={
+                    "attempt": attempt,
+                    "error": str(exc),
+                    "llm_backend": "openai",
+                    "model": settings.gpt_model,
+                },
+            )
+            if attempt < max_attempts:
+                time.sleep(3)
+
+    if last_exception is not None and "answer_text" not in locals():
+        answer_text = (
+            "Maaf, terjadi kesalahan teknis saat menghasilkan jawaban. "
+            "Silakan coba kembali beberapa saat lagi."
+        )
 
     sources: List[Dict[str, Any]] = []
     for i, doc in enumerate(documents):
@@ -117,8 +109,8 @@ def generate_answer(
         extra={
             "query": query,
             "num_sources": len(sources),
-            "llm_backend": "replicate",
-            "replicate_model": settings.llm_model,
+            "llm_backend": "openai",
+            "model": settings.gpt_model,
         },
     )
 
