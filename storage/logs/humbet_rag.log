@@ -1181,3 +1181,72 @@ detail: Request was throttled. Your rate limit for creating predictions is reduc
 2026-01-22 14:59:51 | INFO | app.api.ingest | Vector store reset
 2026-01-22 15:01:09 | INFO | app.main | Application startup
 2026-01-22 15:02:01 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-22 15:02:04 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 15:06:32 | INFO | app.main | Application startup
+2026-01-22 15:18:39 | INFO | app.main | Application startup
+2026-01-22 15:24:05 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 15:24:08 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-22 15:24:10 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 15:24:10 | INFO | app.api.ingest | Document ingested
+2026-01-22 15:26:17 | INFO | app.api.ingest | Vector source detail fetched
+2026-01-22 15:28:06 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 15:28:06 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 15:28:06 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-22 15:28:07 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 15:28:08 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 15:28:24 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 15:28:24 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 15:28:24 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-22 15:28:25 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 15:28:25 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 15:28:36 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 15:28:36 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 15:28:36 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-22 15:28:36 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 15:28:36 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 15:28:47 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 15:28:47 | INFO | app.rag.generator | Generated answer
+2026-01-22 15:28:47 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-22 15:28:47 | INFO | app.api.chat | Chat request handled
+2026-01-22 15:29:32 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 15:29:32 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 15:29:32 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-22 15:29:36 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 15:29:36 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 15:29:45 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 15:29:45 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 15:29:45 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-22 15:29:46 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 15:29:46 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 15:29:47 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-22 15:29:47 | ERROR | app.rag.query_refinement | Query rewriting failed
+2026-01-22 15:30:03 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 15:30:03 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 15:30:03 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-22 15:30:03 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 15:30:03 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 15:30:15 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 15:30:15 | INFO | app.rag.generator | Generated answer
+2026-01-22 15:30:15 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-22 15:30:15 | INFO | app.api.chat | Chat request handled
+2026-01-22 15:30:54 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 15:30:54 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 15:30:54 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-22 15:30:58 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 15:30:58 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 15:31:06 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 15:31:06 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 15:31:06 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-22 15:31:07 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 15:31:07 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 15:31:08 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-22 15:31:08 | ERROR | app.rag.query_refinement | Query rewriting failed
+2026-01-22 15:31:19 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-22 15:31:19 | INFO | app.rag.query_refinement | Refined query
+2026-01-22 15:31:19 | INFO | app.rag.dynamic_decision | Retrieval decision
+2026-01-22 15:31:19 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-22 15:31:19 | INFO | app.rag.retriever | Retrieved documents
+2026-01-22 15:31:36 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-22 15:31:36 | INFO | app.rag.generator | Generated answer
+2026-01-22 15:31:36 | INFO | app.rag.iter_retgen | RAG pipeline finished
+2026-01-22 15:31:36 | INFO | app.api.chat | Chat request handled

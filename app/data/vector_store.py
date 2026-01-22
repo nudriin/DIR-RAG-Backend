@@ -9,6 +9,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_core.vectorstores import VectorStore
 from pydantic import BaseModel
+from langchain_experimental.text_splitter import SemanticChunker
 
 from app.core.config import get_settings
 
@@ -62,26 +63,25 @@ class VectorStoreManager:
         chunk_size: int = 800,
         chunk_overlap: int = 80,
     ) -> int:
-        splitter = RecursiveCharacterTextSplitter(
-            chunk_size=chunk_size,
-            chunk_overlap=chunk_overlap,
+        splitter = SemanticChunker(
+            self.embedding_model, breakpoint_threshold_type="percentile"
         )
         documents: List[Document] = []
+
         for idx, raw_text in enumerate(texts):
-            for chunk_id, chunk in enumerate(splitter.split_text(raw_text)):
-                documents.append(
-                    Document(
-                        page_content=chunk,
-                        metadata={
-                            "source": source,
-                            "chunk_id": f"{idx}-{chunk_id}",
-                        },
-                    )
-                )
+            semantic_docs = splitter.create_documents([raw_text])
+
+            for chunk_id, doc in enumerate(semantic_docs):
+                doc.metadata = {
+                    "source": source,
+                    "chunk_id": f"{idx}-{chunk_id}",
+                }
+                documents.append(doc)
+
         if not documents:
             return 0
 
-        # Chroma automatically persists
+        # Simpan ke ChromaDB
         self.vector_store.add_documents(documents)
         return len(documents)
 
@@ -105,23 +105,23 @@ class VectorStoreManager:
     def delete_by_source(self, source: str) -> int:
         # Chroma allows deleting by metadata filter
         store = self.vector_store
-        # We need to find how many documents to delete first to return the count, 
+        # We need to find how many documents to delete first to return the count,
         # or just delete and return unknown count?
         # The user interface expects a count.
-        
+
         # Get ids to delete first
         try:
             # Chroma specific method to get data
             # Note: store is a langchain wrapper around chroma client
             # Accessing internal client might be needed for complex queries or use get()
-            
+
             # Using get() with filter
             results = store.get(where={"source": source})
             ids_to_delete = results["ids"]
-            
+
             if not ids_to_delete:
                 return 0
-                
+
             store.delete(ids=ids_to_delete)
             return len(ids_to_delete)
         except Exception:
@@ -134,7 +134,7 @@ class VectorStoreManager:
             # Get all metadata
             results = store.get(include=["metadatas"])
             metadatas = results["metadatas"]
-            
+
             counts: dict[str, int] = {}
             for meta in metadatas:
                 if meta:
@@ -148,18 +148,19 @@ class VectorStoreManager:
     def get_documents_by_source(self, source: str) -> List[Tuple[str, Document]]:
         store = self.vector_store
         try:
-            results = store.get(where={"source": source}, include=["metadatas", "documents"])
+            results = store.get(
+                where={"source": source}, include=["metadatas", "documents"]
+            )
             output: List[Tuple[str, Document]] = []
-            
+
             ids = results["ids"]
             metadatas = results["metadatas"]
             docs = results["documents"]
-            
+
             for i, doc_id in enumerate(ids):
                 # Reconstruct Document
                 doc = Document(
-                    page_content=docs[i],
-                    metadata=metadatas[i] if metadatas[i] else {}
+                    page_content=docs[i], metadata=metadatas[i] if metadatas[i] else {}
                 )
                 output.append((doc_id, doc))
             return output
