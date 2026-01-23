@@ -1899,3 +1899,12 @@ Sumber: cleaned_knowledge_bases_humbet.pdf
 
 Sumber: cleaned_knowledge_bases_humbet.pdf
 2026-01-24 03:57:16 | INFO | app.api.chat | Chat request handled
+2026-01-24 04:44:31 | INFO | app.main | Application startup
+2026-01-24 04:45:28 | INFO | app.main | Application startup
+2026-01-24 04:48:28 | INFO | app.main | Application startup
+2026-01-24 04:53:52 | INFO | app.main | Application startup
+2026-01-24 04:54:27 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 04:54:27 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-24 04:54:27 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 04:54:27 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 04:55:04 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.

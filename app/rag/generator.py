@@ -115,3 +115,73 @@ def generate_answer(
     )
 
     return answer_text, sources
+
+
+def build_user_prompt_paragraph(query: str, context_text: str, previous_output: str | None) -> str:
+    continuation = ""
+    if previous_output:
+        continuation = (
+            "Lanjutkan jawaban berikut dengan menambahkan satu paragraf baru yang relevan.\n\n"
+            f"Jawaban sementara:\n{previous_output}\n\n"
+        )
+    return (
+        "Berikut adalah konteks dari dokumen yang relevan:\n\n"
+        f"{context_text}\n\n"
+        "Pertanyaan pengguna:\n"
+        f"{query}\n\n"
+        f"{continuation}"
+        "Instruksi:\n"
+        "- Tulis hanya SATU paragraf baru (3–6 kalimat)\n"
+        "- Jangan mengulang paragraf sebelumnya\n"
+        "- Gunakan hanya informasi dari konteks\n"
+        "- Jika informasi tidak ada di konteks, tulis: 'Tidak ada informasi tersedia untuk pertanyaan tersebut'\n"
+        "- Jangan gunakan pengetahuan internal di luar dokumen"
+    )
+
+
+def generate_paragraph(
+    query: str,
+    documents: List[Document],
+    previous_output: str | None = None,
+) -> Tuple[str, List[Dict[str, Any]]]:
+    settings = get_settings()
+
+    context_text = format_context(documents)
+    system_prompt = build_system_prompt()
+    user_prompt = build_user_prompt_paragraph(query=query, context_text=context_text, previous_output=previous_output)
+
+    llm = ChatOpenAI(
+        model=settings.gpt_model,
+        api_key=settings.openai_api_key,
+        temperature=0.1,
+    )
+
+    response = llm.invoke(
+        [
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=user_prompt),
+        ]
+    )
+    paragraph_text = response.content
+
+    sources: List[Dict[str, Any]] = []
+    for i, doc in enumerate(documents):
+        sources.append(
+            {
+                "id": i,
+                "source": doc.metadata.get("source"),
+                "chunk_id": doc.metadata.get("chunk_id"),
+            }
+        )
+
+    logger.info(
+        "Generated paragraph",
+        extra={
+            "query": query,
+            "num_sources": len(sources),
+            "llm_backend": "openai",
+            "model": settings.gpt_model,
+        },
+    )
+
+    return paragraph_text, sources

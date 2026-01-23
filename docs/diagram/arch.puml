@@ -1,4 +1,4 @@
-@startuml
+@startuml Arch
 skinparam backgroundColor #fdfdfd
 skinparam ActivityBackgroundColor #e1f5fe
 skinparam ActivityBorderColor #01579b
