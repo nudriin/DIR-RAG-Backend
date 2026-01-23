@@ -36,6 +36,11 @@ class Settings(BaseSettings):
 
     dragin_threshold: float = Field(default=0.5, env="DRAGIN_THRESHOLD")
 
+    # Context budgeting to avoid rate limit/token overflow
+    context_max_docs: int = Field(default=5, env="CONTEXT_MAX_DOCS")
+    context_char_budget: int = Field(default=6000, env="CONTEXT_CHAR_BUDGET")
+    max_generation_tokens: int = Field(default=512, env="MAX_GENERATION_TOKENS")
+
     base_dir: Path = Path(__file__).resolve().parents[2]
     data_dir: Path = base_dir / "storage"
     vector_dir: Path = data_dir / "vectors"

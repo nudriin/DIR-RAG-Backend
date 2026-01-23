@@ -7,6 +7,7 @@ from langchain_openai import ChatOpenAI
 
 from app.core.config import get_settings
 from app.core.logging import get_logger
+from app.rag.retriever import rerank_documents
 
 logger = get_logger(__name__)
 
@@ -29,6 +30,32 @@ def format_context(docs: List[Document]) -> str:
         blocks.append(f"{header}\n{doc.page_content}")
     return "\n\n".join(blocks)
 
+def limit_docs_for_context(
+    query: str,
+    documents: List[Document],
+    max_docs: int,
+    max_chars: int,
+) -> List[Document]:
+    if not documents:
+        return []
+    top_docs = rerank_documents(query=query, documents=documents, top_n=max_docs)
+    limited: List[Document] = []
+    char_count = 0
+    for d in top_docs:
+        content_len = len(d.page_content or "")
+        if char_count + content_len > max_chars:
+            # Trim the last doc content to fit budget if useful
+            remaining = max(0, max_chars - char_count)
+            if remaining > 200:
+                d_trim = Document(page_content=(d.page_content or "")[:remaining], metadata=d.metadata)
+                limited.append(d_trim)
+                break
+            else:
+                break
+        limited.append(d)
+        char_count += content_len
+    return limited
+
 
 def build_user_prompt(query: str, context_text: str) -> str:
     return (
@@ -50,7 +77,13 @@ def generate_answer(
 
     settings = get_settings()
 
-    context_text = format_context(documents)
+    docs_limited = limit_docs_for_context(
+        query=query,
+        documents=documents,
+        max_docs=settings.context_max_docs,
+        max_chars=settings.context_char_budget,
+    )
+    context_text = format_context(docs_limited)
     system_prompt = build_system_prompt()
     user_prompt = build_user_prompt(query=query, context_text=context_text)
 
@@ -58,6 +91,7 @@ def generate_answer(
         model=settings.gpt_model,
         api_key=settings.openai_api_key,
         temperature=0.1,
+        max_tokens=settings.max_generation_tokens,
     )
 
     max_attempts = 3
@@ -146,7 +180,13 @@ def generate_paragraph(
 ) -> Tuple[str, List[Dict[str, Any]]]:
     settings = get_settings()
 
-    context_text = format_context(documents)
+    docs_limited = limit_docs_for_context(
+        query=query,
+        documents=documents,
+        max_docs=settings.context_max_docs,
+        max_chars=settings.context_char_budget,
+    )
+    context_text = format_context(docs_limited)
     system_prompt = build_system_prompt()
     user_prompt = build_user_prompt_paragraph(query=query, context_text=context_text, previous_output=previous_output)
 
@@ -154,6 +194,7 @@ def generate_paragraph(
         model=settings.gpt_model,
         api_key=settings.openai_api_key,
         temperature=0.1,
+        max_tokens=settings.max_generation_tokens,
     )
 
     response = llm.invoke(

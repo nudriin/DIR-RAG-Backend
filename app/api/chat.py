@@ -46,4 +46,5 @@ async def chat_endpoint(payload: ChatRequest) -> ChatResponseWithTrace:
         iterations=rag_result.iterations,
         confidence=rag_result.confidence,
         trace=trace_models,
+        debug_logs=rag_result.debug_logs,
     )

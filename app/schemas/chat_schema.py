@@ -81,5 +81,50 @@ class DebugTrace(BaseModel):
     raw_query: str | None
 
 
+class DebugDRAGIN(BaseModel):
+    entropy: float
+    triggered_retrieval: bool
+    reason: str
+
+
+class DebugIterRetGen(BaseModel):
+    iter_query: str
+    current_draft: str
+    new_docs_found: int
+    pruning_discarded: int
+    pruning_kept: int
+
+
+class DebugETC(BaseModel):
+    current_trend: str
+
+
+class DebugIterationLog(BaseModel):
+    step: int
+    dragin: DebugDRAGIN
+    iter_retgen: DebugIterRetGen
+    etc: DebugETC
+
+
+class DebugRQ(BaseModel):
+    refined_query: str
+    sub_queries: List[str]
+    docs_retrieved: int
+    source_names: List[str]
+
+
+class DebugFinalStatus(BaseModel):
+    stop_reason: str
+    is_fallback: bool
+    entropy_history: List[float]
+
+
+class DebugLogs(BaseModel):
+    rq_rag: DebugRQ
+    iterations: List[DebugIterationLog]
+    final_status: DebugFinalStatus
+
+
 class ChatResponseWithTrace(ChatResponse):
     trace: List[DebugTrace]
+    debug_logs: DebugLogs
