@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     openai_api_key: str | None = Field(default=None, env="OPENAI_API_KEY")
     replicate_api_token: str | None = Field(default=None, env="REPLICATE_API_TOKEN")
 
-    max_iterations: int = Field(default=3, env="MAX_ITERATIONS")
+    max_iterations: int = Field(default=2, env="MAX_ITERATIONS")
     similarity_top_k: int = Field(default=5, env="SIMILARITY_TOP_K")
 
     dragin_threshold: float = Field(default=0.5, env="DRAGIN_THRESHOLD")

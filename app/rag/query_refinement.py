@@ -1,6 +1,4 @@
-# query_refinement.py
-
-from typing import List, TypedDict
+from typing import List, TypedDict, Optional
 import json
 import replicate
 import time
@@ -15,48 +13,49 @@ class RefinedQuery(TypedDict):
     original_query: str
     refined_query: str
     sub_queries: List[str]
-    is_ambiguous: bool
+    refinement_type: str  # RQ-RAG: REWRITE, DECOMPOSE, atau DISAMBIGUATE
 
 
-AMBIGUOUS_TOKENS = {"ini", "itu", "tadi", "dia", "mereka", "jadwalnya"}
-
-
-def is_ambiguous_query(query: str) -> bool:
-    lowered = query.lower()
-    if len(query.strip()) < 5:
-        return True
-    return any(token in lowered for token in AMBIGUOUS_TOKENS)
-
-
-def _llm_rewrite_query(query: str) -> tuple[str, List[str]]:
+def refine_query(query: str, draft_answer: Optional[str] = None) -> RefinedQuery:
     """
-    LLM-based Query Rewriting sesuai konsep RQ-RAG:
-    - rewrite query agar retrieval-friendly
-    - decompose jika kompleks
+    Refine query berdasarkan paradigma RQ-RAG dan ITER-RETGEN.
+    Menggunakan draft_answer untuk 'bridge semantic gaps' jika tersedia.
     """
-    prompt = f"""
-Kamu adalah modul Query Rewriter dalam sistem Retrieval-Augmented Generation (RAG)
-untuk domain pendidikan dan sistem akademik.
-
-Tugasmu:
-1. Perbaiki kueri agar lebih deskriptif dan eksplisit
-2. Tambahkan konteks yang implisit jika perlu (kelas, modul, sistem akademik)
-3. Jika kueri kompleks, pecah menjadi sub-kueri sederhana
-4. Jangan menjawab pertanyaan pengguna
-
-Kueri pengguna:
-"{query}"
-
-Keluarkan hasil dalam format JSON VALID berikut:
-{{
-  "refined_query": "...",
-  "sub_queries": ["...", "..."]
-}}
-"""
     settings = get_settings()
+
+    # 1. KONSTRUKSI PROMPT BERDASARKAN RQ-RAG & ITER-RETGEN
+    # Jika ada draft_answer, gunakan logika Generation-Augmented Retrieval [cite: 28]
+    context_instruction = ""
+    if draft_answer:
+        context_instruction = f"""
+        Berdasarkan draf jawaban sebelumnya: "{draft_answer}"
+        Identifikasi celah informasi atau halusinasi yang terjadi. 
+        Gunakan ini untuk merumuskan pencarian yang lebih akurat.
+        """
+
+    prompt = f"""
+    Kamu adalah pakar optimasi kueri RAG untuk domain sistem informasi "Huma Betang".
+    Tugasmu adalah melakukan Query Refinement berdasarkan kategori RQ-RAG:
+    
+    1. REWRITE: Jika kueri sederhana tapi kurang eksplisit.
+    2. DECOMPOSE: Jika kueri kompleks/multi-hop, pecah menjadi langkah-langkah.
+    3. DISAMBIGUATE: Jika kueri mengandung kata ambigu (ini, itu, jadwalnya).
+    
+    {context_instruction}
+    
+    Kueri Asli: "{query}"
+    
+    Berikan output dalam format JSON:
+    {{
+      "refinement_type": "REWRITE|DECOMPOSE|DISAMBIGUATE",
+      "refined_query": "kueri tunggal yang paling optimal",
+      "sub_queries": ["langkah 1", "langkah 2"]
+    }}
+    """
+
+    # 2. EKSEKUSI VIA LLM
     client = replicate.Client(api_token=settings.replicate_api_token)
     max_attempts = 3
-    last_exception: Exception | None = None
 
     for attempt in range(1, max_attempts + 1):
         try:
@@ -68,65 +67,38 @@ Keluarkan hasil dalam format JSON VALID berikut:
                 },
             )
 
-            if isinstance(output, list):
-                text = "".join(str(part) for part in output)
-            else:
-                text = str(output)
+            text = (
+                "".join(str(part) for part in output)
+                if isinstance(output, list)
+                else str(output)
+            )
 
-            # Ambil JSON dari output
+            # Parsing JSON Safety
             json_start = text.find("{")
             json_end = text.rfind("}") + 1
             parsed = json.loads(text[json_start:json_end])
 
-            refined_query = parsed.get("refined_query", query)
-            sub_queries = parsed.get("sub_queries", [refined_query])
+            result: RefinedQuery = {
+                "original_query": query,
+                "refined_query": parsed.get("refined_query", query),
+                "sub_queries": parsed.get(
+                    "sub_queries", [parsed.get("refined_query", query)]
+                ),
+                "refinement_type": parsed.get("refinement_type", "REWRITE"),
+            }
 
-            return refined_query.strip(), [q.strip() for q in sub_queries if q.strip()]
+            logger.info(f"RQ-RAG Refinement Success: {result['refinement_type']}")
+            return result
 
         except Exception as exc:
-            last_exception = exc
-            logger.error(
-                "Query rewriting failed",
-                extra={
-                    "attempt": attempt,
-                    "error": str(exc),
-                    "llm_backend": "replicate",
-                    "model": settings.llm_model,
-                },
-            )
+            logger.error(f"Refinement attempt {attempt} failed: {str(exc)}")
             if attempt < max_attempts:
-                time.sleep(3)
+                time.sleep(2)
 
-    # fallback jika LLM gagal total
-    logger.warning("Fallback to rule-based query refinement")
-    return query, [query]
-
-
-def refine_query(query: str) -> RefinedQuery:
-    query_clean = query.strip()
-    ambiguous = is_ambiguous_query(query_clean)
-
-    refined_query, sub_queries = _llm_rewrite_query(query_clean)
-
-    # safety net
-    if not sub_queries:
-        sub_queries = [refined_query]
-
-    result: RefinedQuery = {
-        "original_query": query_clean,
-        "refined_query": refined_query,
-        "sub_queries": sub_queries,
-        "is_ambiguous": ambiguous,
+    # Fallback jika gagal
+    return {
+        "original_query": query,
+        "refined_query": query,
+        "sub_queries": [query],
+        "refinement_type": "REWRITE",
     }
-
-    logger.info(
-        "Refined query",
-        extra={
-            "original_query": query_clean,
-            "refined_query": refined_query,
-            "sub_queries": sub_queries,
-            "is_ambiguous": ambiguous,
-        },
-    )
-
-    return result

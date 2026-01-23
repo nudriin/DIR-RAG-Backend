@@ -1417,3 +1417,337 @@ detail: Request was throttled. Your rate limit for creating predictions is reduc
 2026-01-22 17:23:48 | INFO | app.rag.generator | Generated answer
 2026-01-22 17:23:48 | INFO | app.rag.iter_retgen | RAG pipeline finished
 2026-01-22 17:23:48 | INFO | app.api.chat | Chat request handled
+2026-01-23 16:17:33 | INFO | app.main | Application startup
+2026-01-23 16:25:28 | INFO | app.main | Application startup
+2026-01-23 16:27:27 | INFO | app.main | Application startup
+2026-01-23 16:28:04 | INFO | app.main | Application startup
+2026-01-23 16:28:32 | INFO | app.main | Application startup
+2026-01-23 22:55:59 | INFO | app.main | Application startup
+2026-01-23 22:57:04 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-23 22:57:04 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-23 22:57:14 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-23 22:58:56 | INFO | app.main | Application startup
+2026-01-23 22:59:29 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-23 22:59:29 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-large-en
+2026-01-23 23:06:34 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-23 23:07:57 | INFO | app.api.ingest | Document ingested
+2026-01-23 23:08:23 | INFO | app.api.ingest | Vector source detail fetched
+2026-01-23 23:11:23 | INFO | app.main | Application startup
+2026-01-23 23:12:24 | INFO | app.main | Application startup
+2026-01-23 23:12:56 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-23 23:12:56 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-23 23:13:03 | WARNING | huggingface_hub.file_download | Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2026-01-23 23:21:35 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-23 23:21:35 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-23 23:21:40 | WARNING | huggingface_hub.file_download | Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2026-01-23 23:25:40 | WARNING | huggingface_hub.file_download | Error while downloading from https://huggingface.co/BAAI/bge-m3/resolve/main/pytorch_model.bin: HTTPSConnectionPool(host='cas-bridge.xethub.hf.co', port=443): Read timed out.
+Trying to resume download...
+2026-01-23 23:25:41 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/pytorch_model.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A207D8D0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: a1fe0f0d-f465-410d-879c-364df64a39e1)')' thrown while requesting GET https://huggingface.co/BAAI/bge-m3/resolve/main/pytorch_model.bin
+2026-01-23 23:25:41 | WARNING | huggingface_hub.utils._http | Retrying in 1s [Retry 1/5].
+2026-01-23 23:25:42 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/pytorch_model.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3B85490>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 33790247-d561-4a0e-8e98-13f405904733)')' thrown while requesting GET https://huggingface.co/BAAI/bge-m3/resolve/main/pytorch_model.bin
+2026-01-23 23:25:42 | WARNING | huggingface_hub.utils._http | Retrying in 2s [Retry 2/5].
+2026-01-23 23:25:44 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/pytorch_model.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3B842D0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 819e37fd-8b4e-4cdc-8115-b5c108238a11)')' thrown while requesting GET https://huggingface.co/BAAI/bge-m3/resolve/main/pytorch_model.bin
+2026-01-23 23:25:44 | WARNING | huggingface_hub.utils._http | Retrying in 4s [Retry 3/5].
+2026-01-23 23:25:48 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/pytorch_model.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3B85D50>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 44720ed3-e95c-4fbf-9308-edd75fa1a1b8)')' thrown while requesting GET https://huggingface.co/BAAI/bge-m3/resolve/main/pytorch_model.bin
+2026-01-23 23:25:48 | WARNING | huggingface_hub.utils._http | Retrying in 8s [Retry 4/5].
+2026-01-23 23:25:56 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/pytorch_model.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3B860D0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 1b9e3bc8-22fb-46c5-8a0c-fb66a7e27749)')' thrown while requesting GET https://huggingface.co/BAAI/bge-m3/resolve/main/pytorch_model.bin
+2026-01-23 23:25:56 | WARNING | huggingface_hub.utils._http | Retrying in 8s [Retry 5/5].
+2026-01-23 23:26:04 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/pytorch_model.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3B85A10>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: fdc835e6-447d-49ff-adc8-43bf8f97344b)')' thrown while requesting GET https://huggingface.co/BAAI/bge-m3/resolve/main/pytorch_model.bin
+2026-01-23 23:26:27 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-23 23:26:27 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-23 23:26:27 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/modules.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3BAD510>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: dfb128b4-f504-4bd7-b1a0-6c728e03dc9c)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./modules.json
+2026-01-23 23:26:27 | WARNING | huggingface_hub.utils._http | Retrying in 1s [Retry 1/5].
+2026-01-23 23:26:28 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/modules.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3BAED50>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 09ff7c25-a578-41f2-a6f3-350d7f4fa13b)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./modules.json
+2026-01-23 23:26:28 | WARNING | huggingface_hub.utils._http | Retrying in 2s [Retry 2/5].
+2026-01-23 23:26:30 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/modules.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3BAD510>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 0dffca21-d623-44fa-8fce-989dec15eb92)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./modules.json
+2026-01-23 23:26:30 | WARNING | huggingface_hub.utils._http | Retrying in 4s [Retry 3/5].
+2026-01-23 23:26:34 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/modules.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3BAC0D0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 51b6192f-3f7a-43a9-bb77-8c1f3ebd6295)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./modules.json
+2026-01-23 23:26:34 | WARNING | huggingface_hub.utils._http | Retrying in 8s [Retry 4/5].
+2026-01-23 23:26:42 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/modules.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3BAD8D0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 8d512452-e9cd-4dac-8fde-0c6396d4a092)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./modules.json
+2026-01-23 23:26:42 | WARNING | huggingface_hub.utils._http | Retrying in 8s [Retry 5/5].
+2026-01-23 23:26:50 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/modules.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3BAFED0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: b22aa88b-d6e8-4513-b569-331e5cdf66d0)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./modules.json
+2026-01-23 23:26:50 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/config_sentence_transformers.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CB0B90>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 2d10ba79-70b8-4d51-90cd-d3878ec4f1d2)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./config_sentence_transformers.json
+2026-01-23 23:26:50 | WARNING | huggingface_hub.utils._http | Retrying in 1s [Retry 1/5].
+2026-01-23 23:26:51 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/config_sentence_transformers.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CB21D0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: c4a800d5-6236-44a5-be5f-210cbbda065a)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./config_sentence_transformers.json
+2026-01-23 23:26:51 | WARNING | huggingface_hub.utils._http | Retrying in 2s [Retry 2/5].
+2026-01-23 23:26:53 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/config_sentence_transformers.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CB0350>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 2d28a6b1-1f8a-468c-8048-162cd684fddd)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./config_sentence_transformers.json
+2026-01-23 23:26:53 | WARNING | huggingface_hub.utils._http | Retrying in 4s [Retry 3/5].
+2026-01-23 23:26:57 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/config_sentence_transformers.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CB0910>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: f21123e5-e0de-4682-bcea-24a0c21fd59a)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./config_sentence_transformers.json
+2026-01-23 23:26:57 | WARNING | huggingface_hub.utils._http | Retrying in 8s [Retry 4/5].
+2026-01-23 23:27:05 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/config_sentence_transformers.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CB1A90>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: e783250f-a781-4f51-be8b-14b56d539a88)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./config_sentence_transformers.json
+2026-01-23 23:27:05 | WARNING | huggingface_hub.utils._http | Retrying in 8s [Retry 5/5].
+2026-01-23 23:27:13 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/config_sentence_transformers.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CB1610>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: e6d2b61a-b6ed-42b9-b768-1b4d92438bb0)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./config_sentence_transformers.json
+2026-01-23 23:27:13 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/config_sentence_transformers.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CBCE10>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 18d5331e-917a-416d-a291-ea80914ecb6e)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./config_sentence_transformers.json
+2026-01-23 23:27:13 | WARNING | huggingface_hub.utils._http | Retrying in 1s [Retry 1/5].
+2026-01-23 23:27:14 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/config_sentence_transformers.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CBD150>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: fc8d8b6d-0045-41ee-a913-886c98b79831)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./config_sentence_transformers.json
+2026-01-23 23:27:14 | WARNING | huggingface_hub.utils._http | Retrying in 2s [Retry 2/5].
+2026-01-23 23:27:16 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/config_sentence_transformers.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CBCE10>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 611882ac-b73e-4bae-8f03-c64be1a51621)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./config_sentence_transformers.json
+2026-01-23 23:27:16 | WARNING | huggingface_hub.utils._http | Retrying in 4s [Retry 3/5].
+2026-01-23 23:27:20 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/config_sentence_transformers.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CBD150>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 798b42b4-7807-4a29-a449-3e5cf29ef0c0)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./config_sentence_transformers.json
+2026-01-23 23:27:20 | WARNING | huggingface_hub.utils._http | Retrying in 8s [Retry 4/5].
+2026-01-23 23:27:28 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/config_sentence_transformers.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CBCE10>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 41f1f9df-bc69-45ba-bf91-7a70b58effbe)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./config_sentence_transformers.json
+2026-01-23 23:27:28 | WARNING | huggingface_hub.utils._http | Retrying in 8s [Retry 5/5].
+2026-01-23 23:27:36 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/config_sentence_transformers.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CBD150>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 5c9e7ea3-0a17-439a-bab8-56a88ed5151b)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./config_sentence_transformers.json
+2026-01-23 23:27:36 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/README.md (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CC2910>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 0a08630e-35c4-4d54-991b-d5e50b63c60a)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./README.md
+2026-01-23 23:27:36 | WARNING | huggingface_hub.utils._http | Retrying in 1s [Retry 1/5].
+2026-01-23 23:27:37 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/README.md (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CBFB10>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: dba9c9cd-8a39-4963-b98c-0da1c473da40)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./README.md
+2026-01-23 23:27:37 | WARNING | huggingface_hub.utils._http | Retrying in 2s [Retry 2/5].
+2026-01-23 23:27:39 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/README.md (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CBC450>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: efea26fe-6ed3-4365-a6be-81dc8476c512)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./README.md
+2026-01-23 23:27:39 | WARNING | huggingface_hub.utils._http | Retrying in 4s [Retry 3/5].
+2026-01-23 23:27:43 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/README.md (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CBF210>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 5662e3eb-c46e-4e3b-8983-b234e98dee7d)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./README.md
+2026-01-23 23:27:43 | WARNING | huggingface_hub.utils._http | Retrying in 8s [Retry 4/5].
+2026-01-23 23:27:51 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/README.md (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CBF9D0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 8661c4c7-2ed3-4253-a64d-0de6023b3986)')' thrown while requesting HEAD https://huggingface.co/BAAI/bge-m3/resolve/main/./README.md
+2026-01-23 23:27:51 | WARNING | huggingface_hub.utils._http | Retrying in 8s [Retry 5/5].
+2026-01-23 23:28:05 | WARNING | huggingface_hub.file_download | Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2026-01-23 23:31:34 | WARNING | huggingface_hub.file_download | Error while downloading from https://huggingface.co/BAAI/bge-m3/resolve/main/pytorch_model.bin: HTTPSConnectionPool(host='cas-bridge.xethub.hf.co', port=443): Read timed out.
+Trying to resume download...
+2026-01-23 23:31:35 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/pytorch_model.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3BAD690>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: a6359afc-123e-4b81-ad92-4fcf51906081)')' thrown while requesting GET https://huggingface.co/BAAI/bge-m3/resolve/main/pytorch_model.bin
+2026-01-23 23:31:35 | WARNING | huggingface_hub.utils._http | Retrying in 1s [Retry 1/5].
+2026-01-23 23:31:36 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/pytorch_model.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3BADA50>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: fa3d5d08-2283-41cd-a510-0615aefedc66)')' thrown while requesting GET https://huggingface.co/BAAI/bge-m3/resolve/main/pytorch_model.bin
+2026-01-23 23:31:36 | WARNING | huggingface_hub.utils._http | Retrying in 2s [Retry 2/5].
+2026-01-23 23:31:38 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/pytorch_model.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3BAE2D0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 517028f7-0365-477b-a1ed-eacf60ac6095)')' thrown while requesting GET https://huggingface.co/BAAI/bge-m3/resolve/main/pytorch_model.bin
+2026-01-23 23:31:38 | WARNING | huggingface_hub.utils._http | Retrying in 4s [Retry 3/5].
+2026-01-23 23:31:42 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/pytorch_model.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3BAC490>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 8b0d0700-bc1c-4502-b3cd-afe572f9cb99)')' thrown while requesting GET https://huggingface.co/BAAI/bge-m3/resolve/main/pytorch_model.bin
+2026-01-23 23:31:42 | WARNING | huggingface_hub.utils._http | Retrying in 8s [Retry 4/5].
+2026-01-23 23:31:50 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/main/pytorch_model.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3BAF790>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 36e4ec39-bd2d-4928-a394-ae5ff83c70fe)')' thrown while requesting GET https://huggingface.co/BAAI/bge-m3/resolve/main/pytorch_model.bin
+2026-01-23 23:31:50 | WARNING | huggingface_hub.utils._http | Retrying in 8s [Retry 5/5].
+2026-01-23 23:33:44 | WARNING | huggingface_hub.file_download | Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2026-01-23 23:33:56 | WARNING | huggingface_hub.file_download | Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2026-01-23 23:34:11 | WARNING | huggingface_hub.file_download | Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2026-01-24 00:20:21 | WARNING | huggingface_hub.file_download | Error while downloading from https://huggingface.co/BAAI/bge-m3/resolve/refs%2Fpr%2F130/model.safetensors: HTTPSConnectionPool(host='cas-bridge.xethub.hf.co', port=443): Read timed out.
+Trying to resume download...
+2026-01-24 00:20:23 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/refs%2Fpr%2F130/model.safetensors (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A52BBCD0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: 3c203386-99c2-48c9-8caf-5dac82d809e6)')' thrown while requesting GET https://huggingface.co/BAAI/bge-m3/resolve/refs%2Fpr%2F130/model.safetensors
+2026-01-24 00:20:23 | WARNING | huggingface_hub.utils._http | Retrying in 1s [Retry 1/5].
+2026-01-24 00:20:24 | WARNING | huggingface_hub.utils._http | '(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /BAAI/bge-m3/resolve/refs%2Fpr%2F130/model.safetensors (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000254A3CCFC10>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))"), '(Request ID: acd51258-a2e2-4b8d-a850-0d98917bcbb2)')' thrown while requesting GET https://huggingface.co/BAAI/bge-m3/resolve/refs%2Fpr%2F130/model.safetensors
+2026-01-24 00:20:24 | WARNING | huggingface_hub.utils._http | Retrying in 2s [Retry 2/5].
+2026-01-24 00:21:37 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 00:26:10 | INFO | app.api.ingest | Document ingested
+2026-01-24 00:31:22 | INFO | app.api.ingest | Vector source detail fetched
+2026-01-24 00:31:38 | INFO | backoff | Backing off send_request(...) for 0.2s (requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='us.i.posthog.com', port=443): Read timed out. (read timeout=15))
+2026-01-24 00:31:50 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 00:32:05 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 00:32:06 | INFO | app.rag.generator | Generated answer
+2026-01-24 00:32:06 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 00:33:48 | INFO | app.main | Application startup
+2026-01-24 00:34:35 | INFO | app.main | Application startup
+2026-01-24 00:34:53 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 00:34:53 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 00:35:18 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 00:35:22 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 00:35:31 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 00:35:32 | INFO | app.rag.generator | Generated answer
+2026-01-24 00:35:32 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 00:35:32 | INFO | app.api.chat | Chat request handled
+2026-01-24 00:38:27 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 00:38:35 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 00:38:37 | INFO | app.rag.generator | Generated answer
+2026-01-24 00:38:37 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 00:38:37 | INFO | app.api.chat | Chat request handled
+2026-01-24 00:39:24 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 00:39:28 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 00:39:28 | INFO | app.rag.generator | Generated answer
+2026-01-24 00:39:28 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 00:39:28 | INFO | app.api.chat | Chat request handled
+2026-01-24 00:46:03 | INFO | app.main | Application startup
+2026-01-24 00:46:57 | INFO | app.main | Application startup
+2026-01-24 00:47:37 | INFO | app.main | Application startup
+2026-01-24 00:47:42 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 00:47:42 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 00:48:01 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 00:48:03 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 00:48:09 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 00:48:09 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 00:48:10 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 00:48:13 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 00:48:13 | INFO | app.rag.generator | Generated answer
+2026-01-24 00:50:03 | INFO | app.main | Application startup
+2026-01-24 00:50:30 | INFO | app.main | Application startup
+2026-01-24 00:51:36 | INFO | app.main | Application startup
+2026-01-24 00:52:02 | INFO | app.main | Application startup
+2026-01-24 00:52:27 | INFO | app.main | Application startup
+2026-01-24 00:52:33 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 00:52:33 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 00:52:54 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 00:52:57 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 00:53:00 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 00:53:01 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 00:53:01 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 00:53:03 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 00:53:03 | INFO | app.rag.generator | Generated answer
+2026-01-24 00:53:18 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 00:53:18 | INFO | app.rag.query_refinement | Refined query
+2026-01-24 00:53:19 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 00:53:22 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 00:53:22 | INFO | app.rag.generator | Generated answer
+2026-01-24 00:55:29 | INFO | app.main | Application startup
+2026-01-24 00:55:54 | INFO | app.main | Application startup
+2026-01-24 00:56:19 | INFO | app.main | Application startup
+2026-01-24 00:56:23 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 00:56:23 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 00:56:34 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 00:56:37 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 00:56:40 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 00:56:40 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 00:56:41 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 00:56:44 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 00:56:44 | INFO | app.rag.generator | Generated answer
+2026-01-24 00:56:51 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 00:56:51 | INFO | app.rag.query_refinement | Refined query
+2026-01-24 00:56:51 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 00:56:53 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 00:56:53 | INFO | openai._base_client | Retrying request to /chat/completions in 0.396059 seconds
+2026-01-24 00:56:54 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 00:56:54 | INFO | openai._base_client | Retrying request to /chat/completions in 0.922947 seconds
+2026-01-24 00:56:55 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 00:56:55 | ERROR | app.rag.generator | LLM generation failed Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2026-01-24 00:56:59 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 00:56:59 | INFO | openai._base_client | Retrying request to /chat/completions in 0.426102 seconds
+2026-01-24 00:57:00 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 00:57:00 | INFO | openai._base_client | Retrying request to /chat/completions in 0.955730 seconds
+2026-01-24 00:57:01 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 00:57:01 | ERROR | app.rag.generator | LLM generation failed Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2026-01-24 00:57:04 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 00:57:04 | INFO | openai._base_client | Retrying request to /chat/completions in 0.454066 seconds
+2026-01-24 00:57:05 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 00:57:05 | INFO | openai._base_client | Retrying request to /chat/completions in 0.876198 seconds
+2026-01-24 00:57:07 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 00:57:07 | ERROR | app.rag.generator | LLM generation failed Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2026-01-24 00:57:07 | INFO | app.rag.generator | Generated answer
+2026-01-24 00:57:07 | INFO | app.api.chat | Chat request handled
+2026-01-24 01:09:29 | INFO | app.main | Application startup
+2026-01-24 01:09:54 | INFO | app.main | Application startup
+2026-01-24 01:10:19 | INFO | app.main | Application startup
+2026-01-24 01:10:34 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 01:10:34 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 01:10:51 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 01:10:53 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:10:57 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:10:57 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 01:10:57 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:11:01 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:11:01 | INFO | app.rag.generator | Generated answer
+2026-01-24 01:11:07 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 01:11:07 | INFO | app.rag.query_refinement | Refined query
+2026-01-24 01:11:07 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:11:10 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:11:10 | INFO | app.rag.generator | Generated answer
+2026-01-24 01:11:10 | INFO | app.api.chat | Chat request handled
+2026-01-24 01:25:46 | INFO | app.main | Application startup
+2026-01-24 01:26:44 | INFO | app.main | Application startup
+2026-01-24 01:27:11 | INFO | app.main | Application startup
+2026-01-24 01:28:29 | INFO | app.main | Application startup
+2026-01-24 01:29:00 | INFO | app.main | Application startup
+2026-01-24 01:32:58 | INFO | app.main | Application startup
+2026-01-24 01:33:05 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 01:33:05 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 01:33:22 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 01:33:25 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:33:28 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:33:29 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 01:33:29 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:33:33 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:33:33 | INFO | app.rag.generator | Generated answer
+2026-01-24 01:33:42 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 01:33:42 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DISAMBIGUATE
+2026-01-24 01:33:43 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:33:46 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:33:46 | INFO | app.rag.generator | Generated answer
+2026-01-24 01:33:46 | INFO | app.api.chat | Chat request handled
+2026-01-24 01:38:43 | INFO | app.main | Application startup
+2026-01-24 01:39:12 | INFO | app.main | Application startup
+2026-01-24 01:39:12 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 01:39:12 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 01:39:28 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 01:39:29 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:39:32 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:39:33 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 01:39:33 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:39:35 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:39:35 | INFO | app.rag.generator | Generated answer
+2026-01-24 01:40:51 | INFO | app.main | Application startup
+2026-01-24 01:41:17 | INFO | app.main | Application startup
+2026-01-24 01:41:59 | INFO | app.main | Application startup
+2026-01-24 01:42:24 | INFO | app.main | Application startup
+2026-01-24 01:42:30 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 01:42:30 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 01:42:44 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 01:42:45 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:42:48 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:42:49 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 01:42:49 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:42:51 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:42:51 | INFO | app.rag.generator | Generated answer
+2026-01-24 01:43:12 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 01:43:12 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: REWRITE
+2026-01-24 01:43:12 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:43:15 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:43:15 | INFO | app.rag.generator | Generated answer
+2026-01-24 01:43:15 | INFO | app.api.chat | Chat request handled
+2026-01-24 01:44:25 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:44:30 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:44:31 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 01:44:31 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:44:35 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:44:35 | INFO | app.rag.generator | Generated answer
+2026-01-24 01:44:47 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 01:44:47 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: REWRITE
+2026-01-24 01:44:47 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:44:50 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:44:50 | INFO | app.rag.generator | Generated answer
+2026-01-24 01:44:50 | INFO | app.api.chat | Chat request handled
+2026-01-24 01:51:55 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:52:01 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:52:05 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 01:52:07 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:52:16 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:52:16 | INFO | app.rag.generator | Generated answer
+2026-01-24 01:52:16 | INFO | app.api.chat | Chat request handled
+2026-01-24 01:52:46 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:52:52 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:52:52 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 01:52:52 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 01:53:01 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 01:53:01 | INFO | app.rag.generator | Generated answer
+2026-01-24 01:53:01 | INFO | app.api.chat | Chat request handled
+2026-01-24 01:54:13 | INFO | app.main | Application startup
+2026-01-24 01:55:03 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 01:55:03 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 01:55:52 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 01:56:06 | INFO | app.api.ingest | Document ingested
+2026-01-24 01:59:41 | INFO | app.api.ingest | Document ingested
+2026-01-24 02:01:37 | INFO | app.api.ingest | Document ingested
+2026-01-24 02:05:02 | INFO | app.api.ingest | Document ingested
+2026-01-24 02:05:54 | INFO | app.api.ingest | Document ingested
+2026-01-24 02:07:13 | INFO | app.api.ingest | Document ingested
+2026-01-24 02:09:15 | INFO | app.api.ingest | Document ingested
+2026-01-24 02:09:28 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 02:09:36 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 02:09:37 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 02:09:37 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 02:09:44 | INFO | backoff | Backing off send_request(...) for 1.0s (requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='us.i.posthog.com', port=443): Read timed out. (read timeout=15))
+2026-01-24 02:09:44 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 02:09:44 | INFO | app.rag.generator | Generated answer
+2026-01-24 02:09:44 | INFO | app.api.chat | Chat request handled
+2026-01-24 02:10:25 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 02:10:27 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 02:10:27 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 02:10:28 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 02:10:30 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 02:10:30 | INFO | app.rag.generator | Generated answer
+2026-01-24 02:10:40 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 02:10:40 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DISAMBIGUATE
+2026-01-24 02:10:40 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 02:10:41 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 02:10:41 | INFO | openai._base_client | Retrying request to /chat/completions in 21.510000 seconds
+2026-01-24 02:11:03 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-24 02:11:03 | ERROR | app.rag.generator | LLM generation failed Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 10131 tokens. Please reduce the length of the messages.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+2026-01-24 02:11:06 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 02:11:06 | INFO | openai._base_client | Retrying request to /chat/completions in 32.178000 seconds
+2026-01-24 02:11:39 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-24 02:11:39 | ERROR | app.rag.generator | LLM generation failed Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 10131 tokens. Please reduce the length of the messages.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+2026-01-24 02:11:42 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-24 02:11:42 | INFO | openai._base_client | Retrying request to /chat/completions in 32.034000 seconds
+2026-01-24 02:12:15 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-01-24 02:12:15 | ERROR | app.rag.generator | LLM generation failed Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 10131 tokens. Please reduce the length of the messages.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+2026-01-24 02:12:15 | INFO | app.rag.generator | Generated answer
+2026-01-24 02:12:15 | INFO | app.api.chat | Chat request handled

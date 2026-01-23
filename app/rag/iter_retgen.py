@@ -34,90 +34,71 @@ class RAGResult:
 
 def run_rag_pipeline(query: str) -> RAGResult:
     settings = get_settings()
+    traces: List[IterationTrace] = []
 
-    if settings.rag_mode == "naive":
-        refined: RefinedQuery = refine_query(query)
-        decision = decide_retrieval_dragin(refined["refined_query"])
-        if decision.retrieve:
-            documents: List[Document] = retrieve_documents(refined["refined_query"])
-        else:
-            documents = []
-        answer, sources = generate_answer(query, documents)
-        trace = IterationTrace(
-            iteration=1,
-            refined_query=refined["refined_query"],
-            num_documents=len(documents),
-            decision=decision,
+    # 1. GATEKEEPER: DRAGIN (Pengecekan awal ketidakpastian)
+    # Dilakukan pada kueri asli sebelum masuk ke loop iteratif
+    initial_decision = decide_retrieval_dragin(query)
+
+    if not initial_decision.retrieve:
+        # Jika model yakin, langsung jawab menggunakan pengetahuan internal
+        docs = retrieve_documents(query)
+        answer, sources = generate_answer(query, docs)
+        return RAGResult(
+            answer=answer,
+            sources=sources,
+            iterations=1,
+            confidence=initial_decision.confidence,
+            traces=[IterationTrace(1, query, 0, initial_decision, query)],
+        )
+
+    # 2. MODULE ITER-RETGEN (Triggered by DRAGIN)
+    current_instruction = query  # Awalnya menggunakan kueri asli [cite: 26, 97]
+    last_answer = ""
+    all_documents = []
+
+    # Jurnal menyebutkan T=2 biasanya paling optimal
+    max_iter = settings.max_iterations
+
+    for i in range(1, max_iter + 1):
+        # A. RETRIEVAL: Mengambil informasi awal (atau tambahan) [cite: 26, 90]
+        new_docs = retrieve_documents(current_instruction)
+        all_documents.extend(new_docs)
+
+        # B. GENERATE: Membuat draf jawaban berdasarkan semua dokumen [cite: 12, 26, 90]
+        # Proses ini penting karena draf ini akan memandu iterasi berikutnya [cite: 11]
+        last_answer, sources = generate_answer(current_instruction, all_documents)
+
+        # C. TRACE: Catat progres iterasi
+        current_trace = IterationTrace(
+            iteration=i,
+            refined_query=current_instruction,
+            num_documents=len(new_docs),
+            decision=(
+                initial_decision
+                if i == 1
+                else RetrievalDecision(True, 1.0, "Iterative loop", 1.0, query)
+            ),
             raw_query=query,
         )
-        traces = [trace]
-        confidence = trace.decision.confidence
-        iterations = 1
-    elif settings.rag_mode == "advanced":
-        refined: RefinedQuery = refine_query(query)
-        decision = decide_retrieval_dragin(refined["refined_query"])
-        if decision.retrieve:
-            documents = retrieve_documents(refined["refined_query"])
-        else:
-            documents = []
-        answer, sources = generate_answer(query, documents)
-        trace = IterationTrace(
-            iteration=1,
-            refined_query=refined["refined_query"],
-            num_documents=len(documents),
-            decision=decision,
-            raw_query=query,
-        )
-        traces = [trace]
-        confidence = min(1.0, trace.decision.confidence + 0.05)
-        iterations = 1
-    else:
-        traces: List[IterationTrace] = []
-        last_documents: List[Document] = []
-        last_decision: RetrievalDecision | None = None
-        last_refined: RefinedQuery | None = None
+        traces.append(current_trace)
 
-        for i in range(1, settings.max_iterations + 1):
-            refined = refine_query(query)
-            decision = decide_retrieval_dragin(query)
-            if decision.retrieve:
-                documents = retrieve_documents(refined["refined_query"])
-            else:
-                query = decision.prompt
-                documents = []
+        # D. STOPPING CONDITION: Cek kelengkapan (sesuai diagram Anda)
+        # Jika jawaban sudah koheren/lengkap, hentikan loop
+        # * if is_answer_sufficient(last_answer): # Fungsi pembantu untuk cek koherensi
+        # *    break
 
-            trace = IterationTrace(
-                iteration=i,
-                refined_query=refined["refined_query"],
-                num_documents=len(documents),
-                decision=decision,
-                raw_query=query,
-            )
-            traces.append(trace)
-            last_documents = documents
-            last_decision = decision
-            last_refined = refined
-
-            if len(refined["refined_query"].split()) > 5 and decision.confidence > 0.7:
-                break
-
-        answer, sources = generate_answer(query, last_documents)
-        iterations = len(traces)
-        confidence = last_decision.confidence if last_decision is not None else 0.5
-
-    logger.info(
-        "RAG pipeline finished",
-        extra={
-            "rag_mode": settings.rag_mode,
-            "iterations": iterations,
-            "confidence": confidence,
-        },
-    )
+        # E. MODULE RQ (Query Refinement): Setelah generate draf jawaban
+        # Menggunakan draf jawaban untuk memperkuat kueri iterasi berikutnya [cite: 89, 192]
+        if i < max_iter:
+            refined_data = refine_query(query, draft_answer=last_answer)
+            # Update instruksi untuk iterasi selanjutnya (Rewriting/Decomposition) [cite: 311, 435]
+            current_instruction = refined_data["refined_query"]
 
     return RAGResult(
-        answer=answer,
+        answer=last_answer,
         sources=sources,
-        iterations=iterations,
-        confidence=confidence,
+        iterations=len(traces),
+        confidence=initial_decision.confidence,
         traces=traces,
     )

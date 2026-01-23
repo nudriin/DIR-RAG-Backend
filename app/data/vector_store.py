@@ -31,9 +31,7 @@ class VectorStoreManager:
             if self.settings.use_bge:
                 from langchain_community.embeddings import HuggingFaceEmbeddings
 
-                self._embedding_model = HuggingFaceEmbeddings(
-                    model_name="BAAI/bge-large-en"
-                )
+                self._embedding_model = HuggingFaceEmbeddings(model_name="BAAI/bge-m3")
             else:
                 self._embedding_model = OpenAIEmbeddings(
                     model=self.settings.embedding_model,

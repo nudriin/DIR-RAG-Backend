@@ -86,7 +86,7 @@ def decide_retrieval_dragin(query: str) -> RetrievalDecision:
         reason = f"Entropy ({avg_entropy:.4f}) melampaui threshold. Model tidak yakin dengan data internal."
         last_prompt = None
     else:
-        reason = f"Entropy ({avg_entropy:.4f}) rendah. Model yakin dapat menjawab tanpa retrieval."
+        reason = f"Entropy ({avg_entropy:.4f}) rendah. Model yakin dapat menjawab tanpa retrieval tambahan."
         last_prompt = decision_prompt
 
     logger.info(
