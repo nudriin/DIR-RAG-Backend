@@ -43,6 +43,17 @@ def prune_context(all_documents: List[Document], current_draft: str) -> List[Doc
     pruned_docs = rerank_documents(query=current_draft, documents=all_documents, top_n=5)
     return pruned_docs
 
+def is_answer_covering_subqueries(answer_text: str, sub_queries: List[str]) -> bool:
+    if not answer_text or not sub_queries:
+        return False
+    ans = answer_text.lower()
+    satisfied = 0
+    for sq in sub_queries:
+        toks = [t for t in sq.lower().split() if len(t) > 3]
+        hit = sum(1 for t in toks if t in ans)
+        if hit >= max(1, len(toks) // 4):
+            satisfied += 1
+    return satisfied >= len(sub_queries)
 
 def run_rag_pipeline(query: str) -> RAGResult:
     settings = get_settings()
@@ -55,10 +66,11 @@ def run_rag_pipeline(query: str) -> RAGResult:
 
     # Phase 1 — The Primer (RQ-RAG)
     rq: RefinedQuery = refine_query(query)
-    sub_queries: List[str] = rq.get("sub_queries", []) or [rq["refined_query"]]
+    sub_queries: List[str] = rq.get("sub_queries", []) or []
+    instruction_queue: List[str] = [rq["refined_query"]] + sub_queries
 
     anchor_results = []
-    for sq in sub_queries:
+    for sq in instruction_queue:
         anchor_results.extend(
             retrieve_documents_with_scores(query=sq, top_k=settings.similarity_top_k)
         )
@@ -87,11 +99,12 @@ def run_rag_pipeline(query: str) -> RAGResult:
     final_sources: List[Dict[str, Any]] = []
     stop_reason = "Max iterations reached"
 
-    max_iter = settings.max_iterations
-    for i in range(1, max_iter + 1):
+    max_iter = len(instruction_queue)
+    for i, instruction in enumerate(instruction_queue[:max_iter], start=1):
         previous_output = "\n\n".join(paragraphs) if paragraphs else None
 
         # Generate next paragraph (ITER-RETGEN)
+        current_instruction = instruction
         paragraph_text, _ = generate_paragraph(
             query=current_instruction,
             documents=all_documents,
@@ -142,15 +155,6 @@ def run_rag_pipeline(query: str) -> RAGResult:
 
         paragraphs.append(paragraph_text)
 
-        # ETC stopping condition: stop if entropy trend is flat or rising
-        if len(entropy_history) > 1:
-            prev_entropy = entropy_history[-2]
-            curr_entropy = entropy_history[-1]
-            if curr_entropy >= prev_entropy:
-                logger.info(f"ETC Triggered: Entropy stabilized at {curr_entropy}")
-                stop_reason = "ETC Stabilized"
-                break
-
         # Debug iteration log (including ETC current trend)
         if len(entropy_history) == 1:
             current_trend = "start"
@@ -163,6 +167,11 @@ def run_rag_pipeline(query: str) -> RAGResult:
                 current_trend = "increasing"
             else:
                 current_trend = "stable"
+
+        if i == 1:
+            executing_label = f"Executing Refined Query {i} of {len(instruction_queue)}"
+        else:
+            executing_label = f"Executing Sub-Query {i-1} of {len(sub_queries)}"
 
         debug_logs["iterations"].append(
             {
@@ -178,6 +187,7 @@ def run_rag_pipeline(query: str) -> RAGResult:
                     "new_docs_found": int(new_docs_found),
                     "pruning_discarded": int(pruning_discarded),
                     "pruning_kept": int(pruning_kept),
+                    "executing": executing_label,
                 },
                 "etc": {
                     "current_trend": current_trend,
@@ -185,8 +195,7 @@ def run_rag_pipeline(query: str) -> RAGResult:
             }
         )
 
-        # Prepare next instruction using refined query with accumulated output
-        current_instruction = refine_query(query, draft_answer="\n\n".join(paragraphs))["refined_query"]
+    stop_reason = "Completed All Instructions"
 
     # Final assembly
     final_answer = "\n\n".join(paragraphs).strip()

@@ -93,6 +93,7 @@ class DebugIterRetGen(BaseModel):
     new_docs_found: int
     pruning_discarded: int
     pruning_kept: int
+    executing: str
 
 
 class DebugETC(BaseModel):

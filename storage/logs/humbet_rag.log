@@ -2045,3 +2045,181 @@ Sumber: cleaned_knowledge_bases_humbet.pdf
 2026-01-24 05:33:35 | INFO | app.rag.retriever | Reranked documents
 2026-01-24 05:33:35 | INFO | app.rag.iter_retgen | ETC Triggered: Entropy stabilized at 0.012383104159655177
 2026-01-24 05:33:35 | INFO | app.api.chat | Chat request handled
+2026-01-24 05:49:37 | INFO | app.main | Application startup
+2026-01-24 05:51:06 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 05:51:06 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-24 05:51:06 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 05:51:06 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 05:51:27 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 05:51:31 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-24 05:51:33 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-24 05:51:36 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 05:51:37 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 05:51:40 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 05:51:41 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 05:51:46 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 05:51:47 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 05:51:47 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 05:51:48 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 05:51:51 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 05:51:52 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 05:51:52 | INFO | app.api.chat | Chat request handled
+2026-01-24 06:01:06 | INFO | app.main | Application startup
+2026-01-24 06:01:38 | INFO | app.main | Application startup
+2026-01-24 06:06:31 | INFO | app.main | Application startup
+2026-01-24 06:17:45 | INFO | app.main | Application startup
+2026-01-24 06:18:19 | INFO | app.main | Application startup
+2026-01-24 06:18:49 | INFO | app.main | Application startup
+2026-01-24 06:19:21 | INFO | app.main | Application startup
+2026-01-24 06:21:32 | INFO | app.main | Application startup
+2026-01-24 06:24:29 | INFO | app.main | Application startup
+2026-01-24 06:25:15 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 06:25:15 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-24 06:25:15 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 06:25:15 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 06:25:31 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 06:25:36 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-24 06:25:36 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-24 06:25:37 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-24 06:25:40 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:25:42 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:25:45 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:25:46 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:25:53 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:25:53 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:25:53 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:25:54 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:25:58 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:25:59 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:26:02 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:26:03 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:26:07 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:26:07 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:26:07 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:26:09 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:26:12 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:26:13 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:26:16 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:26:17 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:26:21 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:26:21 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:26:22 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:26:23 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:26:34 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 06:26:34 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DISAMBIGUATE
+2026-01-24 06:26:35 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:26:35 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:26:35 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:26:38 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:26:40 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:26:45 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:26:45 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:26:48 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:26:50 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:26:50 | INFO | app.api.chat | Chat request handled
+2026-01-24 06:36:56 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 06:36:56 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-24 06:37:00 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-24 06:37:04 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-24 06:37:05 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-24 06:37:09 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:37:12 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:37:19 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:37:20 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:37:23 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:37:23 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:37:24 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:37:26 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:37:37 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 06:37:37 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-24 06:37:38 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:37:40 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:37:40 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:37:46 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:37:50 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:37:54 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:37:54 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:38:00 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:38:04 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:38:08 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:38:09 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:38:16 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:38:16 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:38:19 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:38:20 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:38:32 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 06:38:32 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DISAMBIGUATE|REWRITE
+2026-01-24 06:38:33 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:38:34 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:38:34 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:38:37 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:38:42 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:38:45 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:38:45 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:38:48 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:38:51 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:38:54 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:38:55 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:39:00 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:39:00 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:39:01 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:39:02 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:39:06 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:39:07 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:39:07 | INFO | app.api.chat | Chat request handled
+2026-01-24 06:46:01 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 06:46:01 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-24 06:46:09 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-24 06:46:14 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-24 06:46:15 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-24 06:46:20 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:46:22 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:46:25 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:46:27 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:46:30 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:46:30 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:46:31 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:46:32 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:46:53 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 06:46:53 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-24 06:46:54 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:46:55 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:46:55 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:46:57 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:47:00 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:47:03 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:47:06 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:47:06 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:47:09 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:47:12 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:47:15 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:47:18 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:47:21 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:47:21 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:47:24 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:47:25 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:47:35 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 06:47:36 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: REWRITE
+2026-01-24 06:47:37 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:47:42 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:47:44 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:47:47 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:47:47 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:47:50 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:47:52 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:47:55 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:47:56 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:47:58 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:47:58 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:48:01 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:48:03 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:48:13 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 06:48:13 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: REWRITE
+2026-01-24 06:48:17 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 06:48:21 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:48:23 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:48:25 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 06:48:25 | INFO | app.rag.generator | Generated paragraph
+2026-01-24 06:48:28 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 06:48:29 | INFO | app.rag.retriever | Reranked documents
+2026-01-24 06:48:29 | INFO | app.api.chat | Chat request handled
