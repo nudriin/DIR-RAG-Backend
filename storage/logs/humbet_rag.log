@@ -1751,3 +1751,151 @@ Trying to resume download...
 2026-01-24 02:12:15 | ERROR | app.rag.generator | LLM generation failed Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 10131 tokens. Please reduce the length of the messages.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
 2026-01-24 02:12:15 | INFO | app.rag.generator | Generated answer
 2026-01-24 02:12:15 | INFO | app.api.chat | Chat request handled
+2026-01-24 02:27:18 | INFO | app.main | Application startup
+2026-01-24 02:28:31 | INFO | app.main | Application startup
+2026-01-24 02:28:48 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 02:28:48 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 02:29:18 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 02:29:24 | INFO | app.rag.retriever | Initial retrieval
+2026-01-24 02:29:24 | INFO | app.rag.reranker | Loading reranker model: cross-encoder/ms-marco-MiniLM-L-6-v2
+2026-01-24 02:29:26 | WARNING | huggingface_hub.file_download | Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2026-01-24 02:29:52 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 02:29:56 | INFO | app.rag.reranker | Reranking completed
+2026-01-24 02:29:56 | INFO | app.rag.retriever | Reranking completed
+2026-01-24 02:30:04 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 02:30:04 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 02:30:09 | INFO | app.rag.retriever | Initial retrieval
+2026-01-24 02:30:13 | INFO | app.rag.reranker | Reranking completed
+2026-01-24 02:30:13 | INFO | app.rag.retriever | Reranking completed
+2026-01-24 02:30:15 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 02:30:15 | INFO | app.rag.generator | Generated answer
+2026-01-24 02:30:15 | INFO | app.api.chat | Chat request handled
+2026-01-24 02:34:33 | INFO | app.main | Application startup
+2026-01-24 02:36:05 | INFO | app.main | Application startup
+2026-01-24 02:37:16 | INFO | app.main | Application startup
+2026-01-24 02:38:23 | INFO | app.main | Application startup
+2026-01-24 02:38:33 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 02:38:33 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 02:39:21 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 02:39:22 | INFO | app.api.ingest | Vector sources listed
+2026-01-24 02:42:13 | INFO | app.api.ingest | Vector chunks deleted by source
+2026-01-24 02:42:26 | INFO | app.api.ingest | Vector sources listed
+2026-01-24 02:42:30 | INFO | app.api.ingest | Vector sources listed
+2026-01-24 02:43:55 | INFO | app.rag.retriever | Initial retrieval
+2026-01-24 02:43:55 | INFO | app.rag.reranker | Loading reranker model: cross-encoder/ms-marco-MiniLM-L-6-v2
+2026-01-24 02:44:02 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-24 02:44:06 | INFO | app.rag.reranker | Reranking completed
+2026-01-24 02:44:06 | INFO | app.rag.retriever | Reranking completed
+2026-01-24 02:44:15 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 02:44:15 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 02:44:19 | INFO | app.rag.retriever | Initial retrieval
+2026-01-24 02:44:23 | INFO | app.rag.reranker | Reranking completed
+2026-01-24 02:44:23 | INFO | app.rag.retriever | Reranking completed
+2026-01-24 02:44:26 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 02:44:26 | INFO | app.rag.generator | Generated answer
+2026-01-24 02:44:26 | INFO | app.api.chat | Chat request handled
+2026-01-24 02:47:20 | INFO | app.main | Application startup
+2026-01-24 02:47:20 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 02:47:20 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 02:48:07 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 02:48:13 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 02:48:21 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 02:48:22 | INFO | app.rag.dynamic_decision | DRAGIN Retrieval Decision
+2026-01-24 02:48:27 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 02:48:30 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 02:48:30 | INFO | app.rag.generator | Generated answer
+2026-01-24 02:48:30 | INFO | app.api.chat | Chat request handled
+2026-01-24 02:58:46 | INFO | app.main | Application startup
+2026-01-24 03:00:08 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 03:00:08 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 03:00:57 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 03:01:03 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:01:10 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:01:14 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:01:17 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:01:18 | INFO | app.rag.generator | Generated answer
+2026-01-24 03:01:35 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 03:01:35 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-24 03:01:39 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:01:44 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:01:44 | INFO | app.rag.generator | Generated answer
+2026-01-24 03:01:44 | INFO | app.api.chat | Chat request handled
+2026-01-24 03:09:08 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:09:10 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:09:14 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:09:24 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:09:24 | INFO | app.rag.generator | Generated answer
+2026-01-24 03:09:24 | INFO | app.api.chat | Chat request handled
+2026-01-24 03:23:18 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:23:19 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:23:22 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:23:25 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:23:25 | INFO | app.rag.generator | Generated answer
+2026-01-24 03:23:36 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 03:23:36 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-24 03:23:38 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:23:51 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:23:51 | INFO | app.rag.generator | Generated answer
+2026-01-24 03:23:51 | INFO | app.api.chat | Chat request handled
+2026-01-24 03:29:58 | INFO | app.main | Application startup
+2026-01-24 03:31:00 | INFO | app.main | Application startup
+2026-01-24 03:31:11 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-24 03:31:11 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-24 03:31:40 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-24 03:31:48 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:31:54 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:31:59 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:32:02 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:32:02 | INFO | app.rag.generator | Generated answer
+2026-01-24 03:32:02 | INFO | app.rag.iter_retgen | 1: Maaf, informasi tentang siapa yang menciptakan dan kapan Kelas Digital Huma Betang diciptakan tidak tersedia dalam konteks yang diberikan.
+
+Sumber: cleaned_knowledge_bases_humbet.pdf
+2026-01-24 03:32:13 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 03:32:13 | ERROR | app.rag.query_refinement | Refinement attempt 1 failed: Extra data: line 6 column 1 (char 141)
+2026-01-24 03:32:25 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 03:32:25 | ERROR | app.rag.query_refinement | Refinement attempt 2 failed: Extra data: line 6 column 1 (char 144)
+2026-01-24 03:32:49 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 03:32:49 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DISAMBIGUATE dan DECOMPOSE
+2026-01-24 03:32:58 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:33:02 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:33:02 | INFO | app.rag.generator | Generated answer
+2026-01-24 03:33:02 | INFO | app.rag.iter_retgen | 2: Maaf, informasi tentang nama pencipta dan tanggal pembuatan Kelas Digital Huma Betang tidak tersedia dalam konteks yang diberikan.
+
+Sumber: cleaned_knowledge_bases_humbet.pdf
+2026-01-24 03:33:02 | INFO | app.api.chat | Chat request handled
+2026-01-24 03:35:50 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:35:53 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:35:56 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:36:05 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:36:05 | INFO | app.rag.generator | Generated answer
+2026-01-24 03:36:05 | INFO | app.rag.iter_retgen | 1: Kelas Digital Huma Betang adalah platform pembelajaran daring berbasis Learning Management System (LMS) yang dirancang khusus untuk mendukung kemajuan pendidikan di Kalimantan Tengah. Platform ini dikembangkan dengan mengusung nilai-nilai lokal Huma Betang, sebagai simbol kebersamaan dan keterbukaan dalam membangun masa depan pendidikan. Melalui platform ini, seluruh unsur pendidikan—mulai dari pengawas, admin sekolah, guru, hingga siswa—dapat terhubung dan berinteraksi dalam satu sistem pembelajaran yang terintegrasi. Fitur-fitur yang tersedia mencakup pengelolaan kelas, pembagian materi belajar, kehadiran siswa, ujian secara daring, forum diskusi, serta pemantauan proses pembelajaran secara menyeluruh. Platform ini juga dirancang agar dapat disesuaikan dengan kebutuhan sekolah dan kebijakan pendidikan yang sudah berjalan, sehingga mendukung kelancaran administrasi dan pemantauan belajar dengan lebih efisien.
+
+Sayangnya, konteks yang diberikan tidak menyediakan informasi tentang kapan Kelas Digital Huma Betang diciptakan.
+
+Sumber: cleaned_knowledge_bases_humbet.pdf | Chunk: 0-8
+2026-01-24 03:36:22 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 03:36:22 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-24 03:36:24 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:36:35 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:36:35 | INFO | app.rag.generator | Generated answer
+2026-01-24 03:36:35 | INFO | app.rag.iter_retgen | 2: Kelas Digital Huma Betang adalah platform pembelajaran daring berbasis Learning Management System (LMS) yang dirancang khusus untuk mendukung kemajuan pendidikan di Kalimantan Tengah. Platform ini mengusung nilai-nilai lokal Huma Betang, sebagai simbol kebersamaan dan keterbukaan dalam membangun masa depan pendidikan. Melalui platform ini, seluruh unsur pendidikan—mulai dari pengawas, admin sekolah, guru, hingga siswa—dapat terhubung dan berinteraksi dalam satu sistem pembelajaran yang terintegrasi. Fitur-fitur yang tersedia mencakup pengelolaan kelas, pembagian materi belajar, kehadiran siswa, ujian secara daring, forum diskusi, serta pemantauan proses pembelajaran secara menyeluruh. Platform ini juga dirancang agar dapat disesuaikan dengan kebutuhan sekolah dan kebijakan pendidikan yang sudah berjalan, sehingga mendukung kelancaran administrasi dan pemantauan belajar dengan lebih baik. Namun, konteks yang diberikan tidak menyebutkan kapan platform ini diciptakan.
+
+Sumber: cleaned_knowledge_bases_humbet.pdf | Chunk: 0-0, 0-8.
+2026-01-24 03:36:35 | INFO | app.api.chat | Chat request handled
+2026-01-24 03:56:44 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:56:46 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:56:51 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:56:55 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:56:55 | INFO | app.rag.generator | Generated answer
+2026-01-24 03:56:55 | INFO | app.rag.iter_retgen | 1: Berdasarkan konteks yang diberikan, tidak ada informasi spesifik tentang prosedur teknis untuk memperbarui 'Username' baik untuk Pengajar maupun Siswa di platform Huma Betang. Oleh karena itu, saya tidak dapat memberikan jawaban yang pasti. 
+
+Sumber: cleaned_knowledge_bases_humbet.pdf
+2026-01-24 03:57:09 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-24 03:57:09 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-24 03:57:14 | INFO | app.rag.retriever | Retrieved documents
+2026-01-24 03:57:16 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-24 03:57:16 | INFO | app.rag.generator | Generated answer
+2026-01-24 03:57:16 | INFO | app.rag.iter_retgen | 2: Maaf, berdasarkan konteks yang diberikan, tidak ada informasi tentang cara memperbarui 'Username' di platform Huma Betang.
+
+Sumber: cleaned_knowledge_bases_humbet.pdf
+2026-01-24 03:57:16 | INFO | app.api.chat | Chat request handled

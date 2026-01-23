@@ -1,7 +1,9 @@
 import math
 import numpy as np
 from dataclasses import dataclass
+from typing import Optional, List, Any
 from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage
 from app.core.config import get_settings
 from app.core.logging import get_logger
 from app.rag.retriever import retrieve_documents
@@ -9,100 +11,92 @@ from app.rag.generator import format_context
 
 logger = get_logger(__name__)
 
-
 @dataclass
 class RetrievalDecision:
     retrieve: bool
     confidence: float
     reason: str
-    entropy: float  # Tambahan untuk debugging riset Anda
-    prompt: str | None
-
+    entropy: float
+    prompt: Optional[str]
 
 def calculate_entropy(top_logprobs: list) -> float:
-    """
-    Menghitung Shannon Entropy dari daftar logprobs.
-    H = -sum(p * log(p))
-    """
-    # Ambil probabilitas asli (exp dari logprob)
+    """Menghitung Shannon Entropy: H = -sum(p * log(p))"""
     probs = [math.exp(lp.get("logprob", -100)) for lp in top_logprobs]
-
-    # Normalisasi agar total = 1 (jika perlu)
     sum_probs = sum(probs)
     if sum_probs == 0:
         return 0
     probs = [p / sum_probs for p in probs]
-
-    # Hitung entropy
-    entropy = -sum(p * math.log(p) for p in probs if p > 0)
-    return entropy
-
+    return -sum(p * math.log(p) for p in probs if p > 0)
 
 def decide_retrieval_dragin(query: str) -> RetrievalDecision:
     settings = get_settings()
+    
+    # 1. INITIAL RETRIEVAL (Ambil chunk awal untuk pengecekan)
     documents = retrieve_documents(query)
     context_text = format_context(documents)
-    # Inisialisasi LLM sesuai
+    
     llm = ChatOpenAI(
         model=settings.gpt_model,
         api_key=settings.openai_api_key,
-        temperature=0.1,
+        temperature=0, # Suhu 0 untuk stabilitas probing
         logprobs=True,
-        top_logprobs=settings.top_logprops,
+        top_logprobs=5,
     )
 
-    # 1. Probing Stage: Minta LLM memberikan jawaban singkat (zero-shot)
-    # Kita hanya butuh beberapa token awal untuk mengukur uncertainty
-    decision_prompt = f"""Jawab singkat, apakah Anda memiliki informasi pasti mengenai: {query} Berikut adalah konteks dari dokumen yang relevan:\n\n"
-        f"{context_text}\n\n"""
-    response = llm.invoke(decision_prompt)
+    # 2. SUFFICIENCY PROBE (RQ-RAG & DRAGIN Hybrid Logic)
+    # Memaksa model menjawab biner untuk mendapatkan probabilitas "Ya" vs "Tidak"
+    decision_prompt = f"""
+    Tugas: Evaluasi kecukupan informasi untuk domain "Huma Betang".
+    Pertanyaan: {query}
+    Konteks: {context_text}
 
-    # 2. Ekstrak Logprobs dari metadata LangChain
-    # Struktur OpenAI API: response_metadata -> logprobs -> content -> [token_list]
+    Apakah konteks di atas memuat informasi yang cukup untuk menjawab pertanyaan secara pasti dan detail?
+    Jawab hanya dengan satu kata: Ya atau Tidak.
+    """
+    
+    response = llm.invoke([HumanMessage(content=decision_prompt)])
     logprobs_content = response.response_metadata.get("logprobs", {}).get("content", [])
 
     if not logprobs_content:
-        logger.warning("Logprobs tidak tersedia. Menggunakan fallback retrieval.")
-        return RetrievalDecision(
-            retrieve=True, confidence=0.0, reason="Logprobs missing", entropy=1.0
-        )
+        return RetrievalDecision(True, 0.0, "Logprobs missing", 1.0, None)
 
-    # 3. Hitung rata-rata entropy dari 3-5 token pertama (DRAGIN logic)
-    token_entropies = []
-    for token_data in logprobs_content[:5]:  # Mengambil 5 token pertama sebagai sampel
-        top_lp = token_data.get("top_logprobs", [])
-        token_entropies.append(calculate_entropy(top_lp))
+    # 3. ANALISIS LOGPROBS (TOKEN PERTAMA)
+    first_token_data = logprobs_content[0].get("top_logprobs", [])
+    
+    # Cari probabilitas untuk jawaban "Ya"
+    prob_ya = 0.0
+    for lp in first_token_data:
+        token_str = lp.get("token", "").lower().strip()
+        if token_str in ["ya", "yes"]:
+            prob_ya = math.exp(lp.get("logprob", -100))
+            break
 
+    # 4. HITUNG ENTROPY (DRAGIN Standard)
+    token_entropies = [calculate_entropy(t.get("top_logprobs", [])) for t in logprobs_content[:3]]
     avg_entropy = np.mean(token_entropies)
 
-    # 4. Decision Logic berdasarkan Threshold
-    # Dalam DRAGIN, Entropy Tinggi = Uncertainty Tinggi = Harus Retrieve
-    THRESHOLD = settings.dragin_threshold  # Rekomendasi: Mulai di angka 0.5 - 0.8
-
-    retrieve = avg_entropy > THRESHOLD
-    confidence = 1.0 - (avg_entropy / 2.5)  # Normalisasi kasar (max entropy ~2.5-3.0)
-
+    # 5. DECISION LOGIC
+    # Informasi dianggap TIDAK CUKUP jika:
+    # - Probabilitas "Ya" sangat rendah (Kebutuhan Retrieval Tinggi)
+    # - ATAU Entropy tinggi (Ketidakpastian Model Tinggi)
+    THRESHOLD_ENTROPY = settings.dragin_threshold # Default 0.5 - 0.8
+    THRESHOLD_SUFFICIENCY = 0.7 # Jika model tidak 70% yakin informasinya ada, maka retrieve
+    
+    is_insufficient = prob_ya < THRESHOLD_SUFFICIENCY
+    is_uncertain = avg_entropy > THRESHOLD_ENTROPY
+    
+    retrieve = is_insufficient or is_uncertain
+    
     if retrieve:
-        reason = f"Entropy ({avg_entropy:.4f}) melampaui threshold. Model tidak yakin dengan data internal."
-        last_prompt = None
+        reason = f"Informasi kurang (Prob Ya: {prob_ya:.2f}) atau Entropy tinggi ({avg_entropy:.2f})."
+        last_prompt = None # Picu RQ-RAG untuk dekomposisi
     else:
-        reason = f"Entropy ({avg_entropy:.4f}) rendah. Model yakin dapat menjawab tanpa retrieval tambahan."
+        reason = f"Informasi cukup (Prob Ya: {prob_ya:.2f}) dengan kepastian tinggi."
         last_prompt = decision_prompt
-
-    logger.info(
-        "DRAGIN Retrieval Decision",
-        extra={
-            "query": query,
-            "retrieve": retrieve,
-            "entropy": avg_entropy,
-            "confidence": confidence,
-            "prompt": last_prompt,
-        },
-    )
 
     return RetrievalDecision(
         retrieve=retrieve,
-        confidence=float(confidence),
+        confidence=float(prob_ya if not retrieve else 1.0 - prob_ya),
         reason=reason,
         entropy=float(avg_entropy),
         prompt=last_prompt,

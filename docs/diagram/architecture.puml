@@ -1,0 +1,60 @@
+@startuml Architecture
+skinparam Style strictuml
+skinparam sequenceMessageAlign center
+skinparam backgroundColor #fdfdfd
+
+title Arsitektur RAG Sinergis Humbet AI (RQ-RAG + ITER-RETGEN + DRAGIN)
+
+actor User
+box "Phase 1: The Primer (RQ-RAG)" #E3F2FD
+    participant "Query Rewriter" as RQ
+    participant "Vector DB\n(Huma Betang Docs)" as DB
+end box
+
+box "The Loop (ITER-RETGEN & DRAGIN)" #FFF3E0
+    participant "Supervisor Agent\n(Controller)" as Controller
+    participant "LLM Generator\n(CoT Mode)" as LLM
+    participant "DRAGIN Monitor\n(RIND/Entropy)" as DRAGIN
+end box
+
+User -> RQ : Input Kueri
+RQ -> RQ : Dekomposisi & Rewrite\n(Contextual Anchoring)
+RQ -> DB : Retrieval (K-Documents)
+DB --> Controller : Initial Context ($K$)
+
+loop Hingga "Entropy Trend" Naik/Datar atau Max Iterasi
+    Controller -> LLM : Prompt (Konteks + Kueri)
+    
+    group Phase 3: The Monitor (DRAGIN Interruption)
+        loop Per Generated Token
+            LLM -> DRAGIN : Token + Logits
+            DRAGIN -> DRAGIN : Hitung Entropi
+            alt Entropi > τ_high AND Named Entity
+                DRAGIN -> DB : "Throttled" Retrieval
+                DB --> LLM : Factual Gap Filling Context
+            end
+        end
+    end
+
+    LLM --> Controller : Output Loop (Partial Response)
+    
+    group Phase 2: The Loop (ITER-RETGEN Optimization)
+        Controller -> Controller : PruningRAG\n(Buang konteks tidak relevan)
+        Controller -> DB : Batch Retrieval (via Generated CoT)
+        DB --> Controller : New Context Batch
+    end
+
+    Controller -> Controller : Analisis Tren Entropi (ETC)
+    note right: Jika Tren ↓ : Lanjut\nJika Tren ↑/→ : Berhenti
+end
+
+group Phase 4: Closed-Domain Guardrail
+    Controller -> Controller : Final Context Check
+    alt Konteks Kosong / Tidak Relevan
+        Controller -> User : "Tidak ada informasi tersedia untuk pertanyaan tersebut"
+    else Konteks Valid
+        Controller -> User : Respons Final (Berdasarkan Dokumen)
+    end
+end
+
+@enduml

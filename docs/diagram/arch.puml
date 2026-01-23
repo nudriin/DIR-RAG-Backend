@@ -1,0 +1,34 @@
+@startuml
+skinparam backgroundColor #fdfdfd
+skinparam ActivityBackgroundColor #e1f5fe
+skinparam ActivityBorderColor #01579b
+skinparam ActivityDiamondBackgroundColor #f1f8e9
+skinparam ActivityDiamondBorderColor #33691e
+
+title Alur Kerja Umum Humbet AI (Closed-Domain RAG)
+
+start
+:<b>Fase 1: RQ-RAG</b>\nDekomposisi Kueri &\nPengambilan Dokumen Awal; <<procedure>>
+
+partition "Iterasi Sinergis (Fase 2 & 3)" #fff3e0 {
+    repeat
+        :<b>Generasi Jawaban (ITER-RETGEN)</b>\nMenyusun paragraf demi paragraf;
+        
+        if (<b>Deteksi Ragu-ragu? (DRAGIN)</b>) then (Ya)
+            :<b>Retrieval Fakta Baru</b>\nAmbil detail dari Panduan\nHuma Betang;
+            detach
+        else (Tidak)
+        endif
+        
+        :<b>Cek Tren Entropi (ETC)</b>\nEvaluasi stabilitas jawaban;
+    repeat while (Belum Stabil?) is (Ya)
+}
+
+if (<b>Apakah Jawaban Ada di Dokumen?</b>) then (Tidak / Luar Konteks)
+    #ffcdd2:<b>Fallback</b>\n"Tidak ada informasi tersedia...";
+else (Ya)
+    :<b>Respons Final</b>\nBerdasarkan Panduan Huma Betang;
+endif
+
+stop
+@enduml

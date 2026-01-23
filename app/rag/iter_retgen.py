@@ -68,6 +68,7 @@ def run_rag_pipeline(query: str) -> RAGResult:
         # B. GENERATE: Membuat draf jawaban berdasarkan semua dokumen [cite: 12, 26, 90]
         # Proses ini penting karena draf ini akan memandu iterasi berikutnya [cite: 11]
         last_answer, sources = generate_answer(current_instruction, all_documents)
+        logger.info(f"{i}: {last_answer}")
 
         # C. TRACE: Catat progres iterasi
         current_trace = IterationTrace(
