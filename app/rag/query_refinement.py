@@ -55,45 +55,41 @@ def refine_query(query: str, draft_answer: Optional[str] = None) -> RefinedQuery
 
     # 2. EKSEKUSI VIA LLM
     client = replicate.Client(api_token=settings.replicate_api_token)
-    max_attempts = 3
 
-    for attempt in range(1, max_attempts + 1):
-        try:
-            output = client.run(
-                settings.llm_model,
-                input={
-                    "prompt": prompt,
-                    "temperature": 0.1,
-                },
-            )
+    try:
+        output = client.run(
+            settings.llm_model,
+            input={
+                "prompt": prompt,
+                "temperature": 0.1,
+            },
+        )
 
-            text = (
-                "".join(str(part) for part in output)
-                if isinstance(output, list)
-                else str(output)
-            )
+        text = (
+            "".join(str(part) for part in output)
+            if isinstance(output, list)
+            else str(output)
+        )
 
-            # Parsing JSON Safety
-            json_start = text.find("{")
-            json_end = text.rfind("}") + 1
-            parsed = json.loads(text[json_start:json_end])
+        # Parsing JSON Safety
+        json_start = text.find("{")
+        json_end = text.rfind("}") + 1
+        parsed = json.loads(text[json_start:json_end])
 
-            result: RefinedQuery = {
-                "original_query": query,
-                "refined_query": parsed.get("refined_query", query),
-                "sub_queries": parsed.get(
-                    "sub_queries", [parsed.get("refined_query", query)]
-                ),
-                "refinement_type": parsed.get("refinement_type", "REWRITE"),
-            }
+        result: RefinedQuery = {
+            "original_query": query,
+            "refined_query": parsed.get("refined_query", query),
+            "sub_queries": parsed.get(
+                "sub_queries", [parsed.get("refined_query", query)]
+            ),
+            "refinement_type": parsed.get("refinement_type", "REWRITE"),
+        }
 
-            logger.info(f"RQ-RAG Refinement Success: {result['refinement_type']}")
-            return result
+        logger.info(f"RQ-RAG Refinement Success: {result['refinement_type']}")
+        return result
 
-        except Exception as exc:
-            logger.error(f"Refinement attempt {attempt} failed: {str(exc)}")
-            if attempt < max_attempts:
-                time.sleep(2)
+    except Exception as exc:
+        logger.error(f"failed: {str(exc)}")
 
     # Fallback jika gagal
     return {

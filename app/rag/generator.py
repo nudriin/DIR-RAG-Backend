@@ -1,9 +1,8 @@
 from typing import Any, Dict, List, Tuple
 import time
+import replicate
 
 from langchain_core.documents import Document
-from langchain_core.messages import SystemMessage, HumanMessage
-from langchain_openai import ChatOpenAI
 
 from app.core.config import get_settings
 from app.core.logging import get_logger
@@ -30,6 +29,7 @@ def format_context(docs: List[Document]) -> str:
         blocks.append(f"{header}\n{doc.page_content}")
     return "\n\n".join(blocks)
 
+
 def limit_docs_for_context(
     query: str,
     documents: List[Document],
@@ -47,7 +47,9 @@ def limit_docs_for_context(
             # Trim the last doc content to fit budget if useful
             remaining = max(0, max_chars - char_count)
             if remaining > 200:
-                d_trim = Document(page_content=(d.page_content or "")[:remaining], metadata=d.metadata)
+                d_trim = Document(
+                    page_content=(d.page_content or "")[:remaining], metadata=d.metadata
+                )
                 limited.append(d_trim)
                 break
             else:
@@ -87,40 +89,37 @@ def generate_answer(
     system_prompt = build_system_prompt()
     user_prompt = build_user_prompt(query=query, context_text=context_text)
 
-    llm = ChatOpenAI(
-        model=settings.gpt_model,
-        api_key=settings.openai_api_key,
-        temperature=0.1,
-        max_tokens=settings.max_generation_tokens,
-    )
+    client = replicate.Client(api_token=settings.replicate_api_token)
+    full_prompt = f"{system_prompt}\n\n{user_prompt}"
 
     max_attempts = 3
     last_exception: Exception | None = None
 
-    for attempt in range(1, max_attempts + 1):
-        try:
-            response = llm.invoke(
-                [
-                    SystemMessage(content=system_prompt),
-                    HumanMessage(content=user_prompt),
-                ]
-            )
-            answer_text = response.content
-            break
+    try:
+        output = client.run(
+            settings.llm_model,
+            input={
+                "prompt": full_prompt,
+                "temperature": 0.1,
+            },
+        )
+        text = (
+            "".join(str(part) for part in output)
+            if isinstance(output, list)
+            else str(output)
+        )
+        answer_text = text
 
-        except Exception as exc:
-            last_exception = exc
-            logger.error(
-                f"LLM generation failed {str(exc)}",
-                extra={
-                    "attempt": attempt,
-                    "error": str(exc),
-                    "llm_backend": "openai",
-                    "model": settings.gpt_model,
-                },
-            )
-            if attempt < max_attempts:
-                time.sleep(3)
+    except Exception as exc:
+        last_exception = exc
+        logger.error(
+            f"LLM generation failed {str(exc)}",
+            extra={
+                "error": str(exc),
+                "llm_backend": "replicate",
+                "model": settings.llm_model,
+            },
+        )
 
     if last_exception is not None and "answer_text" not in locals():
         answer_text = (
@@ -143,15 +142,17 @@ def generate_answer(
         extra={
             "query": query,
             "num_sources": len(sources),
-            "llm_backend": "openai",
-            "model": settings.gpt_model,
+            "llm_backend": "replicate",
+            "model": settings.llm_model,
         },
     )
 
     return answer_text, sources
 
 
-def build_user_prompt_paragraph(query: str, context_text: str, previous_output: str | None) -> str:
+def build_user_prompt_paragraph(
+    query: str, context_text: str, previous_output: str | None
+) -> str:
     continuation = ""
     if previous_output:
         continuation = (
@@ -188,22 +189,42 @@ def generate_paragraph(
     )
     context_text = format_context(docs_limited)
     system_prompt = build_system_prompt()
-    user_prompt = build_user_prompt_paragraph(query=query, context_text=context_text, previous_output=previous_output)
-
-    llm = ChatOpenAI(
-        model=settings.gpt_model,
-        api_key=settings.openai_api_key,
-        temperature=0.1,
-        max_tokens=settings.max_generation_tokens,
+    user_prompt = build_user_prompt_paragraph(
+        query=query, context_text=context_text, previous_output=previous_output
     )
 
-    response = llm.invoke(
-        [
-            SystemMessage(content=system_prompt),
-            HumanMessage(content=user_prompt),
-        ]
-    )
-    paragraph_text = response.content
+    client = replicate.Client(api_token=settings.replicate_api_token)
+    full_prompt = f"{system_prompt}\n\n{user_prompt}"
+
+    last_exception: Exception | None = None
+
+    try:
+        output = client.run(
+            settings.llm_model,
+            input={
+                "prompt": full_prompt,
+                "temperature": 0.1,
+            },
+        )
+        text = (
+            "".join(str(part) for part in output)
+            if isinstance(output, list)
+            else str(output)
+        )
+        paragraph_text = text
+    except Exception as exc:
+        last_exception = exc
+        logger.error(
+            f"LLM generation failed {str(exc)}",
+            extra={
+                "error": str(exc),
+                "llm_backend": "replicate",
+                "model": settings.llm_model,
+            },
+        )
+
+    if last_exception is not None and "paragraph_text" not in locals():
+        paragraph_text = "Tidak ada informasi tersedia untuk pertanyaan tersebut"
 
     sources: List[Dict[str, Any]] = []
     for i, doc in enumerate(documents):
@@ -220,8 +241,8 @@ def generate_paragraph(
         extra={
             "query": query,
             "num_sources": len(sources),
-            "llm_backend": "openai",
-            "model": settings.gpt_model,
+            "llm_backend": "replicate",
+            "model": settings.llm_model,
         },
     )
 
