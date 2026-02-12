@@ -18,20 +18,27 @@ class RefinedQuery(TypedDict):
 
 def refine_query(query: str, draft_answer: Optional[str] = None) -> RefinedQuery:
     """
-    Refine query berdasarkan paradigma RQ-RAG dan ITER-RETGEN.
-    Menggunakan draft_answer untuk 'bridge semantic gaps' jika tersedia.
+    Refine query berdasarkan paradigma RQ-RAG + DRAGIN.
+    Jika draft_answer tersedia (dari iterasi DRAGIN sebelumnya),
+    identifikasi celah informasi untuk re-refinement.
     """
     settings = get_settings()
 
-    # 1. KONSTRUKSI PROMPT BERDASARKAN RQ-RAG & ITER-RETGEN
-    # Jika ada draft_answer, gunakan logika Generation-Augmented Retrieval [cite: 28]
+    # 1. KONSTRUKSI PROMPT RQ-RAG + DRAGIN RE-REFINEMENT
     context_instruction = ""
     if draft_answer:
         context_instruction = f"""
-        Berdasarkan draf jawaban sebelumnya: "{draft_answer}"
-        Identifikasi celah informasi atau halusinasi yang terjadi. 
-        Gunakan ini untuk merumuskan pencarian yang lebih akurat.
-        """
+    KONTEKS ITERASI SEBELUMNYA:
+    Sistem telah menghasilkan jawaban sementara berikut, namun tingkat
+    kepastian model masih rendah (entropy tinggi):
+
+    "{draft_answer}"
+
+    Tugasmu:
+    1. Identifikasi bagian jawaban yang KURANG SPESIFIK atau TIDAK DIDUKUNG data.
+    2. Rumuskan kueri baru yang menargetkan celah informasi tersebut.
+    3. Jika ada klaim tanpa sumber, buat sub_query untuk memverifikasinya.
+    """
 
     prompt = f"""
     Kamu adalah pakar optimasi kueri RAG untuk domain sistem informasi "Huma Betang".

@@ -146,6 +146,7 @@ def _create_llm(settings):
 def generate_with_dragin(
     query: str,
     documents: List[Document],
+    sub_queries: List[str] | None = None,
 ) -> DRAGINResult:
     """
     Generate jawaban DAN evaluasi uncertainty dalam SATU panggilan LLM.
@@ -175,12 +176,23 @@ def generate_with_dragin(
     context_text = format_context(docs_limited)
     system_prompt = build_system_prompt()
 
+    # Bangun bagian sub_queries jika ada
+    sub_queries_section = ""
+    if sub_queries:
+        sq_list = "\n".join(f"  {i+1}. {sq}" for i, sq in enumerate(sub_queries))
+        sub_queries_section = (
+            "\nSub-pertanyaan yang juga harus dijawab:\n"
+            f"{sq_list}\n"
+        )
+
     user_prompt = (
         "Berikut adalah konteks dari dokumen yang relevan:\n\n"
         f"{context_text}\n\n"
-        "Pertanyaan pengguna:\n"
-        f"{query}\n\n"
+        "Pertanyaan utama:\n"
+        f"{query}\n"
+        f"{sub_queries_section}\n"
         "Instruksi:\n"
+        "- Jawab pertanyaan utama DAN semua sub-pertanyaan secara lengkap\n"
         "- Jawab secara terstruktur, jelas, dan ringkas\n"
         "- Gunakan hanya informasi dari konteks\n"
         "- Jika jawaban tidak ditemukan di konteks, katakan bahwa kamu tidak tahu\n"

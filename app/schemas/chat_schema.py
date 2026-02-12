@@ -114,7 +114,8 @@ class DebugRQ(BaseModel):
     refined_query: str
     sub_queries: List[str]
     docs_retrieved: int
-    source_names: List[str]
+    source_per_query: Dict[str, List[str]] = {}
+    refinement_type: str = "REWRITE"
 
 
 class DebugFinalStatus(BaseModel):

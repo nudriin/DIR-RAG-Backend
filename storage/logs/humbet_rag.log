@@ -2924,3 +2924,183 @@ detail: Request was throttled. Your rate limit for creating predictions is reduc
 2026-01-29 15:23:44 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
 2026-01-29 15:23:44 | INFO | app.rag.generator | Generated answer
 2026-01-29 15:23:44 | INFO | app.api.chat | Chat request handled
+2026-02-12 23:36:32 | INFO | app.main | Application startup
+2026-02-12 23:38:00 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-12 23:38:00 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-12 23:38:00 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-12 23:38:00 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-02-12 23:38:00 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-02-12 23:38:26 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-12 23:38:31 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-12 23:38:34 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-12 23:38:36 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-12 23:38:37 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:38:37 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-12 23:38:37 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:38:38 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'top_logprobs' provided to ChatGoogleGenerativeAI.
+2026-02-12 23:38:38 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'response_logprobs' provided to ChatGoogleGenerativeAI. Did you mean: 'response_schema'?
+2026-02-12 23:38:39 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini backend: gemini-2.0-flash
+2026-02-12 23:38:39 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-02-12 23:38:41 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent "HTTP/1.1 200 OK"
+2026-02-12 23:38:41 | WARNING | app.rag.dynamic_decision | Logprobs tidak tersedia dari gemini, anggap entropy tinggi
+2026-02-12 23:38:41 | INFO | app.rag.rag_pipeline | Entropy tinggi, re-refine query via RQ-RAG...
+2026-02-12 23:38:55 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-12 23:38:55 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-12 23:38:57 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:38:58 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:38:59 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:39:04 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:39:04 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:39:04 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 2/2
+2026-02-12 23:39:04 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:39:05 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'top_logprobs' provided to ChatGoogleGenerativeAI.
+2026-02-12 23:39:05 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'response_logprobs' provided to ChatGoogleGenerativeAI. Did you mean: 'response_schema'?
+2026-02-12 23:39:06 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini backend: gemini-2.0-flash
+2026-02-12 23:39:06 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-02-12 23:39:08 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent "HTTP/1.1 200 OK"
+2026-02-12 23:39:08 | WARNING | app.rag.dynamic_decision | Logprobs tidak tersedia dari gemini, anggap entropy tinggi
+2026-02-12 23:39:08 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Max iterations reached (2), final entropy=1.0000
+2026-02-12 23:39:08 | INFO | app.api.chat | Chat request handled
+2026-02-12 23:49:34 | INFO | app.main | Application startup
+2026-02-12 23:50:21 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-12 23:50:21 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-12 23:50:21 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-12 23:50:21 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-02-12 23:50:21 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-02-12 23:50:47 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-12 23:50:50 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-12 23:50:51 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-12 23:50:52 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-12 23:50:52 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:50:52 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-12 23:50:53 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:50:53 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'top_logprobs' provided to ChatGoogleGenerativeAI.
+2026-02-12 23:50:53 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'response_logprobs' provided to ChatGoogleGenerativeAI. Did you mean: 'response_schema'?
+2026-02-12 23:50:54 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini backend: gemini-2.0-flash
+2026-02-12 23:50:54 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-02-12 23:50:56 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent "HTTP/1.1 200 OK"
+2026-02-12 23:50:56 | WARNING | app.rag.dynamic_decision | Logprobs tidak tersedia dari gemini, anggap entropy tinggi
+2026-02-12 23:50:56 | INFO | app.rag.rag_pipeline | Entropy tinggi, re-refine query via RQ-RAG...
+2026-02-12 23:51:10 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-12 23:51:10 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-12 23:51:13 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:51:15 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:51:16 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:51:16 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:51:17 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:51:17 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 2/2
+2026-02-12 23:51:17 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:51:17 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'top_logprobs' provided to ChatGoogleGenerativeAI.
+2026-02-12 23:51:17 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'response_logprobs' provided to ChatGoogleGenerativeAI. Did you mean: 'response_schema'?
+2026-02-12 23:51:19 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini backend: gemini-2.0-flash
+2026-02-12 23:51:19 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-02-12 23:51:21 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent "HTTP/1.1 200 OK"
+2026-02-12 23:51:21 | WARNING | app.rag.dynamic_decision | Logprobs tidak tersedia dari gemini, anggap entropy tinggi
+2026-02-12 23:51:21 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Max iterations reached (2), final entropy=1.0000
+2026-02-12 23:51:21 | INFO | app.api.chat | Chat request handled
+2026-02-12 23:53:29 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-12 23:53:31 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-12 23:53:31 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-12 23:53:36 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-12 23:53:40 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-12 23:53:44 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-12 23:53:45 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:53:45 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-12 23:53:45 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:53:45 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'top_logprobs' provided to ChatGoogleGenerativeAI.
+2026-02-12 23:53:45 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'response_logprobs' provided to ChatGoogleGenerativeAI. Did you mean: 'response_schema'?
+2026-02-12 23:53:47 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini backend: gemini-2.0-flash
+2026-02-12 23:53:47 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-02-12 23:53:49 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent "HTTP/1.1 200 OK"
+2026-02-12 23:53:49 | WARNING | app.rag.dynamic_decision | Logprobs tidak tersedia dari gemini, anggap entropy tinggi
+2026-02-12 23:53:49 | INFO | app.rag.rag_pipeline | Entropy tinggi, re-refine query via RQ-RAG...
+2026-02-12 23:54:04 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-12 23:54:04 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-12 23:54:08 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:54:12 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:54:13 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:54:14 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:54:14 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:54:14 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 2/2
+2026-02-12 23:54:15 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:54:15 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'top_logprobs' provided to ChatGoogleGenerativeAI.
+2026-02-12 23:54:15 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'response_logprobs' provided to ChatGoogleGenerativeAI. Did you mean: 'response_schema'?
+2026-02-12 23:54:16 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini backend: gemini-2.0-flash
+2026-02-12 23:54:16 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-02-12 23:54:18 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent "HTTP/1.1 200 OK"
+2026-02-12 23:54:18 | WARNING | app.rag.dynamic_decision | Logprobs tidak tersedia dari gemini, anggap entropy tinggi
+2026-02-12 23:54:18 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Max iterations reached (2), final entropy=1.0000
+2026-02-12 23:54:18 | INFO | app.api.chat | Chat request handled
+2026-02-12 23:56:21 | INFO | app.main | Application startup
+2026-02-12 23:56:39 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-12 23:56:39 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-12 23:56:39 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-12 23:56:39 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-02-12 23:56:39 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-02-12 23:57:07 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-12 23:57:12 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-12 23:57:15 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-12 23:57:19 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-12 23:57:20 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:57:20 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-12 23:57:20 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:57:20 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'top_logprobs' provided to ChatGoogleGenerativeAI.
+2026-02-12 23:57:20 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'response_logprobs' provided to ChatGoogleGenerativeAI. Did you mean: 'response_schema'?
+2026-02-12 23:57:21 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini backend: gemini-2.0-flash
+2026-02-12 23:57:21 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-02-12 23:57:24 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent "HTTP/1.1 200 OK"
+2026-02-12 23:57:24 | WARNING | app.rag.dynamic_decision | Logprobs tidak tersedia dari gemini, anggap entropy tinggi
+2026-02-12 23:57:24 | INFO | app.rag.rag_pipeline | Entropy tinggi, re-refine query via RQ-RAG...
+2026-02-12 23:57:35 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-12 23:57:35 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: REWRITE
+2026-02-12 23:57:37 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:57:37 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:57:38 | INFO | app.rag.retriever | Retrieved documents
+2026-02-12 23:57:38 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:57:38 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 2/2
+2026-02-12 23:57:38 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-12 23:57:38 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'top_logprobs' provided to ChatGoogleGenerativeAI.
+2026-02-12 23:57:38 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'response_logprobs' provided to ChatGoogleGenerativeAI. Did you mean: 'response_schema'?
+2026-02-12 23:57:39 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini backend: gemini-2.0-flash
+2026-02-12 23:57:39 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-02-12 23:57:41 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent "HTTP/1.1 200 OK"
+2026-02-12 23:57:41 | WARNING | app.rag.dynamic_decision | Logprobs tidak tersedia dari gemini, anggap entropy tinggi
+2026-02-12 23:57:41 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Max iterations reached (2), final entropy=1.0000
+2026-02-12 23:57:41 | INFO | app.api.chat | Chat request handled
+2026-02-13 00:01:47 | INFO | app.main | Application startup
+2026-02-13 00:04:23 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 00:04:23 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 00:04:23 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-13 00:04:23 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-02-13 00:04:23 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-02-13 00:05:10 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-13 00:05:15 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 00:05:19 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 00:05:23 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 00:05:24 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 00:05:24 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-13 00:05:24 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 00:05:26 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'top_logprobs' provided to ChatGoogleGenerativeAI.
+2026-02-13 00:05:26 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'response_logprobs' provided to ChatGoogleGenerativeAI. Did you mean: 'response_schema'?
+2026-02-13 00:05:27 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini backend: gemini-2.0-flash
+2026-02-13 00:05:27 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-02-13 00:05:30 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent "HTTP/1.1 200 OK"
+2026-02-13 00:05:30 | WARNING | app.rag.dynamic_decision | Logprobs tidak tersedia dari gemini, anggap entropy tinggi
+2026-02-13 00:05:30 | INFO | app.rag.rag_pipeline | Entropy tinggi, re-refine query via RQ-RAG...
+2026-02-13 00:05:49 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 00:05:49 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 00:05:54 | INFO | app.rag.retriever | Retrieved documents
+2026-02-13 00:05:59 | INFO | app.rag.retriever | Retrieved documents
+2026-02-13 00:06:02 | INFO | app.rag.retriever | Retrieved documents
+2026-02-13 00:06:06 | INFO | app.rag.retriever | Retrieved documents
+2026-02-13 00:06:07 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 00:06:07 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 2/2
+2026-02-13 00:06:07 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 00:06:07 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'top_logprobs' provided to ChatGoogleGenerativeAI.
+2026-02-13 00:06:07 | WARNING | langchain_google_genai.chat_models | Unexpected argument 'response_logprobs' provided to ChatGoogleGenerativeAI. Did you mean: 'response_schema'?
+2026-02-13 00:06:09 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini backend: gemini-2.0-flash
+2026-02-13 00:06:09 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-02-13 00:06:12 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent "HTTP/1.1 200 OK"
+2026-02-13 00:06:12 | WARNING | app.rag.dynamic_decision | Logprobs tidak tersedia dari gemini, anggap entropy tinggi
+2026-02-13 00:06:12 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Max iterations reached (2), final entropy=1.0000
+2026-02-13 00:06:12 | INFO | app.api.chat | Chat request handled

@@ -121,29 +121,37 @@ def run_rag_pipeline(query: str) -> RAGResult:
     )
 
     # ======================================================================
-    # PHASE 2 — Anchor Retrieval + Rerank
+    # PHASE 2 — Anchor Retrieval + Rerank (track per query)
     # ======================================================================
     anchor_results = []
-    for sq in search_queries:
-        anchor_results.extend(
-            retrieve_documents_with_scores(query=sq, top_k=settings.similarity_top_k)
-        )
+    source_per_query: Dict[str, List[str]] = {}
 
-    # Deduplikasi dan rerank menggunakan refined_query (bukan draft)
+    # Retrieve per query dan track source per query
+    for i, sq in enumerate(search_queries):
+        results = retrieve_documents_with_scores(query=sq, top_k=settings.similarity_top_k)
+        anchor_results.extend(results)
+
+        # Label: "refined_query" atau "sub_query_1", "sub_query_2", ...
+        if i == 0:
+            label = "refined_query"
+        else:
+            label = f"sub_query_{i}"
+
+        source_per_query[label] = sorted(set(
+            doc.metadata.get("source", "unknown")
+            for doc, _ in results
+            if doc.metadata.get("source")
+        ))
+
+    # Deduplikasi dan rerank menggunakan refined_query
     raw_anchor_docs: List[Document] = [doc for doc, _ in anchor_results]
     all_documents = _prune_context(raw_anchor_docs, query=rq["refined_query"])
-
-    source_names = sorted(set(
-        doc.metadata.get("source")
-        for doc, _ in anchor_results
-        if doc.metadata.get("source")
-    ))
 
     debug_logs["rq_rag"] = {
         "refined_query": rq["refined_query"],
         "sub_queries": sub_queries,
         "docs_retrieved": len(raw_anchor_docs),
-        "source_names": source_names,
+        "source_per_query": source_per_query,
         "refinement_type": rq.get("refinement_type", "REWRITE"),
     }
 
@@ -197,6 +205,7 @@ def run_rag_pipeline(query: str) -> RAGResult:
         dragin_result = generate_with_dragin(
             query=current_query,
             documents=all_documents,
+            sub_queries=sub_queries,
         )
         entropy_history.append(dragin_result.entropy)
 
