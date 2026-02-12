@@ -3104,3 +3104,4 @@ detail: Request was throttled. Your rate limit for creating predictions is reduc
 2026-02-13 00:06:12 | WARNING | app.rag.dynamic_decision | Logprobs tidak tersedia dari gemini, anggap entropy tinggi
 2026-02-13 00:06:12 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Max iterations reached (2), final entropy=1.0000
 2026-02-13 00:06:12 | INFO | app.api.chat | Chat request handled
+2026-02-13 01:17:30 | INFO | app.main | Application startup
