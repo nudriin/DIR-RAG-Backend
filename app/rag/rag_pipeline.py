@@ -155,39 +155,6 @@ def run_rag_pipeline(query: str) -> RAGResult:
         "refinement_type": rq.get("refinement_type", "REWRITE"),
     }
 
-    # ======================================================================
-    # PHASE 3 — Closed-Domain Guardrail
-    # ======================================================================
-    RELEVANCE_DISTANCE_THRESHOLD = 1.2
-    has_valid_anchor = bool(anchor_results) and any(
-        score <= RELEVANCE_DISTANCE_THRESHOLD for _, score in anchor_results
-    )
-
-    if not has_valid_anchor:
-        fallback_text = "Tidak ada informasi tersedia untuk pertanyaan tersebut"
-        debug_logs["final_status"] = {
-            "stop_reason": "No relevant anchor documents",
-            "is_fallback": True,
-            "entropy_history": [],
-        }
-
-        fallback_dragin = DRAGINResult(
-            answer_text=fallback_text,
-            entropy=1.0,
-            confidence=0.0,
-            should_retry=False,
-            reason="No valid context",
-            token_count=0,
-        )
-
-        return RAGResult(
-            answer=fallback_text,
-            sources=[],
-            iterations=1,
-            confidence=0.0,
-            traces=[IterationTrace(1, rq["refined_query"], 0, fallback_dragin, query)],
-            debug_logs=debug_logs,
-        )
 
     # ======================================================================
     # PHASE 4 — Reasoning Loop: DRAGIN Generate + Evaluate

@@ -262,8 +262,7 @@ def generate_with_dragin(
         "- Jawab pertanyaan utama DAN semua sub-pertanyaan secara lengkap\n"
         "- Jawab secara terstruktur, jelas, dan ringkas\n"
         "- Gunakan hanya informasi dari konteks\n"
-        "- Jika jawaban tidak ditemukan di konteks, katakan bahwa kamu tidak tahu\n"
-        "- Di bagian akhir, tuliskan daftar sumber yang digunakan"
+        "- Jika informasi dalam konteks kurang lengkap, tetap berikan jawaban terbaik berdasarkan apa yang tersedia\n"
     )
 
     # --- 2. Panggil LLM dengan logprobs ---
@@ -324,7 +323,23 @@ def generate_with_dragin(
     if token_count == 0:
         avg_entropy = 1.0
     else:
-        avg_entropy = float(np.mean(token_entropies))
+        # DRAGIN: fokus pada token-token PALING UNCERTAIN (top-K%)
+        # Token boilerplate (kata sambung, tanda baca) memiliki entropy
+        # rendah dan mendilusi sinyal uncertainty dari token informatif.
+        # Kita ambil top 20% token dengan entropy tertinggi.
+        TOP_K_PERCENT = 0.20
+        sorted_entropies = sorted(token_entropies, reverse=True)
+        top_k_count = max(1, int(len(sorted_entropies) * TOP_K_PERCENT))
+        top_k_entropies = sorted_entropies[:top_k_count]
+        avg_entropy = float(np.mean(top_k_entropies))
+
+        # Log perbandingan untuk analisis
+        full_mean = float(np.mean(token_entropies))
+        logger.debug(
+            f"Entropy comparison: full_mean={full_mean:.4f}, "
+            f"top_{int(TOP_K_PERCENT*100)}%_mean={avg_entropy:.4f} "
+            f"(top {top_k_count}/{token_count} tokens)"
+        )
 
     # --- 4. Keputusan: retry atau tidak ---
     THRESHOLD = settings.dragin_threshold

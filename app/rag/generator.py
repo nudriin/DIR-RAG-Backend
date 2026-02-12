@@ -18,11 +18,9 @@ def build_system_prompt() -> str:
         "dan akurat berdasarkan HANYA konteks dokumen resmi yang diberikan.\n\n"
         "Pedoman:\n"
         "1. Jawab langsung dan to-the-point, gunakan format poin jika informasi banyak.\n"
-        "2. Setiap klaim HARUS didukung kutipan sumber, contoh: (Sumber: nama_dokumen).\n"
-        "3. Jika konteks tidak memuat jawaban, katakan: "
-        "'Tidak ada informasi tersedia untuk pertanyaan tersebut.'\n"
-        "4. JANGAN gunakan pengetahuan di luar dokumen konteks.\n"
-        "5. Gunakan bahasa Indonesia baku dan formal."
+        "2. Jika informasi dalam konteks kurang lengkap, tetap berikan jawaban terbaik berdasarkan apa yang tersedia.\n"
+        "3. JANGAN gunakan pengetahuan di luar dokumen konteks.\n"
+        "4. Gunakan bahasa Indonesia baku dan formal."
     )
 
 
@@ -74,8 +72,7 @@ def build_user_prompt(query: str, context_text: str) -> str:
         "Instruksi:\n"
         "- Jawab secara terstruktur, jelas, dan ringkas\n"
         "- Gunakan hanya informasi dari konteks\n"
-        "- Jika jawaban tidak ditemukan di konteks, katakan bahwa kamu tidak tahu\n"
-        "- Di bagian akhir, tuliskan daftar sumber yang digunakan"
+        "- Jika informasi dalam konteks kurang lengkap, tetap berikan jawaban terbaik berdasarkan apa yang tersedia\n"
     )
 
 
@@ -175,7 +172,7 @@ def build_user_prompt_paragraph(
         "- Tulis hanya SATU paragraf baru (3–6 kalimat)\n"
         "- Jangan mengulang paragraf sebelumnya\n"
         "- Gunakan hanya informasi dari konteks\n"
-        "- Jika informasi tidak ada di konteks, tulis: 'Tidak ada informasi tersedia untuk pertanyaan tersebut'\n"
+        "- Jika informasi dalam konteks kurang lengkap, tetap tulis jawaban terbaik berdasarkan apa yang tersedia\n"
         "- Jangan gunakan pengetahuan internal di luar dokumen"
     )
 

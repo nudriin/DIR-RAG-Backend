@@ -3406,3 +3406,205 @@ detail: Request was throttled. Your rate limit for creating predictions is reduc
 2026-02-13 02:23:50 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
 2026-02-13 02:23:50 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Confident answer (entropy=0.0790 ≤ threshold=0.5)
 2026-02-13 02:23:50 | INFO | app.api.chat | Chat request handled
+2026-02-13 02:30:29 | INFO | app.main | Application startup
+2026-02-13 02:30:47 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 02:30:47 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 02:30:47 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-13 02:30:47 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-02-13 02:30:47 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-02-13 02:31:08 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-13 02:31:12 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:31:13 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:31:13 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:31:14 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:31:14 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 02:31:14 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-13 02:31:15 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 02:31:15 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini direct SDK: gemini-2.0-flash
+2026-02-13 02:31:17 | INFO | app.rag.dynamic_decision | Gemini logprobs extracted: 43 token entries via top_candidates
+2026-02-13 02:31:17 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
+2026-02-13 02:31:17 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Confident answer (entropy=0.0958 ≤ threshold=0.5)
+2026-02-13 02:31:17 | INFO | app.api.chat | Chat request handled
+2026-02-13 02:37:31 | INFO | app.main | Application startup
+2026-02-13 02:38:15 | INFO | app.main | Application startup
+2026-02-13 02:43:46 | INFO | app.main | Application startup
+2026-02-13 02:44:49 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 02:44:49 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 02:44:49 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-13 02:44:49 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-02-13 02:44:49 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-02-13 02:45:10 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-13 02:45:13 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:45:13 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:45:13 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:45:14 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:45:14 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 02:45:14 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-13 02:45:14 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 02:45:14 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini direct SDK: gemini-2.0-flash
+2026-02-13 02:45:17 | INFO | app.rag.dynamic_decision | Gemini logprobs extracted: 226 token entries via top_candidates
+2026-02-13 02:45:17 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
+2026-02-13 02:45:17 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Confident answer (entropy=0.0883 ≤ threshold=0.5)
+2026-02-13 02:45:17 | INFO | app.api.chat | Chat request handled
+2026-02-13 02:51:21 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 02:51:22 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 02:51:22 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-13 02:51:26 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:51:29 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:51:32 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:51:33 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:51:34 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:51:35 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 02:51:35 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-13 02:51:35 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 02:51:35 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini direct SDK: gemini-2.0-flash
+2026-02-13 02:51:38 | INFO | app.rag.dynamic_decision | Gemini logprobs extracted: 267 token entries via top_candidates
+2026-02-13 02:51:38 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
+2026-02-13 02:51:38 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Confident answer (entropy=0.0817 ≤ threshold=0.5)
+2026-02-13 02:51:38 | INFO | app.api.chat | Chat request handled
+2026-02-13 02:57:54 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 02:57:54 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 02:57:54 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-13 02:57:57 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:57:59 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:58:01 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:58:02 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 02:58:02 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-13 02:58:03 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 02:58:03 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini direct SDK: gemini-2.0-flash
+2026-02-13 02:58:04 | INFO | app.rag.dynamic_decision | Gemini logprobs extracted: 105 token entries via top_candidates
+2026-02-13 02:58:04 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
+2026-02-13 02:58:04 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Confident answer (entropy=0.1449 ≤ threshold=0.5)
+2026-02-13 02:58:04 | INFO | app.api.chat | Chat request handled
+2026-02-13 02:59:17 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 02:59:17 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 02:59:17 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-13 02:59:21 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:59:24 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:59:28 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:59:28 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:59:29 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:59:29 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:59:30 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 02:59:31 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 02:59:31 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-13 02:59:31 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 02:59:31 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini direct SDK: gemini-2.0-flash
+2026-02-13 02:59:34 | INFO | app.rag.dynamic_decision | Gemini logprobs extracted: 251 token entries via top_candidates
+2026-02-13 02:59:34 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
+2026-02-13 02:59:34 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Confident answer (entropy=0.1251 ≤ threshold=0.5)
+2026-02-13 02:59:34 | INFO | app.api.chat | Chat request handled
+2026-02-13 03:00:43 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 03:00:43 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 03:00:43 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-13 03:00:44 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:00:45 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:00:45 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:00:45 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:00:45 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-13 03:00:46 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:00:46 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini direct SDK: gemini-2.0-flash
+2026-02-13 03:00:48 | INFO | app.rag.dynamic_decision | Gemini logprobs extracted: 107 token entries via top_candidates
+2026-02-13 03:00:48 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
+2026-02-13 03:00:48 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Confident answer (entropy=0.1399 ≤ threshold=0.5)
+2026-02-13 03:00:48 | INFO | app.api.chat | Chat request handled
+2026-02-13 03:03:15 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 03:03:15 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 03:03:15 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-13 03:03:18 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:03:23 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:03:26 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:03:26 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:03:26 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-13 03:03:27 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:03:27 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini direct SDK: gemini-2.0-flash
+2026-02-13 03:03:28 | INFO | app.rag.dynamic_decision | Gemini logprobs extracted: 20 token entries via top_candidates
+2026-02-13 03:03:28 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
+2026-02-13 03:03:28 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Confident answer (entropy=0.1869 ≤ threshold=0.5)
+2026-02-13 03:03:28 | INFO | app.api.chat | Chat request handled
+2026-02-13 03:06:01 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 03:06:01 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 03:06:01 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-13 03:06:04 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:06:05 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:06:06 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:06:06 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:06:07 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:06:07 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-13 03:06:07 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:06:07 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini direct SDK: gemini-2.0-flash
+2026-02-13 03:06:09 | INFO | app.rag.dynamic_decision | Gemini logprobs extracted: 30 token entries via top_candidates
+2026-02-13 03:06:09 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
+2026-02-13 03:06:09 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Confident answer (entropy=0.1980 ≤ threshold=0.5)
+2026-02-13 03:06:09 | INFO | app.api.chat | Chat request handled
+2026-02-13 03:08:03 | INFO | app.main | Application startup
+2026-02-13 03:08:23 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 03:08:23 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 03:08:23 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-13 03:08:23 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-02-13 03:08:23 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-02-13 03:08:44 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-13 03:08:48 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:08:49 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:08:49 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:08:49 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:08:49 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-13 03:08:50 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:08:50 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini direct SDK: gemini-2.0-flash
+2026-02-13 03:08:53 | INFO | app.rag.dynamic_decision | Gemini logprobs extracted: 263 token entries via top_candidates
+2026-02-13 03:08:53 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
+2026-02-13 03:08:53 | INFO | app.rag.rag_pipeline | Entropy tinggi, re-refine query via RQ-RAG...
+2026-02-13 03:09:12 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 03:09:12 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 03:09:13 | INFO | app.rag.retriever | Retrieved documents
+2026-02-13 03:09:13 | INFO | app.rag.retriever | Retrieved documents
+2026-02-13 03:09:13 | INFO | app.rag.retriever | Retrieved documents
+2026-02-13 03:09:14 | INFO | app.rag.retriever | Retrieved documents
+2026-02-13 03:09:14 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:09:14 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 2/2
+2026-02-13 03:09:14 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:09:14 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini direct SDK: gemini-2.0-flash
+2026-02-13 03:09:17 | INFO | app.rag.dynamic_decision | Gemini logprobs extracted: 244 token entries via top_candidates
+2026-02-13 03:09:17 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
+2026-02-13 03:09:17 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Max iterations reached (2), final entropy=0.5701
+2026-02-13 03:09:17 | INFO | app.api.chat | Chat request handled
+2026-02-13 03:10:29 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 03:10:29 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 03:10:29 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-13 03:10:32 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:10:35 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:10:38 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:10:39 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:10:39 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-13 03:10:39 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:10:39 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini direct SDK: gemini-2.0-flash
+2026-02-13 03:10:41 | INFO | app.rag.dynamic_decision | Gemini logprobs extracted: 103 token entries via top_candidates
+2026-02-13 03:10:41 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
+2026-02-13 03:10:41 | INFO | app.rag.rag_pipeline | Entropy tinggi, re-refine query via RQ-RAG...
+2026-02-13 03:10:57 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 03:10:57 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-02-13 03:10:57 | INFO | app.rag.retriever | Retrieved documents
+2026-02-13 03:10:58 | INFO | app.rag.retriever | Retrieved documents
+2026-02-13 03:10:58 | INFO | app.rag.retriever | Retrieved documents
+2026-02-13 03:10:58 | INFO | app.rag.retriever | Retrieved documents
+2026-02-13 03:10:58 | INFO | app.rag.retriever | Retrieved documents
+2026-02-13 03:10:59 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:10:59 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 2/2
+2026-02-13 03:10:59 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:10:59 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini direct SDK: gemini-2.0-flash
+2026-02-13 03:11:03 | INFO | app.rag.dynamic_decision | Gemini logprobs extracted: 102 token entries via top_candidates
+2026-02-13 03:11:03 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
+2026-02-13 03:11:03 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Max iterations reached (2), final entropy=0.5870
+2026-02-13 03:11:03 | INFO | app.api.chat | Chat request handled
+2026-02-13 03:12:09 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-02-13 03:12:09 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: REWRITE
+2026-02-13 03:12:09 | INFO | app.rag.rag_pipeline | RQ-RAG refinement complete
+2026-02-13 03:12:11 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-02-13 03:12:12 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:12:12 | INFO | app.rag.rag_pipeline | Reasoning loop iteration 1/2
+2026-02-13 03:12:12 | WARNING | app.rag.retriever | Reranker unavailable, using original order
+2026-02-13 03:12:12 | INFO | app.rag.dynamic_decision | DRAGIN using Gemini direct SDK: gemini-2.0-flash
+2026-02-13 03:12:16 | INFO | app.rag.dynamic_decision | Gemini logprobs extracted: 165 token entries via top_candidates
+2026-02-13 03:12:16 | INFO | app.rag.dynamic_decision | DRAGIN evaluation
+2026-02-13 03:12:16 | INFO | app.rag.rag_pipeline | Reasoning loop stopped: Confident answer (entropy=0.1049 ≤ threshold=0.5)
+2026-02-13 03:12:16 | INFO | app.api.chat | Chat request handled
