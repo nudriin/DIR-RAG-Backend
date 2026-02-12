@@ -30,11 +30,19 @@ class Settings(BaseSettings):
 
     openai_api_key: str | None = Field(default=None, env="OPENAI_API_KEY")
     replicate_api_token: str | None = Field(default=None, env="REPLICATE_API_TOKEN")
+    enable_dragin: bool = Field(default=True, env="ENABLE_DRAGIN")
+
+    # DRAGIN LLM backend: "openai" atau "gemini"
+    dragin_llm_backend: str = Field(default="openai", env="DRAGIN_LLM_BACKEND")
+    gemini_model: str = Field(default="gemini-2.0-flash", env="GEMINI_MODEL")
+    google_api_key: str | None = Field(default=None, env="GOOGLE_API_KEY")
 
     max_iterations: int = Field(default=2, env="MAX_ITERATIONS")
     similarity_top_k: int = Field(default=5, env="SIMILARITY_TOP_K")
 
     dragin_threshold: float = Field(default=0.5, env="DRAGIN_THRESHOLD")
+    dragin_max_iterations: int = Field(default=2, env="DRAGIN_MAX_ITERATIONS")
+    reranker_min_score: float = Field(default=0.1, env="RERANKER_MIN_SCORE")
 
     # Context budgeting to avoid rate limit/token overflow
     context_max_docs: int = Field(default=5, env="CONTEXT_MAX_DOCS")

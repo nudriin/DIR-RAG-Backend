@@ -83,11 +83,13 @@ class DebugTrace(BaseModel):
 
 class DebugDRAGIN(BaseModel):
     entropy: float
-    triggered_retrieval: bool
+    confidence: float = 0.0
+    should_retry: bool = False
     reason: str
+    token_count: int = 0
 
 
-class DebugIterRetGen(BaseModel):
+class DebugRQDragin(BaseModel):
     iter_query: str
     current_draft: str
     new_docs_found: int
@@ -102,8 +104,9 @@ class DebugETC(BaseModel):
 
 class DebugIterationLog(BaseModel):
     step: int
-    dragin: DebugDRAGIN
-    iter_retgen: DebugIterRetGen
+    dragin: Optional[DebugDRAGIN] = None
+    rq_dragin: Optional[DebugRQDragin] = None
+    iter_retgen: Optional[DebugRQDragin] = None  # backward compatibility alias
     etc: DebugETC
 
 

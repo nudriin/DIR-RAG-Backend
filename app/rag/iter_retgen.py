@@ -97,27 +97,138 @@ def run_rag_pipeline(query: str) -> RAGResult:
     all_documents: List[Document] = prune_context(semantic_anchor_docs, current_draft=current_instruction)
     paragraphs: List[str] = []
     final_sources: List[Dict[str, Any]] = []
-    stop_reason = "Max iterations reached"
+    stop_reason = "Initialized"
 
-    max_iter = len(instruction_queue)
-    for i, instruction in enumerate(instruction_queue[:max_iter], start=1):
-        previous_output = "\n\n".join(paragraphs) if paragraphs else None
+    if settings.enable_dragin:
+        gate_decision = decide_retrieval_dragin(rq["refined_query"])
+        entropy_history.append(gate_decision.entropy)
 
-        # Generate next paragraph (ITER-RETGEN)
-        current_instruction = instruction
-        paragraph_text, _ = generate_paragraph(
-            query=current_instruction,
-            documents=all_documents,
-            previous_output=previous_output,
-        )
+        if not gate_decision.retrieve:
+            answer_text, sources_from_answer = generate_answer(query=query, documents=all_documents)
 
-        # DRAGIN: Decide if we need gap-filling retrieval
-        decision = decide_retrieval_dragin(current_instruction)
-        entropy_history.append(decision.entropy)
+            traces.append(
+                IterationTrace(
+                    iteration=1,
+                    refined_query=rq["refined_query"],
+                    num_documents=len(all_documents),
+                    decision=gate_decision,
+                    raw_query=query,
+                )
+            )
 
-        new_docs_found = 0
-        if decision.retrieve:
-            # Use RQ-RAG again to refine based on the newly generated paragraph
+            debug_logs["iterations"].append(
+                {
+                    "step": 1,
+                    "dragin": {
+                        "entropy": float(gate_decision.entropy),
+                        "triggered_retrieval": False,
+                        "reason": gate_decision.reason,
+                    },
+                    "iter_retgen": {
+                        "iter_query": rq["refined_query"],
+                        "current_draft": answer_text,
+                        "new_docs_found": 0,
+                        "pruning_discarded": 0,
+                        "pruning_kept": int(len(all_documents)),
+                        "executing": "Direct Answer",
+                    },
+                    "etc": {
+                        "current_trend": "start",
+                    },
+                }
+            )
+
+            final_answer = answer_text.strip()
+            final_sources = sources_from_answer
+
+            stop_reason = "Direct Answer"
+
+        else:
+            max_iter = min(2, settings.max_iterations)
+            for i in range(1, max_iter + 1):
+                previous_output = "\n\n".join(paragraphs) if paragraphs else None
+
+                current_instruction = rq["refined_query"]
+                paragraph_text, _ = generate_paragraph(
+                    query=current_instruction,
+                    documents=all_documents,
+                    previous_output=previous_output,
+                )
+
+                refined_next = refine_query(query=current_instruction, draft_answer=paragraph_text)
+                expanded_queries = [refined_next["refined_query"]] + (refined_next.get("sub_queries", []) or [])
+
+                gap_docs: List[Document] = []
+                for qx in expanded_queries:
+                    gap_docs.extend(retrieve_documents(qx))
+
+                new_docs_found = len(gap_docs)
+                if gap_docs:
+                    all_documents.extend(gap_docs)
+
+                before_prune = len(all_documents)
+                all_documents = prune_context(all_documents, current_draft=paragraph_text)
+                after_prune = len(all_documents)
+                pruning_discarded = max(0, before_prune - after_prune)
+                pruning_kept = after_prune
+
+                decision_iter = decide_retrieval_dragin(refined_next["refined_query"])
+                entropy_history.append(decision_iter.entropy)
+
+                traces.append(
+                    IterationTrace(
+                        iteration=i,
+                        refined_query=current_instruction,
+                        num_documents=len(all_documents),
+                        decision=decision_iter,
+                        raw_query=query,
+                    )
+                )
+
+                paragraphs.append(paragraph_text)
+
+                current_trend = "start" if len(entropy_history) == 1 else (
+                    "decreasing" if entropy_history[-1] < entropy_history[-2]
+                    else "increasing" if entropy_history[-1] > entropy_history[-2]
+                    else "stable"
+                )
+
+                debug_logs["iterations"].append(
+                    {
+                        "step": i,
+                        "dragin": {
+                            "entropy": float(decision_iter.entropy),
+                            "triggered_retrieval": True,
+                            "reason": "ITER-RETGEN retrieval",
+                        },
+                        "iter_retgen": {
+                            "iter_query": current_instruction,
+                            "current_draft": paragraph_text,
+                            "new_docs_found": int(new_docs_found),
+                            "pruning_discarded": int(pruning_discarded),
+                            "pruning_kept": int(pruning_kept),
+                            "executing": f"ITER-RETGEN {i} of {max_iter}",
+                        },
+                        "etc": {
+                            "current_trend": current_trend,
+                        },
+                    }
+                )
+
+            final_answer, final_sources = generate_answer(query=query, documents=all_documents)
+            stop_reason = "Iter-RetGen Completed"
+    else:
+        max_iter = min(2, settings.max_iterations)
+        for i in range(1, max_iter + 1):
+            previous_output = "\n\n".join(paragraphs) if paragraphs else None
+
+            current_instruction = rq["refined_query"]
+            paragraph_text, _ = generate_paragraph(
+                query=current_instruction,
+                documents=all_documents,
+                previous_output=previous_output,
+            )
+
             refined_next = refine_query(query=current_instruction, draft_answer=paragraph_text)
             expanded_queries = [refined_next["refined_query"]] + (refined_next.get("sub_queries", []) or [])
 
@@ -125,80 +236,57 @@ def run_rag_pipeline(query: str) -> RAGResult:
             for qx in expanded_queries:
                 gap_docs.extend(retrieve_documents(qx))
 
+            new_docs_found = len(gap_docs)
             if gap_docs:
                 all_documents.extend(gap_docs)
-                new_docs_found = len(gap_docs)
-                # Regenerate paragraph with enriched context
-                paragraph_text, _ = generate_paragraph(
-                    query=current_instruction,
-                    documents=all_documents,
-                    previous_output=previous_output,
-                )
 
-        # Pruning: keep context window clean for next iteration
-        before_prune = len(all_documents)
-        all_documents = prune_context(all_documents, current_draft=paragraph_text)
-        after_prune = len(all_documents)
-        pruning_discarded = max(0, before_prune - after_prune)
-        pruning_kept = after_prune
+            before_prune = len(all_documents)
+            all_documents = prune_context(all_documents, current_draft=paragraph_text)
+            after_prune = len(all_documents)
+            pruning_discarded = max(0, before_prune - after_prune)
+            pruning_kept = after_prune
 
-        # Trace
-        traces.append(
-            IterationTrace(
-                iteration=i,
-                refined_query=current_instruction,
-                num_documents=len(all_documents),
-                decision=decision,
-                raw_query=query,
+            disabled_decision = RetrievalDecision(
+                retrieve=False, confidence=1.0, reason="DRAGIN disabled", entropy=0.0, prompt=None
             )
-        )
 
-        paragraphs.append(paragraph_text)
+            traces.append(
+                IterationTrace(
+                    iteration=i,
+                    refined_query=current_instruction,
+                    num_documents=len(all_documents),
+                    decision=disabled_decision,
+                    raw_query=query,
+                )
+            )
 
-        # Debug iteration log (including ETC current trend)
-        if len(entropy_history) == 1:
-            current_trend = "start"
-        else:
-            prev_entropy = entropy_history[-2]
-            curr_entropy = entropy_history[-1]
-            if curr_entropy < prev_entropy:
-                current_trend = "decreasing"
-            elif curr_entropy > prev_entropy:
-                current_trend = "increasing"
-            else:
-                current_trend = "stable"
+            paragraphs.append(paragraph_text)
 
-        if i == 1:
-            executing_label = f"Executing Refined Query {i} of {len(instruction_queue)}"
-        else:
-            executing_label = f"Executing Sub-Query {i-1} of {len(sub_queries)}"
+            current_trend = "start" if len(entropy_history) == 0 else "stable"
 
-        debug_logs["iterations"].append(
-            {
-                "step": i,
-                "dragin": {
-                    "entropy": float(decision.entropy),
-                    "triggered_retrieval": bool(decision.retrieve),
-                    "reason": decision.reason,
-                },
-                "iter_retgen": {
-                    "iter_query": current_instruction,
-                    "current_draft": paragraph_text,
-                    "new_docs_found": int(new_docs_found),
-                    "pruning_discarded": int(pruning_discarded),
-                    "pruning_kept": int(pruning_kept),
-                    "executing": executing_label,
-                },
-                "etc": {
-                    "current_trend": current_trend,
-                },
-            }
-        )
+            debug_logs["iterations"].append(
+                {
+                    "step": i,
+                    "iter_retgen": {
+                        "iter_query": current_instruction,
+                        "current_draft": paragraph_text,
+                        "new_docs_found": int(new_docs_found),
+                        "pruning_discarded": int(pruning_discarded),
+                        "pruning_kept": int(pruning_kept),
+                        "executing": f"ITER-RETGEN {i} of {max_iter}",
+                    },
+                    "etc": {
+                        "current_trend": current_trend,
+                    },
+                }
+            )
 
-    stop_reason = "Completed All Instructions"
+        final_answer, final_sources = generate_answer(query=query, documents=all_documents)
+        stop_reason = "Iter-RetGen Completed"
 
     # Final assembly
-    final_answer = "\n\n".join(paragraphs).strip()
+    if stop_reason != "Direct Answer":
+        final_answer = "\n\n".join(paragraphs).strip()
 
     # Final Guardrail (Closed-Domain)
     if not has_valid_anchor or not final_answer or "Tidak ada informasi tersedia untuk pertanyaan tersebut" in final_answer:
@@ -217,15 +305,7 @@ def run_rag_pipeline(query: str) -> RAGResult:
             debug_logs=debug_logs,
         )
 
-    # Build sources from pruned context
-    for i, doc in enumerate(all_documents):
-        final_sources.append(
-            {
-                "id": i,
-                "source": doc.metadata.get("source"),
-                "chunk_id": doc.metadata.get("chunk_id"),
-            }
-        )
+    # Sources already built from generate_answer when applicable
 
     last_confidence = traces[-1].decision.confidence if traces else 0.0
     debug_logs["final_status"] = {

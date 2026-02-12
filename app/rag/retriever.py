@@ -48,26 +48,71 @@ def retrieve_documents_with_scores(
     return results
 
 
-def rerank_documents(query: str, documents: List[Document], top_n: int = 5) -> List[Document]:
+def rerank_documents(
+    query: str,
+    documents: List[Document],
+    top_n: int = 5,
+    min_score: float | None = None,
+) -> List[Document]:
+    """Rerank documents menggunakan cross-encoder multilingual.
+
+    Perbaikan dari versi lama:
+    1. Model diganti ke multilingual (support Bahasa Indonesia).
+    2. Deduplikasi berdasarkan konten sebelum reranking.
+    3. Filter min_score untuk buang dokumen yang benar-benar tidak relevan.
+    """
     if not documents:
+        return []
+
+    from app.core.config import get_settings
+    settings = get_settings()
+    if min_score is None:
+        min_score = settings.reranker_min_score
+
+    # --- Deduplikasi berdasarkan konten ---
+    seen_hashes: set = set()
+    unique_docs: List[Document] = []
+    for doc in documents:
+        content_hash = hash(doc.page_content)
+        if content_hash not in seen_hashes:
+            seen_hashes.add(content_hash)
+            unique_docs.append(doc)
+
+    if not unique_docs:
         return []
 
     try:
         from sentence_transformers import CrossEncoder
 
-        model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+        model_name = "cross-encoder/ms-marco-multilingual-MiniLM-L6-v2"
         cross_encoder = CrossEncoder(model_name)
 
-        pairs = [(query, d.page_content) for d in documents]
+        pairs = [(query, d.page_content) for d in unique_docs]
         scores = cross_encoder.predict(pairs)
 
-        scored = list(zip(documents, scores))
+        scored = list(zip(unique_docs, scores))
         scored.sort(key=lambda x: float(x[1]), reverse=True)
-        reranked = [doc for doc, _ in scored[: max(1, top_n)]]
+
+        # Filter berdasarkan skor minimum
+        reranked = [
+            doc for doc, score in scored[:max(1, top_n)]
+            if float(score) >= min_score
+        ]
+
+        # Jika semua difilter, tetap kembalikan top-1
+        if not reranked and scored:
+            reranked = [scored[0][0]]
 
         logger.info(
-            "Reranked documents",
-            extra={"query": query, "top_n": top_n, "num_input_docs": len(documents)},
+            "Reranked documents (multilingual)",
+            extra={
+                "query": query,
+                "top_n": top_n,
+                "num_input_docs": len(documents),
+                "num_unique": len(unique_docs),
+                "num_after_rerank": len(reranked),
+                "min_score": min_score,
+            },
         )
         return reranked
     except Exception as exc:
@@ -75,4 +120,4 @@ def rerank_documents(query: str, documents: List[Document], top_n: int = 5) -> L
             "Reranker unavailable, using original order",
             extra={"error": str(exc), "top_n": top_n, "num_input_docs": len(documents)},
         )
-        return documents[: max(1, top_n)]
+        return unique_docs[:max(1, top_n)]

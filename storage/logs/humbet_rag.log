@@ -2724,3 +2724,203 @@ detail: Request was throttled. Your rate limit for creating predictions is reduc
 2026-01-26 01:20:38 | INFO | app.main | Application startup
 2026-01-26 01:21:07 | INFO | app.main | Application startup
 2026-01-26 01:22:09 | INFO | app.main | Application startup
+2026-01-29 14:59:16 | INFO | app.main | Application startup
+2026-01-29 14:59:50 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/deepseek-ai/deepseek-r1/predictions "HTTP/1.1 201 Created"
+2026-01-29 14:59:50 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-29 14:59:50 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-29 14:59:50 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-29 15:00:29 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-29 15:00:35 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-29 15:00:40 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-29 15:00:44 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-29 15:00:49 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:00:52 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:00:59 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:01:30 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:01:52 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/deepseek-ai/deepseek-r1/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:01:52 | INFO | app.rag.generator | Generated paragraph
+2026-01-29 15:02:12 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/deepseek-ai/deepseek-r1/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:02:12 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-29 15:02:16 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:02:20 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:02:23 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:02:29 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:02:33 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:02:37 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:02:39 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:02:58 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/deepseek-ai/deepseek-r1/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:02:59 | INFO | app.rag.generator | Generated paragraph
+2026-01-29 15:04:00 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/deepseek-ai/deepseek-r1/predictions "HTTP/1.1 202 Accepted"
+2026-01-29 15:04:01 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:02 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:03 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:04 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:05 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:06 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:07 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:08 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:09 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:10 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:11 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:12 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:13 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:14 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:15 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:16 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:17 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:18 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:19 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:20 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:21 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:22 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:23 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:23 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:25 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:26 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:27 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:28 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:29 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:30 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:32 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:33 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:33 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:35 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:36 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:37 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:37 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:38 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:40 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:41 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:42 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:43 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:44 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:45 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:47 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:48 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:49 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:51 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:53 | INFO | httpx | HTTP Request: GET https://api.replicate.com/v1/predictions/rxnfvt77zsrmw0cw133agmdy40 "HTTP/1.1 200 OK"
+2026-01-29 15:04:53 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-29 15:04:57 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:05:01 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:05:03 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:05:04 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:05:13 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:05:19 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:05:24 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:05:26 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:05:54 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/deepseek-ai/deepseek-r1/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:05:54 | INFO | app.rag.generator | Generated answer
+2026-01-29 15:05:54 | INFO | app.api.chat | Chat request handled
+2026-01-29 15:08:00 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/deepseek-ai/deepseek-r1/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:08:00 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-29 15:08:06 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-29 15:08:12 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-29 15:08:13 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-29 15:08:13 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-29 15:08:19 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:08:24 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:08:29 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:08:31 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:08:51 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/deepseek-ai/deepseek-r1/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:08:51 | INFO | app.rag.generator | Generated paragraph
+2026-01-29 15:09:27 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/deepseek-ai/deepseek-r1/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:09:27 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-29 15:09:29 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:09:30 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:09:30 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:09:31 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:09:36 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:09:41 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:09:46 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:09:47 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:10:06 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/deepseek-ai/deepseek-r1/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:10:06 | INFO | app.rag.generator | Generated paragraph
+2026-01-29 15:10:44 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/deepseek-ai/deepseek-r1/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:10:44 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-29 15:10:50 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:10:57 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:10:59 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:11:00 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:11:05 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:11:11 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:11:16 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:11:18 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:11:47 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/deepseek-ai/deepseek-r1/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:11:47 | INFO | app.rag.generator | Generated answer
+2026-01-29 15:11:47 | INFO | app.api.chat | Chat request handled
+2026-01-29 15:18:33 | INFO | app.main | Application startup
+2026-01-29 15:19:13 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:19:13 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: DECOMPOSE
+2026-01-29 15:19:13 | INFO | sentence_transformers.SentenceTransformer | Use pytorch device_name: cpu
+2026-01-29 15:19:13 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: BAAI/bge-m3
+2026-01-29 15:19:39 | INFO | chromadb.telemetry.product.posthog | Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-29 15:19:44 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-29 15:19:47 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-29 15:19:52 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-29 15:19:52 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-29 15:19:56 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:19:58 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:20:01 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:20:03 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:20:06 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:20:06 | INFO | app.rag.generator | Generated paragraph
+2026-01-29 15:20:06 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-29 15:20:06 | ERROR | app.rag.query_refinement | failed: ReplicateError Details:
+status: 429
+detail: Request was throttled. Your rate limit for creating predictions is reduced to 6 requests per minute with a burst of 1 requests while you have less than $5.0 in credit. Your rate limit resets in ~7s.
+2026-01-29 15:20:07 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:20:09 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:20:14 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:20:16 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:20:20 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:20:21 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:20:28 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:20:28 | INFO | app.rag.generator | Generated paragraph
+2026-01-29 15:20:28 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-29 15:20:28 | ERROR | app.rag.query_refinement | failed: ReplicateError Details:
+status: 429
+detail: Request was throttled. Your rate limit for creating predictions is reduced to 6 requests per minute with a burst of 1 requests while you have less than $5.0 in credit. Your rate limit resets in ~4s.
+2026-01-29 15:20:30 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:20:33 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:20:36 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:20:38 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:20:41 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:20:42 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:20:55 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:20:55 | INFO | app.rag.generator | Generated answer
+2026-01-29 15:20:55 | INFO | app.api.chat | Chat request handled
+2026-01-29 15:22:20 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:22:20 | INFO | app.rag.query_refinement | RQ-RAG Refinement Success: REWRITE
+2026-01-29 15:22:23 | INFO | app.rag.retriever | Retrieved documents with scores
+2026-01-29 15:22:27 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:22:28 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:22:31 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:22:32 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:22:41 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:22:41 | INFO | app.rag.generator | Generated paragraph
+2026-01-29 15:22:42 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-29 15:22:42 | ERROR | app.rag.query_refinement | failed: ReplicateError Details:
+status: 429
+detail: Request was throttled. Your rate limit for creating predictions is reduced to 6 requests per minute with a burst of 1 requests while you have less than $5.0 in credit. Your rate limit resets in ~1s.
+2026-01-29 15:22:45 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:22:48 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:22:52 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:22:55 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:22:58 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:22:59 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:23:07 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:23:07 | INFO | app.rag.generator | Generated paragraph
+2026-01-29 15:23:08 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 429 Too Many Requests"
+2026-01-29 15:23:08 | ERROR | app.rag.query_refinement | failed: ReplicateError Details:
+status: 429
+detail: Request was throttled. Your rate limit for creating predictions is reduced to 6 requests per minute with a burst of 1 requests while you have less than $5.0 in credit. Your rate limit resets in ~3s.
+2026-01-29 15:23:12 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:23:18 | INFO | app.rag.retriever | Retrieved documents
+2026-01-29 15:23:22 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:23:27 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:23:31 | INFO | sentence_transformers.cross_encoder.CrossEncoder | Use pytorch device: cpu
+2026-01-29 15:23:33 | INFO | app.rag.retriever | Reranked documents
+2026-01-29 15:23:44 | INFO | httpx | HTTP Request: POST https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions "HTTP/1.1 201 Created"
+2026-01-29 15:23:44 | INFO | app.rag.generator | Generated answer
+2026-01-29 15:23:44 | INFO | app.api.chat | Chat request handled

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from app.core.logging import get_logger
-from app.rag.iter_retgen import run_rag_pipeline
+from app.rag.rag_pipeline import run_rag_pipeline
 from app.schemas.chat_schema import (
     ChatRequest,
     ChatResponseWithTrace,
@@ -14,7 +14,7 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/api", tags=["chat"])
 
 
-@router.post("/chat", response_model=ChatResponseWithTrace)
+@router.post("/chat", response_model=ChatResponseWithTrace, response_model_exclude_none=True)
 async def chat_endpoint(payload: ChatRequest) -> ChatResponseWithTrace:
     rag_result = run_rag_pipeline(payload.query)
 
@@ -23,10 +23,10 @@ async def chat_endpoint(payload: ChatRequest) -> ChatResponseWithTrace:
             iteration=t.iteration,
             refined_query=t.refined_query,
             num_documents=t.num_documents,
-            retrieve=t.decision.retrieve,
+            retrieve=t.decision.should_retry,
             retrieval_confidence=t.decision.confidence,
             reason=t.decision.reason,
-            raw_query=t.decision.prompt,
+            raw_query=None,
         )
         for t in rag_result.traces
     ]
