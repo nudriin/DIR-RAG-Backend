@@ -10,6 +10,9 @@ from app.core.config import get_settings
 from app.core.logging import get_logger
 from app.rag.generator import build_system_prompt, format_context, limit_docs_for_context
 
+import google.generativeai as genai
+from google.ai.generativelanguage_v1beta.types import GenerationConfig as ProtoGenerationConfig
+
 logger = get_logger(__name__)
 
 
@@ -53,52 +56,116 @@ def _extract_logprobs_openai(response) -> List[dict]:
     )
 
 
-def _extract_logprobs_gemini(response) -> List[dict]:
+def _extract_logprobs_gemini(gemini_response) -> List[dict]:
     """
-    Ekstrak logprobs dari response Gemini (ChatGoogleGenerativeAI).
+    Ekstrak logprobs dari response LANGSUNG google.generativeai SDK.
 
-    Gemini mengembalikan logprobs dalam format berbeda:
-    response.generation_info atau response.response_metadata
-    berisi 'logprobs_result' dengan 'chosen_candidates' dan 'top_candidates'.
-    Kita normalisasi ke format yang sama dengan OpenAI agar
-    calculate_token_entropy bisa dipakai langsung.
+    Struktur proto LogprobsResult:
+        logprobs_result.top_candidates[]     — list of TopCandidates (per posisi token)
+        logprobs_result.chosen_candidates[]  — list of Candidate (token terpilih)
+
+    top_candidates dan chosen_candidates adalah list PARALEL:
+        top_candidates[i].candidates = [Candidate, ...] (top-k alternatif untuk token ke-i)
+        chosen_candidates[i] = Candidate terpilih untuk token ke-i
+
+    Kita normalisasi ke format [{top_logprobs: [{token, logprob}, ...]}, ...]
+    agar calculate_token_entropy bisa dipakai langsung.
     """
-    # Gemini via LangChain: logprobs ada di response_metadata
-    metadata = response.response_metadata or {}
+    try:
+        candidates = gemini_response.candidates
+        if not candidates:
+            logger.warning("Gemini response tidak punya candidates")
+            return []
 
-    # Path 1: langchain-google-genai format
-    logprobs_result = metadata.get("logprobs_result")
-    if logprobs_result:
-        top_candidates = logprobs_result.get("top_candidates", [])
-        normalized = []
-        for candidate_group in top_candidates:
-            candidates = candidate_group.get("candidates", [])
-            top_logprobs = [
-                {"token": c.get("token", ""), "logprob": c.get("log_probability", -100)}
-                for c in candidates
-            ]
-            normalized.append({"top_logprobs": top_logprobs})
-        return normalized
+        logprobs_result = candidates[0].logprobs_result
+        if not logprobs_result:
+            logger.warning("Gemini candidate tidak punya logprobs_result")
+            return []
 
-    # Path 2: google-genai SDK format (candidates.logprobs_result)
-    candidates_meta = metadata.get("candidates", [])
-    if candidates_meta:
-        for cand in candidates_meta:
-            lp_result = cand.get("logprobs_result")
-            if not lp_result:
-                continue
-            top_candidates = lp_result.get("top_candidates", [])
+        # top_candidates adalah list paralel di level logprobs_result
+        top_candidates_list = getattr(logprobs_result, "top_candidates", None)
+
+        if top_candidates_list:
             normalized = []
-            for candidate_group in top_candidates:
-                candidates = candidate_group.get("candidates", [])
+            for top_group in top_candidates_list:
+                # Setiap top_group punya .candidates = list alternatif token
+                alt_candidates = getattr(top_group, "candidates", [])
                 top_logprobs = [
-                    {"token": c.get("token", ""), "logprob": c.get("log_probability", -100)}
-                    for c in candidates
+                    {
+                        "token": getattr(c, "token", ""),
+                        "logprob": getattr(c, "log_probability", -100),
+                    }
+                    for c in alt_candidates
+                ]
+                if top_logprobs:
+                    normalized.append({"top_logprobs": top_logprobs})
+            logger.info(f"Gemini logprobs extracted: {len(normalized)} token entries via top_candidates")
+            return normalized
+
+        # Fallback: hanya chosen_candidates (tanpa alternatif, entropy=0)
+        chosen = getattr(logprobs_result, "chosen_candidates", None)
+        if chosen:
+            logger.warning("Hanya chosen_candidates tersedia (tanpa top_candidates), entropy akan = 0")
+            normalized = []
+            for entry in chosen:
+                top_logprobs = [
+                    {
+                        "token": getattr(entry, "token", ""),
+                        "logprob": getattr(entry, "log_probability", -100),
+                    }
                 ]
                 normalized.append({"top_logprobs": top_logprobs})
             return normalized
 
-    return []
+        logger.warning("logprobs_result tidak punya top_candidates maupun chosen_candidates")
+        return []
+
+    except Exception as exc:
+        logger.warning(f"Gagal mengekstrak logprobs dari Gemini response: {exc}")
+        return []
+
+
+def _call_gemini_direct(
+    system_prompt: str,
+    user_prompt: str,
+    settings,
+) -> tuple:
+    """
+    Panggil Gemini API langsung via google.generativeai SDK.
+
+    LangChain (langchain-google-genai) TIDAK meneruskan logprobs_result
+    ke response_metadata, jadi kita harus bypass LangChain.
+
+    Menggunakan proto GenerationConfig dari google.ai.generativelanguage_v1beta
+    karena SDK wrapper (genai.types.GenerationConfig) tidak mendukung
+    parameter response_logprobs dan logprobs.
+
+    Returns:
+        (answer_text, logprobs_content)
+    """
+    genai.configure(api_key=settings.google_api_key)
+
+    model = genai.GenerativeModel(
+        model_name=settings.gemini_model,
+        system_instruction=system_prompt,
+    )
+
+    generation_config = {
+        "temperature": 0.1,
+        "max_output_tokens": settings.max_generation_tokens,
+        "response_logprobs": True,
+        "logprobs": settings.top_logprops,
+    }
+
+    response = model.generate_content(
+        user_prompt,
+        generation_config=generation_config,
+    )
+
+    answer_text = response.text.strip()
+    logprobs_content = _extract_logprobs_gemini(response)
+
+    return answer_text, logprobs_content
 
 
 # ---------------------------------------------------------------------------
@@ -200,13 +267,26 @@ def generate_with_dragin(
     )
 
     # --- 2. Panggil LLM dengan logprobs ---
-    llm, backend = _create_llm(settings)
+    backend = settings.dragin_llm_backend.lower()
 
     try:
-        response = llm.invoke([
-            SystemMessage(content=system_prompt),
-            HumanMessage(content=user_prompt),
-        ])
+        if backend == "gemini":
+            # Bypass LangChain: langchain-google-genai tidak meneruskan logprobs
+            logger.info(f"DRAGIN using Gemini direct SDK: {settings.gemini_model}")
+            answer_text, logprobs_content = _call_gemini_direct(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                settings=settings,
+            )
+        else:
+            # OpenAI via LangChain (logprobs didukung penuh)
+            llm, backend = _create_llm(settings)
+            response = llm.invoke([
+                SystemMessage(content=system_prompt),
+                HumanMessage(content=user_prompt),
+            ])
+            answer_text = response.content.strip()
+            logprobs_content = _extract_logprobs_openai(response)
     except Exception as exc:
         logger.error(f"DRAGIN generation failed ({backend}): {exc}")
         return DRAGINResult(
@@ -221,14 +301,6 @@ def generate_with_dragin(
             token_count=0,
             llm_backend=backend,
         )
-
-    answer_text = response.content.strip()
-
-    # --- 3. Hitung Shannon Entropy dari logprobs jawaban ---
-    if backend == "gemini":
-        logprobs_content = _extract_logprobs_gemini(response)
-    else:
-        logprobs_content = _extract_logprobs_openai(response)
 
     if not logprobs_content:
         logger.warning(f"Logprobs tidak tersedia dari {backend}, anggap entropy tinggi")
