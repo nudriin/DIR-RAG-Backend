@@ -3,7 +3,7 @@ from typing import List, Tuple
 from langchain_core.documents import Document
 
 from app.core.config import get_settings
-from app.core.logging import get_logger
+from app.core.logging import get_logger, broadcast_event
 from app.data.vector_store import vector_store_manager
 
 
@@ -26,6 +26,12 @@ def retrieve_documents(query: str) -> List[Document]:
             "num_documents": len(documents),
         },
     )
+    broadcast_event(
+        stage="retrieval",
+        action="initial",
+        summary="Retrieval dokumen awal",
+        details={"query": query, "top_k": settings.similarity_top_k, "num_documents": len(documents)},
+    )
 
     return documents
 
@@ -45,6 +51,12 @@ def retrieve_documents_with_scores(
             "num_results": len(results),
         },
     )
+    broadcast_event(
+        stage="retrieval",
+        action="scored",
+        summary="Retrieval dokumen dengan skor",
+        details={"query": query, "top_k": k, "num_results": len(results)},
+    )
     return results
 
 
@@ -54,13 +66,6 @@ def rerank_documents(
     top_n: int = 5,
     min_score: float | None = None,
 ) -> List[Document]:
-    """Rerank documents menggunakan cross-encoder multilingual.
-
-    Perbaikan dari versi lama:
-    1. Model diganti ke multilingual (support Bahasa Indonesia).
-    2. Deduplikasi berdasarkan konten sebelum reranking.
-    3. Filter min_score untuk buang dokumen yang benar-benar tidak relevan.
-    """
     if not documents:
         return []
 
@@ -114,10 +119,29 @@ def rerank_documents(
                 "min_score": min_score,
             },
         )
+        broadcast_event(
+            stage="reranker",
+            action="complete",
+            summary="Reranker selesai",
+            details={
+                "query": query,
+                "top_n": top_n,
+                "num_input_docs": len(documents),
+                "num_unique": len(unique_docs),
+                "num_after_rerank": len(reranked),
+                "min_score": min_score,
+            },
+        )
         return reranked
     except Exception as exc:
         logger.warning(
             "Reranker unavailable, using original order",
             extra={"error": str(exc), "top_n": top_n, "num_input_docs": len(documents)},
+        )
+        broadcast_event(
+            stage="reranker",
+            action="fallback",
+            summary="Reranker tidak tersedia, gunakan urutan awal",
+            details={"error": str(exc), "top_n": top_n, "num_input_docs": len(documents)},
         )
         return unique_docs[:max(1, top_n)]
