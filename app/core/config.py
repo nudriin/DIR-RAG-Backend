@@ -30,6 +30,7 @@ class Settings(BaseSettings):
 
     openai_api_key: str | None = Field(default=None, env="OPENAI_API_KEY")
     replicate_api_token: str | None = Field(default=None, env="REPLICATE_API_TOKEN")
+    hf_token: str | None = Field(default=None, env="HF_TOKEN")
     enable_dragin: bool = Field(default=True, env="ENABLE_DRAGIN")
 
     # DRAGIN LLM backend: "openai" atau "gemini"
@@ -43,6 +44,10 @@ class Settings(BaseSettings):
     dragin_threshold: float = Field(default=0.5, env="DRAGIN_THRESHOLD")
     dragin_max_iterations: int = Field(default=2, env="DRAGIN_MAX_ITERATIONS")
     reranker_min_score: float = Field(default=0.1, env="RERANKER_MIN_SCORE")
+    reranker_model: str = Field(
+        default="cross-encoder/ms-marco-MiniLM-L6-v2",
+        env="RERANKER_MODEL",
+    )
 
     # Context budgeting to avoid rate limit/token overflow
     context_max_docs: int = Field(default=5, env="CONTEXT_MAX_DOCS")
