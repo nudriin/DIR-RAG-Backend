@@ -23,7 +23,6 @@ RUN groupadd -g 1001 appuser && useradd -u 1001 -g appuser -s /usr/sbin/nologin 
 COPY --from=builder /install /usr/local
 
 COPY app app
-COPY .env.example .env.example
 
 RUN mkdir -p storage storage/vectors storage/logs && chown -R appuser:appuser storage
 
