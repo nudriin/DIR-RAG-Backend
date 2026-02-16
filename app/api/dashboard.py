@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,6 +12,8 @@ from app.db.crud import (
     get_dashboard_stats,
     add_feedback,
     get_answer_contexts_for_messages,
+    delete_conversation,
+    delete_all_conversations,
 )
 from app.db.engine import get_session
 from app.db.models import Message
@@ -116,6 +118,33 @@ async def get_conversation(
             for m in messages
         ],
     )
+
+
+@router.delete(
+    "/history/{conversation_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_conversation_history(
+    conversation_id: int,
+    session: AsyncSession = Depends(get_session),
+):
+    deleted = await delete_conversation(session=session, conversation_id=conversation_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    await session.commit()
+    return
+
+
+@router.delete(
+    "/history",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_all_history(
+    session: AsyncSession = Depends(get_session),
+):
+    await delete_all_conversations(session=session)
+    await session.commit()
+    return
 
 
 @router.get("/dashboard/stats", response_model=DashboardStats)

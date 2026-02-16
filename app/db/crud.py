@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
-from sqlalchemy import Select, func, select
+from sqlalchemy import Select, func, select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Conversation, Message, Feedback, AnswerContext
@@ -77,6 +77,22 @@ async def get_all_conversations(
     )
     result = await session.execute(stmt)
     return list(result.scalars().all())
+
+
+async def delete_conversation(
+    session: AsyncSession,
+    conversation_id: int,
+) -> int:
+    conversation = await session.get(Conversation, conversation_id)
+    if conversation is None:
+        return 0
+    await session.delete(conversation)
+    return 1
+
+
+async def delete_all_conversations(session: AsyncSession) -> int:
+    result = await session.execute(delete(Conversation))
+    return result.rowcount or 0
 
 
 async def get_answer_contexts_for_messages(
