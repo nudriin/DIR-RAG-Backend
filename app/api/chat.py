@@ -4,7 +4,7 @@ import asyncio
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.logging import get_logger
+from app.core.logging import get_logger, broadcast_event
 from app.core.auth import optional_current_user
 from app.rag.rag_pipeline import run_rag_pipeline
 from app.db.crud import add_message, create_conversation
@@ -116,6 +116,15 @@ async def chat_endpoint(
             extra={
                 "query": query_text,
                 "reason": bypass_reason,
+            },
+        )
+        broadcast_event(
+            stage="final_status",
+            action="bypass",
+            summary="Chat bypassed RAG pipeline",
+            details={
+                "stop_reason": bypass_reason,
+                "query": query_text,
             },
         )
     else:
