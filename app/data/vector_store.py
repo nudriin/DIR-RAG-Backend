@@ -54,6 +54,11 @@ class VectorStoreManager:
             )
         return self._vector_store
 
+    def metadata_store(self) -> Chroma:
+        return Chroma(
+            persist_directory=str(self.vector_store_path),
+        )
+
     def ingest_texts(
         self,
         texts: Iterable[str],
@@ -101,8 +106,7 @@ class VectorStoreManager:
             shutil.rmtree(self.vector_store_path, ignore_errors=True)
 
     def delete_by_source(self, source: str) -> int:
-        # Chroma allows deleting by metadata filter
-        store = self.vector_store
+        store = self.metadata_store()
         # We need to find how many documents to delete first to return the count,
         # or just delete and return unknown count?
         # The user interface expects a count.
@@ -127,7 +131,7 @@ class VectorStoreManager:
             return 0
 
     def list_sources(self) -> List[tuple[str, int]]:
-        store = self.vector_store
+        store = self.metadata_store()
         try:
             # Get all metadata
             results = store.get(include=["metadatas"])
@@ -144,7 +148,7 @@ class VectorStoreManager:
             return []
 
     def get_documents_by_source(self, source: str) -> List[Tuple[str, Document]]:
-        store = self.vector_store
+        store = self.metadata_store()
         try:
             results = store.get(
                 where={"source": source}, include=["metadatas", "documents"]
