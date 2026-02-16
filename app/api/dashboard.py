@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -22,6 +22,19 @@ from app.db.models import Message
 logger = get_logger(__name__)
 
 router = APIRouter(prefix="/api", tags=["dashboard"])
+
+
+def to_wib(dt: datetime | None) -> datetime | None:
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone(timedelta(hours=7)))
+
+
+def to_wib_iso(dt: datetime | None) -> str | None:
+    converted = to_wib(dt)
+    return converted.isoformat() if converted is not None else None
 
 
 class ConversationSummary(BaseModel):
@@ -83,7 +96,7 @@ async def list_conversations(
         ConversationSummary(
             id=c.id,
             title=c.title,
-            created_at=c.created_at,
+            created_at=to_wib(c.created_at),
         )
         for c in conversations
     ]
@@ -105,13 +118,13 @@ async def get_conversation(
     return ConversationDetail(
         id=conversation.id,
         title=conversation.title,
-        created_at=conversation.created_at,
+        created_at=to_wib(conversation.created_at),
         messages=[
             MessageItem(
                 id=m.id,
                 role=m.role,
                 content=m.content,
-                created_at=m.created_at,
+                created_at=to_wib(m.created_at),
                 confidence=m.confidence,
                 rag_iterations=m.rag_iterations,
             )
@@ -206,13 +219,13 @@ async def export_conversations(
             {
                 "id": conversation.id,
                 "title": conversation.title,
-                "created_at": conversation.created_at.isoformat(),
+                "created_at": to_wib_iso(conversation.created_at),
                 "messages": [
                     {
                         "id": m.id,
                         "role": m.role,
                         "content": m.content,
-                        "created_at": m.created_at.isoformat(),
+                        "created_at": to_wib_iso(m.created_at),
                         "confidence": m.confidence,
                         "rag_iterations": m.rag_iterations,
                         "contexts": [
@@ -248,13 +261,13 @@ async def export_conversations(
                 {
                     "id": conversation.id,
                     "title": conversation.title,
-                    "created_at": conversation.created_at.isoformat(),
+                    "created_at": to_wib_iso(conversation.created_at),
                     "messages": [
                         {
                             "id": m.id,
                             "role": m.role,
                             "content": m.content,
-                            "created_at": m.created_at.isoformat(),
+                            "created_at": to_wib_iso(m.created_at),
                             "confidence": m.confidence,
                             "rag_iterations": m.rag_iterations,
                             "contexts": [
