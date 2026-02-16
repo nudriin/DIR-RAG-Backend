@@ -11,6 +11,7 @@ from app.db.crud import (
     get_conversation_history,
     get_dashboard_stats,
     add_feedback,
+    get_answer_contexts_for_messages,
 )
 from app.db.engine import get_session
 from app.db.models import Message
@@ -150,3 +151,95 @@ async def submit_feedback(
         score=feedback.score,
         comment=feedback.comment,
     )
+
+
+@router.get("/export")
+async def export_conversations(
+    conversation_id: Optional[int] = None,
+    session: AsyncSession = Depends(get_session),
+):
+    conversations = []
+    if conversation_id is not None:
+        try:
+            conversation, messages = await get_conversation_history(
+                session=session,
+                conversation_id=conversation_id,
+            )
+        except ValueError:
+            raise HTTPException(status_code=404, detail="Conversation not found")
+
+        message_ids = [m.id for m in messages]
+        context_map = await get_answer_contexts_for_messages(
+            session=session,
+            message_ids=message_ids,
+        )
+        conversations.append(
+            {
+                "id": conversation.id,
+                "title": conversation.title,
+                "created_at": conversation.created_at.isoformat(),
+                "messages": [
+                    {
+                        "id": m.id,
+                        "role": m.role,
+                        "content": m.content,
+                        "created_at": m.created_at.isoformat(),
+                        "confidence": m.confidence,
+                        "rag_iterations": m.rag_iterations,
+                        "contexts": [
+                            {
+                                "source": ctx.source,
+                                "chunk_id": ctx.chunk_id,
+                                "content": ctx.content,
+                            }
+                            for ctx in context_map.get(m.id, [])
+                        ],
+                    }
+                    for m in messages
+                ],
+            }
+        )
+    else:
+        conversations_list = await get_all_conversations(
+            session=session,
+            offset=0,
+            limit=10000,
+        )
+        for conv in conversations_list:
+            conversation, messages = await get_conversation_history(
+                session=session,
+                conversation_id=conv.id,
+            )
+            message_ids = [m.id for m in messages]
+            context_map = await get_answer_contexts_for_messages(
+                session=session,
+                message_ids=message_ids,
+            )
+            conversations.append(
+                {
+                    "id": conversation.id,
+                    "title": conversation.title,
+                    "created_at": conversation.created_at.isoformat(),
+                    "messages": [
+                        {
+                            "id": m.id,
+                            "role": m.role,
+                            "content": m.content,
+                            "created_at": m.created_at.isoformat(),
+                            "confidence": m.confidence,
+                            "rag_iterations": m.rag_iterations,
+                            "contexts": [
+                                {
+                                    "source": ctx.source,
+                                    "chunk_id": ctx.chunk_id,
+                                    "content": ctx.content,
+                                }
+                                for ctx in context_map.get(m.id, [])
+                            ],
+                        }
+                        for m in messages
+                    ],
+                }
+            )
+
+    return {"conversations": conversations}

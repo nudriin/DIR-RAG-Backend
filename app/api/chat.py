@@ -8,7 +8,8 @@ from app.core.logging import get_logger
 from app.rag.rag_pipeline import run_rag_pipeline
 from app.db.crud import add_message, create_conversation
 from app.db.engine import get_session
-from app.db.models import Conversation
+from app.db.models import Conversation, AnswerContext
+from app.data.vector_store import vector_store_manager
 from app.schemas.chat_schema import (
     ChatRequest,
     ChatResponseWithTrace,
@@ -75,7 +76,7 @@ async def chat_endpoint(
             content=payload.query,
         )
 
-        await add_message(
+        assistant_message = await add_message(
             session=session,
             conversation_id=conversation.id,
             role="assistant",
@@ -83,6 +84,34 @@ async def chat_endpoint(
             confidence=rag_result.confidence,
             rag_iterations=rag_result.iterations,
         )
+
+        context_records = []
+        seen_keys = set()
+        for src in rag_result.sources:
+            source = src.get("source")
+            chunk_id = src.get("chunk_id")
+            key = (source, chunk_id)
+            if not source or key in seen_keys:
+                continue
+            seen_keys.add(key)
+            docs = vector_store_manager.get_documents_by_source(source)
+            for _, doc in docs:
+                meta_chunk = doc.metadata.get("chunk_id")
+                if chunk_id is not None and meta_chunk != chunk_id:
+                    continue
+                context_records.append(
+                    AnswerContext(
+                        message_id=assistant_message.id,
+                        source=source,
+                        chunk_id=chunk_id,
+                        content=doc.page_content,
+                    )
+                )
+                if chunk_id is not None:
+                    break
+
+        if context_records:
+            session.add_all(context_records)
 
         await session.commit()
         conversation_id = conversation.id

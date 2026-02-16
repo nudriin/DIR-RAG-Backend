@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import Conversation, Message, Feedback
+from app.db.models import Conversation, Message, Feedback, AnswerContext
 
 
 async def create_conversation(
@@ -77,6 +77,25 @@ async def get_all_conversations(
     )
     result = await session.execute(stmt)
     return list(result.scalars().all())
+
+
+async def get_answer_contexts_for_messages(
+    session: AsyncSession,
+    message_ids: List[int],
+) -> Dict[int, List[AnswerContext]]:
+    if not message_ids:
+        return {}
+    stmt: Select[AnswerContext] = (
+        select(AnswerContext)
+        .where(AnswerContext.message_id.in_(message_ids))
+        .order_by(AnswerContext.id)
+    )
+    result = await session.execute(stmt)
+    contexts = list(result.scalars().all())
+    grouped: Dict[int, List[AnswerContext]] = {}
+    for ctx in contexts:
+        grouped.setdefault(ctx.message_id, []).append(ctx)
+    return grouped
 
 
 async def get_dashboard_stats(session: AsyncSession) -> Dict[str, Any]:

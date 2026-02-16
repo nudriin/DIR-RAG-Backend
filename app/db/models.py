@@ -51,3 +51,15 @@ class Feedback(Base):
     )
     score: Mapped[int] = mapped_column(Integer)
     comment: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+
+class AnswerContext(Base):
+    __tablename__ = "answer_contexts"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    message_id: Mapped[int] = mapped_column(
+        ForeignKey("messages.id", ondelete="CASCADE"), index=True
+    )
+    source: Mapped[str] = mapped_column(String(255))
+    chunk_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    content: Mapped[str] = mapped_column(Text)
