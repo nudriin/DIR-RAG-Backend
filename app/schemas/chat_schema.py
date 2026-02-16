@@ -5,6 +5,10 @@ from pydantic import BaseModel, Field
 
 class ChatRequest(BaseModel):
     query: str = Field(..., description="Pertanyaan mentah dari pengguna.")
+    conversation_id: int | None = Field(
+        default=None,
+        description="ID percakapan sebelumnya (jika ingin melanjutkan).",
+    )
 
 
 class SourceInfo(BaseModel):
@@ -18,6 +22,7 @@ class ChatResponse(BaseModel):
     sources: List[SourceInfo]
     iterations: int
     confidence: float
+    conversation_id: int
 
 
 class IngestResponse(BaseModel):
