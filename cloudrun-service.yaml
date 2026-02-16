@@ -8,22 +8,22 @@ spec:
       annotations:
         run.googleapis.com/client-name: gcloud
         run.googleapis.com/cloudsql-instances: ""
+        run.googleapis.com/execution-environment: gen2
     spec:
       containers:
-        - image: asia-southeast2-docker.pkg.dev/PROJECT_ID/dir-rag-backend/dir-rag-backend:TAG
+        - image: asia-southeast2-docker.pkg.dev/gen-lang-client-0221576884/dir-rag-backend/dir-rag-backend:latest
           ports:
             - containerPort: 8080
           env:
-            - name: PORT
-              value: "8080"
             - name: GOOGLE_CLOUD_PROJECT
-              value: PROJECT_ID
+              value: gen-lang-client-0221576884
           volumeMounts:
             - name: chroma-storage
               mountPath: /app/storage/vectors
       volumes:
         - name: chroma-storage
-          cloudStorage:
-            bucket: PROJECT_ID-chroma-vectors
+          csi:
+            driver: gcsfuse.run.googleapis.com
             readOnly: false
-
+            volumeAttributes:
+              bucketName: gen-lang-client-0221576884-chroma-vectors
