@@ -24,6 +24,51 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/api", tags=["chat"])
 
 
+def _is_greeting(text: str) -> bool:
+    normalized = text.strip().lower()
+    if not normalized:
+        return False
+    simple_greetings = {
+        "hi",
+        "hai",
+        "halo",
+        "hello",
+        "pagi",
+        "selamat pagi",
+        "selamat siang",
+        "selamat sore",
+        "selamat malam",
+        "malam",
+        "siang",
+        "assalamualaikum",
+        "assalamu'alaikum",
+        "assalamualaikum wr wb",
+        "assalamualaikum wr. wb.",
+    }
+    if normalized in simple_greetings:
+        return True
+    if len(normalized) <= 20 and any(normalized.startswith(g) for g in simple_greetings):
+        if "?" not in normalized:
+            return True
+    return False
+
+
+def _is_low_signal(text: str) -> bool:
+    normalized = text.strip()
+    if not normalized:
+        return True
+    if "?" in normalized:
+        return False
+    if len(normalized) <= 1:
+        return True
+    if len(normalized) <= 4:
+        return True
+    letters = sum(1 for c in normalized if c.isalpha())
+    if letters and letters <= 3 and len(normalized) <= 10:
+        return True
+    return False
+
+
 @router.post(
     "/chat",
     response_model=ChatResponseWithTrace,
@@ -33,32 +78,79 @@ async def chat_endpoint(
     payload: ChatRequest,
     session: AsyncSession = Depends(get_session),
 ) -> ChatResponseWithTrace:
-    rag_result = await asyncio.to_thread(run_rag_pipeline, payload.query)
+    query_text = payload.query or ""
 
-    trace_models = [
-        DebugTrace(
-            iteration=t.iteration,
-            refined_query=t.refined_query,
-            num_documents=t.num_documents,
-            retrieve=t.decision.should_retry,
-            retrieval_confidence=t.decision.confidence,
-            reason=t.decision.reason,
-            raw_query=None,
+    bypass_reason: str | None = None
+    if _is_greeting(query_text):
+        bypass_reason = "GREETING_BYPASS"
+    elif _is_low_signal(query_text):
+        bypass_reason = "LOW_SIGNAL_BYPASS"
+
+    if bypass_reason is not None:
+        if bypass_reason == "GREETING_BYPASS":
+            answer_text = "Halo! Saya Humbet AI. Silakan ajukan pertanyaan terkait materi atau dokumen kamu, nanti saya bantu mencarikan jawabannya."
+        else:
+            answer_text = "Sepertinya pesanmu belum cukup jelas. Coba jelaskan pertanyaanmu lebih lengkap agar saya bisa membantu dengan tepat."
+        sources: list[dict] = []
+        iterations = 0
+        confidence = 1.0
+        trace_models: list[DebugTrace] = []
+        debug_logs = {
+            "rq_rag": {
+                "refined_query": query_text,
+                "sub_queries": [],
+                "docs_retrieved": 0,
+                "source_per_query": {},
+                "refinement_type": bypass_reason,
+            },
+            "iterations": [],
+            "final_status": {
+                "stop_reason": bypass_reason,
+                "is_fallback": False,
+                "entropy_history": [],
+            },
+        }
+
+        logger.info(
+            "Chat bypassed RAG",
+            extra={
+                "query": query_text,
+                "reason": bypass_reason,
+            },
         )
-        for t in rag_result.traces
-    ]
+    else:
+        rag_result = await asyncio.to_thread(run_rag_pipeline, query_text)
 
-    logger.info(
-        "Chat request handled",
-        extra={
-            "query": payload.query,
-            "iterations": rag_result.iterations,
-            "confidence": rag_result.confidence,
-        },
-    )
+        trace_models = [
+            DebugTrace(
+                iteration=t.iteration,
+                refined_query=t.refined_query,
+                num_documents=t.num_documents,
+                retrieve=t.decision.should_retry,
+                retrieval_confidence=t.decision.confidence,
+                reason=t.decision.reason,
+                raw_query=None,
+            )
+            for t in rag_result.traces
+        ]
+
+        answer_text = rag_result.answer
+        sources = rag_result.sources
+        iterations = rag_result.iterations
+        confidence = rag_result.confidence
+        debug_logs = rag_result.debug_logs
+
+        logger.info(
+            "Chat request handled",
+            extra={
+                "query": query_text,
+                "iterations": iterations,
+                "confidence": confidence,
+            },
+        )
     try:
         if payload.conversation_id is None:
-            title = payload.query.strip()
+            title = query_text.strip()
             if len(title) > 100:
                 title = title[:100]
             conversation = await create_conversation(
@@ -74,21 +166,21 @@ async def chat_endpoint(
             session=session,
             conversation_id=conversation.id,
             role="user",
-            content=payload.query,
+            content=query_text,
         )
 
         assistant_message = await add_message(
             session=session,
             conversation_id=conversation.id,
             role="assistant",
-            content=rag_result.answer,
-            confidence=rag_result.confidence,
-            rag_iterations=rag_result.iterations,
+            content=answer_text,
+            confidence=confidence,
+            rag_iterations=iterations,
         )
 
         context_records = []
         seen_keys = set()
-        for src in rag_result.sources:
+        for src in sources:
             source = src.get("source")
             chunk_id = src.get("chunk_id")
             key = (source, chunk_id)
@@ -122,13 +214,13 @@ async def chat_endpoint(
         conversation_id = payload.conversation_id or -1
 
     return ChatResponseWithTrace(
-        answer=rag_result.answer,
-        sources=rag_result.sources,
-        iterations=rag_result.iterations,
-        confidence=rag_result.confidence,
+        answer=answer_text,
+        sources=sources,
+        iterations=iterations,
+        confidence=confidence,
         conversation_id=conversation_id,
         trace=trace_models,
-        debug_logs=rag_result.debug_logs,
+        debug_logs=debug_logs,
     )
 
 
