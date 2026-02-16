@@ -4,7 +4,7 @@ import replicate
 import time
 
 from app.core.config import get_settings
-from app.core.logging import get_logger
+from app.core.logging import get_logger, broadcast_event
 
 logger = get_logger(__name__)
 
@@ -39,6 +39,13 @@ def refine_query(query: str, draft_answer: Optional[str] = None) -> RefinedQuery
     2. Rumuskan kueri baru yang menargetkan celah informasi tersebut.
     3. Jika ada klaim tanpa sumber, buat sub_query untuk memverifikasinya.
     """
+
+    broadcast_event(
+        stage="rq_rag",
+        action="start",
+        summary="Memulai Query Refinement",
+        details={"original_query": query},
+    )
 
     prompt = f"""
     Kamu adalah pakar optimasi kueri RAG untuk domain sistem informasi "Huma Betang".
@@ -93,6 +100,15 @@ def refine_query(query: str, draft_answer: Optional[str] = None) -> RefinedQuery
         }
 
         logger.info(f"RQ-RAG Refinement Success: {result['refinement_type']}")
+        broadcast_event(
+                stage="rq_rag",
+                action="complete",
+                summary=f"Refinement {result['refinement_type']}",
+                details={
+                    "refined_query": result["refined_query"],
+                    "sub_queries_count": len(result["sub_queries"]),
+                },
+            )
         return result
 
     except Exception as exc:

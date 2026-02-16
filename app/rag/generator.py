@@ -5,7 +5,7 @@ import replicate
 from langchain_core.documents import Document
 
 from app.core.config import get_settings
-from app.core.logging import get_logger
+from app.core.logging import get_logger, broadcast_event
 from app.rag.retriever import rerank_documents
 
 logger = get_logger(__name__)
@@ -149,6 +149,12 @@ def generate_answer(
             "model": settings.llm_model,
         },
     )
+    broadcast_event(
+        stage="generation",
+        action="answer",
+        summary="Jawaban akhir digenerate",
+        details={"num_sources": len(sources)},
+    )
 
     return answer_text, sources
 
@@ -247,6 +253,12 @@ def generate_paragraph(
             "llm_backend": "replicate",
             "model": settings.llm_model,
         },
+    )
+    broadcast_event(
+        stage="generation",
+        action="paragraph",
+        summary="Paragraf digenerate",
+        details={"preview": paragraph_text[:120], "num_sources": len(sources)},
     )
 
     return paragraph_text, sources

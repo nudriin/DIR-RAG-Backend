@@ -3,7 +3,7 @@ from typing import List, Tuple
 from langchain_core.documents import Document
 
 from app.core.config import get_settings
-from app.core.logging import get_logger
+from app.core.logging import get_logger, broadcast_event
 from app.data.vector_store import vector_store_manager
 
 
@@ -26,6 +26,12 @@ def retrieve_documents(query: str) -> List[Document]:
             "num_documents": len(documents),
         },
     )
+    broadcast_event(
+        stage="retrieval",
+        action="initial",
+        summary="Retrieval dokumen awal",
+        details={"query": query, "top_k": settings.similarity_top_k, "num_documents": len(documents)},
+    )
 
     return documents
 
@@ -45,6 +51,12 @@ def retrieve_documents_with_scores(
             "num_results": len(results),
         },
     )
+    broadcast_event(
+        stage="retrieval",
+        action="scored",
+        summary="Retrieval dokumen dengan skor",
+        details={"query": query, "top_k": k, "num_results": len(results)},
+    )
     return results
 
 
@@ -54,13 +66,6 @@ def rerank_documents(
     top_n: int = 5,
     min_score: float | None = None,
 ) -> List[Document]:
-    """Rerank documents menggunakan cross-encoder multilingual.
-
-    Perbaikan dari versi lama:
-    1. Model diganti ke multilingual (support Bahasa Indonesia).
-    2. Deduplikasi berdasarkan konten sebelum reranking.
-    3. Filter min_score untuk buang dokumen yang benar-benar tidak relevan.
-    """
     if not documents:
         return []
 
@@ -82,21 +87,57 @@ def rerank_documents(
         return []
 
     try:
+        import os
+        import inspect
+        import numpy as np
         from sentence_transformers import CrossEncoder
 
-        model_name = "cross-encoder/ms-marco-multilingual-MiniLM-L6-v2"
-        cross_encoder = CrossEncoder(model_name)
+        primary_model = settings.reranker_model
+        fallback_model = "cross-encoder/ms-marco-MiniLM-L6-v2"
+        token = settings.hf_token
+        if token:
+            os.environ.setdefault("HUGGINGFACE_HUB_TOKEN", token)
+
+        ce_kwargs = {}
+        sig = inspect.signature(CrossEncoder)
+        if token and "token" in sig.parameters:
+            ce_kwargs["token"] = token
+        elif token and "use_auth_token" in sig.parameters:
+            ce_kwargs["use_auth_token"] = token
+
+        def build_cross_encoder(model_name: str) -> CrossEncoder:
+            return CrossEncoder(model_name, **ce_kwargs)
+
+        try:
+            cross_encoder = build_cross_encoder(primary_model)
+            model_used = primary_model
+        except Exception as init_exc:
+            if primary_model != fallback_model:
+                cross_encoder = build_cross_encoder(fallback_model)
+                model_used = fallback_model
+            else:
+                raise init_exc
 
         pairs = [(query, d.page_content) for d in unique_docs]
-        scores = cross_encoder.predict(pairs)
+        raw_scores = cross_encoder.predict(pairs)
+        scores: List[float] = []
+        for s in raw_scores:
+            if hasattr(s, "shape"):
+                arr = np.asarray(s)
+                if arr.size == 1:
+                    scores.append(float(arr.item()))
+                else:
+                    scores.append(float(arr.max()))
+            else:
+                scores.append(float(s))
 
         scored = list(zip(unique_docs, scores))
-        scored.sort(key=lambda x: float(x[1]), reverse=True)
+        scored.sort(key=lambda x: x[1], reverse=True)
 
         # Filter berdasarkan skor minimum
         reranked = [
             doc for doc, score in scored[:max(1, top_n)]
-            if float(score) >= min_score
+            if score >= min_score
         ]
 
         # Jika semua difilter, tetap kembalikan top-1
@@ -107,6 +148,21 @@ def rerank_documents(
             "Reranked documents (multilingual)",
             extra={
                 "query": query,
+                "model": model_used,
+                "top_n": top_n,
+                "num_input_docs": len(documents),
+                "num_unique": len(unique_docs),
+                "num_after_rerank": len(reranked),
+                "min_score": min_score,
+            },
+        )
+        broadcast_event(
+            stage="reranker",
+            action="complete",
+            summary="Reranker selesai",
+            details={
+                "query": query,
+                "model": model_used,
                 "top_n": top_n,
                 "num_input_docs": len(documents),
                 "num_unique": len(unique_docs),
@@ -119,5 +175,11 @@ def rerank_documents(
         logger.warning(
             "Reranker unavailable, using original order",
             extra={"error": str(exc), "top_n": top_n, "num_input_docs": len(documents)},
+        )
+        broadcast_event(
+            stage="reranker",
+            action="fallback",
+            summary="Reranker tidak tersedia, gunakan urutan awal",
+            details={"error": str(exc), "top_n": top_n, "num_input_docs": len(documents)},
         )
         return unique_docs[:max(1, top_n)]

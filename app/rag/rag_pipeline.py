@@ -17,7 +17,7 @@ from typing import Any, Dict, List
 from langchain_core.documents import Document
 
 from app.core.config import get_settings
-from app.core.logging import get_logger
+from app.core.logging import get_logger, broadcast_event
 from app.rag.dynamic_decision import DRAGINResult, generate_with_dragin
 from app.rag.query_refinement import RefinedQuery, refine_query
 from app.rag.retriever import (
@@ -108,6 +108,12 @@ def run_rag_pipeline(query: str) -> RAGResult:
     # ======================================================================
     # PHASE 1 — RQ-RAG: Query Refinement
     # ======================================================================
+    broadcast_event(
+        stage="rq_rag",
+        action="start",
+        summary="Memulai Query Refinement",
+        details={"original_query": query},
+    )
     rq: RefinedQuery = refine_query(query)
     sub_queries: List[str] = rq.get("sub_queries", []) or []
     search_queries: List[str] = [rq["refined_query"]] + sub_queries
@@ -118,6 +124,12 @@ def run_rag_pipeline(query: str) -> RAGResult:
             "refinement_type": rq.get("refinement_type", "REWRITE"),
             "num_sub_queries": len(sub_queries),
         },
+    )
+    broadcast_event(
+        stage="rq_rag",
+        action="complete",
+        summary=f"Refinement {rq.get('refinement_type', 'REWRITE')}",
+        details={"refined_query": rq["refined_query"], "sub_queries_count": len(sub_queries)},
     )
 
     # ======================================================================
@@ -142,10 +154,24 @@ def run_rag_pipeline(query: str) -> RAGResult:
             for doc, _ in results
             if doc.metadata.get("source")
         ))
+        broadcast_event(
+            stage="retrieval",
+            action="scored",
+            summary=f"Retrieval {label}",
+            details={"query": sq, "top_k": settings.similarity_top_k, "num_results": len(results)},
+        )
 
     # Deduplikasi dan rerank menggunakan refined_query
     raw_anchor_docs: List[Document] = [doc for doc, _ in anchor_results]
+    before_prune = len(raw_anchor_docs)
     all_documents = _prune_context(raw_anchor_docs, query=rq["refined_query"])
+    after_prune = len(all_documents)
+    broadcast_event(
+        stage="reranker",
+        action="prune",
+        summary="Konteks dipangkas oleh reranker",
+        details={"discarded": max(0, before_prune - after_prune), "kept": after_prune},
+    )
 
     debug_logs["rq_rag"] = {
         "refined_query": rq["refined_query"],
@@ -167,6 +193,12 @@ def run_rag_pipeline(query: str) -> RAGResult:
 
     for iteration in range(1, max_dragin_iter + 1):
         logger.info(f"Reasoning loop iteration {iteration}/{max_dragin_iter}")
+        broadcast_event(
+            stage="iter_retgen",
+            action="start",
+            summary=f"Reasoning loop {iteration}/{max_dragin_iter}",
+            details={"current_query": current_query},
+        )
 
         # --- DRAGIN: Generate + Evaluate ---
         dragin_result = generate_with_dragin(
@@ -175,6 +207,17 @@ def run_rag_pipeline(query: str) -> RAGResult:
             sub_queries=sub_queries,
         )
         entropy_history.append(dragin_result.entropy)
+        broadcast_event(
+            stage="dragin",
+            action="gate",
+            summary="Evaluasi DRAGIN",
+            details={
+                "entropy": float(dragin_result.entropy),
+                "confidence": float(dragin_result.confidence),
+                "should_retry": bool(dragin_result.should_retry),
+                "reason": dragin_result.reason,
+            },
+        )
 
         # Trace
         traces.append(
@@ -229,6 +272,12 @@ def run_rag_pipeline(query: str) -> RAGResult:
                 f"≤ threshold={settings.dragin_threshold})"
             )
             logger.info(f"Reasoning loop stopped: {stop_reason}")
+            broadcast_event(
+                stage="generation",
+                action="final_answer",
+                summary="Jawaban akhir (confident)",
+                details={"num_sources": len(final_sources)},
+            )
             break
 
         # Entropy tinggi → cek apakah masih bisa iterasi
@@ -241,6 +290,12 @@ def run_rag_pipeline(query: str) -> RAGResult:
                 f"final entropy={dragin_result.entropy:.4f}"
             )
             logger.info(f"Reasoning loop stopped: {stop_reason}")
+            broadcast_event(
+                stage="generation",
+                action="final_answer",
+                summary="Jawaban akhir (max iter)",
+                details={"num_sources": len(final_sources)},
+            )
             break
 
         # --- Re-refine via RQ-RAG (bridge semantic gaps) ---
@@ -252,6 +307,12 @@ def run_rag_pipeline(query: str) -> RAGResult:
         expanded_queries = [refined_next["refined_query"]] + (
             refined_next.get("sub_queries", []) or []
         )
+        broadcast_event(
+            stage="rq_rag",
+            action="iter_refine",
+            summary="Refinement lanjutan untuk menutup celah informasi",
+            details={"refined_query": refined_next["refined_query"], "sub_queries_count": len(refined_next.get("sub_queries", []) or [])},
+        )
 
         # --- Gap Retrieval ---
         gap_docs: List[Document] = []
@@ -261,6 +322,12 @@ def run_rag_pipeline(query: str) -> RAGResult:
         new_docs_found = len(gap_docs)
         if gap_docs:
             all_documents.extend(gap_docs)
+        broadcast_event(
+            stage="retrieval",
+            action="gap_retrieval",
+            summary="Retrieval tambahan berdasarkan draf",
+            details={"new_docs_found": int(new_docs_found)},
+        )
 
         # --- Prune (dengan refined query, bukan draft) ---
         before_prune = len(all_documents)
@@ -269,6 +336,12 @@ def run_rag_pipeline(query: str) -> RAGResult:
             query=refined_next["refined_query"],
         )
         after_prune = len(all_documents)
+        broadcast_event(
+            stage="reranker",
+            action="prune",
+            summary="Konteks dipangkas oleh reranker",
+            details={"discarded": max(0, before_prune - after_prune), "kept": after_prune},
+        )
 
         # Update debug log untuk iterasi ini
         debug_logs["iterations"][-1]["rq_dragin"]["new_docs_found"] = new_docs_found
@@ -289,6 +362,12 @@ def run_rag_pipeline(query: str) -> RAGResult:
             "is_fallback": True,
             "entropy_history": [float(x) for x in entropy_history],
         }
+        broadcast_event(
+            stage="final_status",
+            action="fallback",
+            summary="Jawaban fallback karena konteks tidak valid",
+            details={"stop_reason": stop_reason},
+        )
         return RAGResult(
             answer="Tidak ada informasi tersedia untuk pertanyaan tersebut",
             sources=[],
@@ -304,6 +383,12 @@ def run_rag_pipeline(query: str) -> RAGResult:
         "is_fallback": False,
         "entropy_history": [float(x) for x in entropy_history],
     }
+    broadcast_event(
+        stage="final_status",
+        action="complete",
+        summary="Pipeline RAG selesai",
+        details={"stop_reason": stop_reason, "iterations": len(traces)},
+    )
 
     return RAGResult(
         answer=final_answer.strip(),
