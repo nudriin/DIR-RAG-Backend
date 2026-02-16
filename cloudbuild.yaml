@@ -1,0 +1,37 @@
+substitutions:
+  _SERVICE_NAME: dir-rag-backend
+  _REGION: asia-southeast2
+  _REPO_NAME: dir-rag-backend
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - "-t"
+      - "asia-southeast2-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/${_SERVICE_NAME}:$SHORT_SHA"
+      - "."
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - "asia-southeast2-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/${_SERVICE_NAME}:$SHORT_SHA"
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - run
+      - deploy
+      - "${_SERVICE_NAME}"
+      - "--image=asia-southeast2-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/${_SERVICE_NAME}:$SHORT_SHA"
+      - "--region=${_REGION}"
+      - "--platform=managed"
+      - "--min-instances=0"
+      - "--max-instances=3"
+      - "--cpu=1"
+      - "--memory=512Mi"
+      - "--port=8080"
+      - "--allow-unauthenticated"
+
+images:
+  - "asia-southeast2-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/${_SERVICE_NAME}:$SHORT_SHA"
+

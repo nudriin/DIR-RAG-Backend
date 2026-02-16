@@ -1,11 +1,17 @@
 from pathlib import Path
+import os
 
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
 
-DB_PATH = Path("storage") / "chat_history.db"
-DB_URL = f"sqlite+aiosqlite:///{DB_PATH}"
+DATABASE_URL = os.getenv("DATABASE_URL")
+if DATABASE_URL:
+    DB_URL = DATABASE_URL
+    DB_PATH = None
+else:
+    DB_PATH = Path("storage") / "chat_history.db"
+    DB_URL = f"sqlite+aiosqlite:///{DB_PATH}"
 
 
 class Base(DeclarativeBase):
@@ -17,7 +23,8 @@ AsyncSessionLocal: async_sessionmaker[AsyncSession] | None = None
 
 
 def _ensure_storage_dir() -> None:
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if DB_PATH is not None:
+        DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 
 def get_engine() -> AsyncEngine:
