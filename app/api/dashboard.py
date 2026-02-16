@@ -10,8 +10,10 @@ from app.db.crud import (
     get_all_conversations,
     get_conversation_history,
     get_dashboard_stats,
+    add_feedback,
 )
 from app.db.engine import get_session
+from app.db.models import Message
 
 
 logger = get_logger(__name__)
@@ -46,6 +48,21 @@ class DashboardStats(BaseModel):
     total_messages: int
     avg_confidence: Optional[float] = None
     last_activity: Optional[str] = None
+    total_feedback: int
+    avg_feedback_score: Optional[float] = None
+
+
+class FeedbackRequest(BaseModel):
+    message_id: int
+    score: int
+    comment: Optional[str] = None
+
+
+class FeedbackResponse(BaseModel):
+    id: int
+    message_id: int
+    score: int
+    comment: Optional[str] = None
 
 
 @router.get("/history", response_model=List[ConversationSummary])
@@ -106,3 +123,30 @@ async def dashboard_stats(
 ):
     stats = await get_dashboard_stats(session=session)
     return DashboardStats(**stats)
+
+
+@router.post("/feedback", response_model=FeedbackResponse)
+async def submit_feedback(
+    payload: FeedbackRequest,
+    session: AsyncSession = Depends(get_session),
+):
+    message = await session.get(Message, payload.message_id)
+    if message is None:
+        raise HTTPException(status_code=404, detail="Message not found")
+    if message.role != "assistant":
+        raise HTTPException(status_code=400, detail="Feedback hanya untuk jawaban assistant")
+
+    feedback = await add_feedback(
+        session=session,
+        message_id=payload.message_id,
+        score=payload.score,
+        comment=payload.comment,
+    )
+    await session.commit()
+
+    return FeedbackResponse(
+        id=feedback.id,
+        message_id=feedback.message_id,
+        score=feedback.score,
+        comment=feedback.comment,
+    )

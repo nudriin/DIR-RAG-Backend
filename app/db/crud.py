@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import Conversation, Message
+from app.db.models import Conversation, Message, Feedback
 
 
 async def create_conversation(
@@ -83,10 +83,14 @@ async def get_dashboard_stats(session: AsyncSession) -> Dict[str, Any]:
     total_conversations_stmt = select(func.count(Conversation.id))
     total_messages_stmt = select(func.count(Message.id))
     avg_confidence_stmt = select(func.avg(Message.confidence))
+    total_feedback_stmt = select(func.count(Feedback.id))
+    avg_feedback_score_stmt = select(func.avg(Feedback.score))
 
     total_conversations = (await session.execute(total_conversations_stmt)).scalar() or 0
     total_messages = (await session.execute(total_messages_stmt)).scalar() or 0
     avg_confidence = (await session.execute(avg_confidence_stmt)).scalar()
+    total_feedback = (await session.execute(total_feedback_stmt)).scalar() or 0
+    avg_feedback_score = (await session.execute(avg_feedback_score_stmt)).scalar()
 
     last_activity_stmt = select(func.max(Message.created_at))
     last_activity = (await session.execute(last_activity_stmt)).scalar()
@@ -96,4 +100,23 @@ async def get_dashboard_stats(session: AsyncSession) -> Dict[str, Any]:
         "total_messages": int(total_messages),
         "avg_confidence": float(avg_confidence) if avg_confidence is not None else None,
         "last_activity": last_activity.isoformat() if isinstance(last_activity, datetime) else None,
+        "total_feedback": int(total_feedback),
+        "avg_feedback_score": float(avg_feedback_score) if avg_feedback_score is not None else None,
     }
+
+
+async def add_feedback(
+    session: AsyncSession,
+    message_id: int,
+    score: int,
+    comment: Optional[str] = None,
+) -> Feedback:
+    feedback = Feedback(
+        message_id=message_id,
+        score=score,
+        comment=comment,
+    )
+    session.add(feedback)
+    await session.flush()
+    await session.refresh(feedback)
+    return feedback
