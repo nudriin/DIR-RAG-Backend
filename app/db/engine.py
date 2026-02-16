@@ -45,7 +45,12 @@ async def get_session() -> AsyncSession:
 
 async def init_db() -> None:
     from app.db import models  # noqa: F401
+    from app.db.seed import seed_default_admin
 
     eng = get_engine()
     async with eng.begin() as conn:
         await conn.run_sync(models.Base.metadata.create_all)
+
+    assert AsyncSessionLocal is not None
+    async with AsyncSessionLocal() as session:
+        await seed_default_admin(session)

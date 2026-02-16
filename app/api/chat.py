@@ -5,6 +5,7 @@ import asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import get_logger
+from app.core.auth import optional_current_user
 from app.rag.rag_pipeline import run_rag_pipeline
 from app.db.crud import add_message, create_conversation
 from app.db.engine import get_session

@@ -1,8 +1,9 @@
 from typing import List
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 
 from app.core.logging import get_logger
+from app.core.auth import check_role
 from app.data.vector_store import vector_store_manager
 from app.schemas.chat_schema import (
     IngestResponse,
@@ -18,7 +19,11 @@ from app.schemas.chat_schema import (
 
 logger = get_logger(__name__)
 
-router = APIRouter(prefix="/api", tags=["ingest"])
+router = APIRouter(
+    prefix="/api",
+    tags=["ingest"],
+    dependencies=[Depends(check_role("admin"))],
+)
 
 
 async def _extract_text_from_pdf(file: UploadFile) -> str:

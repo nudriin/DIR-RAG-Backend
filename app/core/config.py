@@ -1,6 +1,6 @@
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import List, Literal
 
 from pydantic import Field
 from pydantic_settings import BaseSettings
@@ -40,6 +40,23 @@ class Settings(BaseSettings):
 
     max_iterations: int = Field(default=2, env="MAX_ITERATIONS")
     similarity_top_k: int = Field(default=5, env="SIMILARITY_TOP_K")
+
+    jwt_secret_key: str = Field(default="change-me", env="JWT_SECRET_KEY")
+    jwt_algorithm: str = Field(default="HS256", env="JWT_ALGORITHM")
+    access_token_exp_hours: int = Field(default=24, env="ACCESS_TOKEN_EXP_HOURS")
+    refresh_token_exp_days: int = Field(default=7, env="REFRESH_TOKEN_EXP_DAYS")
+
+    admin_register_rate_limit_per_hour: int = Field(
+        default=5, env="ADMIN_REGISTER_RATE_LIMIT_PER_HOUR"
+    )
+
+    cors_allow_origins: List[str] = Field(
+        default=["*"], env="CORS_ALLOW_ORIGINS"
+    )
+
+    default_admin_password: str | None = Field(
+        default=None, env="DEFAULT_ADMIN_PASSWORD"
+    )
 
     dragin_threshold: float = Field(default=0.5, env="DRAGIN_THRESHOLD")
     dragin_max_iterations: int = Field(default=2, env="DRAGIN_MAX_ITERATIONS")

@@ -1,8 +1,9 @@
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from app.core.logging import get_logger
+from app.core.auth import check_role
 from app.evaluation.ragas_eval import run_ragas_evaluation
 from app.evaluation.retrieval_metrics import evaluate_retrieval_batch
 from app.schemas.chat_schema import EvaluateRequest, EvaluateResponse
@@ -10,7 +11,11 @@ from app.schemas.chat_schema import EvaluateRequest, EvaluateResponse
 
 logger = get_logger(__name__)
 
-router = APIRouter(prefix="/api", tags=["evaluate"])
+router = APIRouter(
+    prefix="/api",
+    tags=["evaluate"],
+    dependencies=[Depends(check_role("admin"))],
+)
 
 
 @router.post("/evaluate", response_model=EvaluateResponse)

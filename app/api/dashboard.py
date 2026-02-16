@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import get_logger
+from app.core.auth import check_role
 from app.db.crud import (
     get_all_conversations,
     get_conversation_history,
@@ -21,7 +22,11 @@ from app.db.models import Message
 
 logger = get_logger(__name__)
 
-router = APIRouter(prefix="/api", tags=["dashboard"])
+router = APIRouter(
+    prefix="/api",
+    tags=["dashboard"],
+    dependencies=[Depends(check_role("admin"))],
+)
 
 
 def to_wib(dt: datetime | None) -> datetime | None:
