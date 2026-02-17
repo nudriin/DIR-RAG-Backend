@@ -16,9 +16,8 @@ gcloud run deploy "${SERVICE_NAME}" \
   --region="${REGION}" \
   --platform=managed \
   --min-instances=0 \
-  --max-instances=3 \
+  --max-instances=1 \
   --cpu=1 \
-  --memory=512Mi \
+  --memory=4Gi \
   --port=8080 \
   --allow-unauthenticated
-

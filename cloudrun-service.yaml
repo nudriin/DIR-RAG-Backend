@@ -20,7 +20,7 @@ spec:
           resources:
             limits:
               cpu: "1"
-              memory: "2Gi"
+              memory: "4Gi"
           volumeMounts:
             - name: chroma-storage
               mountPath: /app/storage/vectors
