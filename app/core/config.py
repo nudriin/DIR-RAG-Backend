@@ -33,6 +33,8 @@ class Settings(BaseSettings):
     hf_token: str | None = Field(default=None, env="HF_TOKEN")
     enable_dragin: bool = Field(default=True, env="ENABLE_DRAGIN")
 
+    database_url: str | None = Field(default=None, env="DATABASE_URL")
+
     # DRAGIN LLM backend: "openai" atau "gemini"
     dragin_llm_backend: str = Field(default="openai", env="DRAGIN_LLM_BACKEND")
     gemini_model: str = Field(default="gemini-2.0-flash", env="GEMINI_MODEL")

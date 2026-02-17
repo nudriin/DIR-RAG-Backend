@@ -17,6 +17,10 @@ spec:
           env:
             - name: GOOGLE_CLOUD_PROJECT
               value: gen-lang-client-0221576884
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
           volumeMounts:
             - name: chroma-storage
               mountPath: /app/storage/vectors

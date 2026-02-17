@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-PROJECT_ID=${PROJECT_ID:-"your-gcp-project-id"}
+PROJECT_ID=${PROJECT_ID:-"gen-lang-client-0221576884"}
 REGION=${REGION:-"asia-southeast2"}
 SERVICE_NAME=${SERVICE_NAME:-"dir-rag-backend"}
 REPO_NAME=${REPO_NAME:-"dir-rag-backend"}
