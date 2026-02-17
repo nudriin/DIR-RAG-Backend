@@ -1,11 +1,23 @@
 from pathlib import Path
+import os
 
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
+from app.core.config import get_settings
 
-DB_PATH = Path("storage") / "chat_history.db"
-DB_URL = f"sqlite+aiosqlite:///{DB_PATH}"
+
+_settings = get_settings()
+_env_database_url = os.getenv("DATABASE_URL")
+if _settings.database_url:
+    DB_URL = _settings.database_url
+    DB_PATH = None
+elif _env_database_url:
+    DB_URL = _env_database_url
+    DB_PATH = None
+else:
+    DB_PATH = Path("storage") / "chat_history.db"
+    DB_URL = f"sqlite+aiosqlite:///{DB_PATH}"
 
 
 class Base(DeclarativeBase):
@@ -17,7 +29,8 @@ AsyncSessionLocal: async_sessionmaker[AsyncSession] | None = None
 
 
 def _ensure_storage_dir() -> None:
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if DB_PATH is not None:
+        DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 
 def get_engine() -> AsyncEngine:
@@ -25,7 +38,16 @@ def get_engine() -> AsyncEngine:
 
     if engine is None:
         _ensure_storage_dir()
-        engine = create_async_engine(DB_URL, echo=False, future=True)
+        connect_args: dict = {}
+        if DB_URL.startswith("postgresql+asyncpg://"):
+            connect_args["ssl"] = "require"
+        engine = create_async_engine(
+            DB_URL,
+            echo=False,
+            future=True,
+            connect_args=connect_args,
+            pool_pre_ping=True,
+        )
         AsyncSessionLocal = async_sessionmaker(
             engine,
             expire_on_commit=False,

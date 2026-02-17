@@ -23,6 +23,12 @@ class Settings(BaseSettings):
     )
 
     use_bge: bool = Field(default=False, env="USE_BGE")
+    bge_model_name: str = Field(
+        default="BAAI/bge-m3", env="BGE_MODEL_NAME"
+    )
+    gemini_embedding_model: str = Field(
+        default="models/text-embedding-004", env="GEMINI_EMBEDDING_MODEL"
+    )
 
     llm_model: str = Field(default="gpt-4", env="LLM_MODEL")
     gpt_model: str = Field(default="gpt-4", env="GPT_MODEL")
@@ -32,6 +38,8 @@ class Settings(BaseSettings):
     replicate_api_token: str | None = Field(default=None, env="REPLICATE_API_TOKEN")
     hf_token: str | None = Field(default=None, env="HF_TOKEN")
     enable_dragin: bool = Field(default=True, env="ENABLE_DRAGIN")
+
+    database_url: str | None = Field(default=None, env="DATABASE_URL")
 
     # DRAGIN LLM backend: "openai" atau "gemini"
     dragin_llm_backend: str = Field(default="openai", env="DRAGIN_LLM_BACKEND")

@@ -1,0 +1,33 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: dir-rag-backend
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/cloudsql-instances: ""
+        run.googleapis.com/execution-environment: gen2
+    spec:
+      containers:
+        - image: asia-southeast2-docker.pkg.dev/gen-lang-client-0221576884/dir-rag-backend/dir-rag-backend:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: GOOGLE_CLOUD_PROJECT
+              value: gen-lang-client-0221576884
+          resources:
+            limits:
+              cpu: "1"
+              memory: "4Gi"
+          volumeMounts:
+            - name: chroma-storage
+              mountPath: /app/storage/vectors
+      volumes:
+        - name: chroma-storage
+          csi:
+            driver: gcsfuse.run.googleapis.com
+            readOnly: false
+            volumeAttributes:
+              bucketName: gen-lang-client-0221576884-chroma-vectors
