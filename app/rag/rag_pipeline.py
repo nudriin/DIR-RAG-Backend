@@ -85,7 +85,7 @@ def _build_sources(documents: List[Document]) -> List[Dict[str, Any]]:
 # Pipeline utama
 # ---------------------------------------------------------------------------
 
-def run_rag_pipeline(query: str) -> RAGResult:
+def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
     """
     RAG Pipeline dengan RQ-RAG + DRAGIN Reasoning Loop.
 
@@ -205,6 +205,7 @@ def run_rag_pipeline(query: str) -> RAGResult:
             query=current_query,
             documents=all_documents,
             sub_queries=sub_queries,
+            user_role=user_role,
         )
         entropy_history.append(dragin_result.entropy)
         broadcast_event(

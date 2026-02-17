@@ -214,6 +214,7 @@ def generate_with_dragin(
     query: str,
     documents: List[Document],
     sub_queries: List[str] | None = None,
+    user_role: str | None = None,
 ) -> DRAGINResult:
     """
     Generate jawaban DAN evaluasi uncertainty dalam SATU panggilan LLM.
@@ -243,7 +244,6 @@ def generate_with_dragin(
     context_text = format_context(docs_limited)
     system_prompt = build_system_prompt()
 
-    # Bangun bagian sub_queries jika ada
     sub_queries_section = ""
     if sub_queries:
         sq_list = "\n".join(f"  {i+1}. {sq}" for i, sq in enumerate(sub_queries))
@@ -252,12 +252,24 @@ def generate_with_dragin(
             f"{sq_list}\n"
         )
 
+    role_section = ""
+    if user_role:
+        role_section = (
+            "\nInformasi tentang pengguna:\n"
+            f"- Peran pengguna saat ini: {user_role}\n"
+            "- Jawab hanya untuk peran tersebut. Jika konteks menjelaskan "
+            "fitur yang hanya tersedia untuk peran lain, jelaskan bahwa "
+            "fitur tersebut tidak tersedia bagi peran pengguna dan jangan "
+            "menyesatkan.\n"
+        )
+
     user_prompt = (
         "Berikut adalah konteks dari dokumen yang relevan:\n\n"
         f"{context_text}\n\n"
         "Pertanyaan utama:\n"
         f"{query}\n"
-        f"{sub_queries_section}\n"
+        f"{sub_queries_section}"
+        f"{role_section}\n"
         "Instruksi:\n"
         "- Jawab pertanyaan utama DAN semua sub-pertanyaan secara lengkap\n"
         "- Jawab secara terstruktur, jelas, dan ringkas\n"
