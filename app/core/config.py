@@ -23,6 +23,12 @@ class Settings(BaseSettings):
     )
 
     use_bge: bool = Field(default=False, env="USE_BGE")
+    bge_model_name: str = Field(
+        default="BAAI/bge-m3", env="BGE_MODEL_NAME"
+    )
+    gemini_embedding_model: str = Field(
+        default="models/text-embedding-004", env="GEMINI_EMBEDDING_MODEL"
+    )
 
     llm_model: str = Field(default="gpt-4", env="LLM_MODEL")
     gpt_model: str = Field(default="gpt-4", env="GPT_MODEL")

@@ -41,7 +41,13 @@ def get_engine() -> AsyncEngine:
         connect_args: dict = {}
         if DB_URL.startswith("postgresql+asyncpg://"):
             connect_args["ssl"] = "require"
-        engine = create_async_engine(DB_URL, echo=False, future=True, connect_args=connect_args)
+        engine = create_async_engine(
+            DB_URL,
+            echo=False,
+            future=True,
+            connect_args=connect_args,
+            pool_pre_ping=True,
+        )
         AsyncSessionLocal = async_sessionmaker(
             engine,
             expire_on_commit=False,

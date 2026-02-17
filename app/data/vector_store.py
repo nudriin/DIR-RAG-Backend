@@ -4,7 +4,7 @@ import shutil
 
 from langchain_core.documents import Document
 from langchain.embeddings.base import Embeddings
-from langchain_openai import OpenAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_core.vectorstores import VectorStore
@@ -31,11 +31,13 @@ class VectorStoreManager:
             if self.settings.use_bge:
                 from langchain_community.embeddings import HuggingFaceEmbeddings
 
-                self._embedding_model = HuggingFaceEmbeddings(model_name="BAAI/bge-m3")
+                self._embedding_model = HuggingFaceEmbeddings(
+                    model_name=self.settings.bge_model_name
+                )
             else:
-                self._embedding_model = OpenAIEmbeddings(
-                    model=self.settings.embedding_model,
-                    openai_api_key=self.settings.openai_api_key,
+                self._embedding_model = GoogleGenerativeAIEmbeddings(
+                    model=self.settings.gemini_embedding_model,
+                    google_api_key=self.settings.google_api_key,
                 )
         return self._embedding_model
 
