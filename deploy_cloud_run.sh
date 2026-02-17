@@ -19,6 +19,5 @@ gcloud run deploy "${SERVICE_NAME}" \
   --max-instances=1 \
   --cpu=1 \
   --memory=4Gi \
-  --ephemeral-storage=8Gi \
   --port=8080 \
   --allow-unauthenticated
