@@ -21,6 +21,7 @@ spec:
             limits:
               cpu: "1"
               memory: "4Gi"
+              ephemeral-storage: "8Gi"
           volumeMounts:
             - name: chroma-storage
               mountPath: /app/storage/vectors
