@@ -78,6 +78,24 @@ class Settings(BaseSettings):
     context_max_docs: int = Field(default=5, env="CONTEXT_MAX_DOCS")
     context_char_budget: int = Field(default=6000, env="CONTEXT_CHAR_BUDGET")
     max_generation_tokens: int = Field(default=512, env="MAX_GENERATION_TOKENS")
+    rq_similarity_block_threshold: float = Field(
+        default=0.9, env="RQ_SIMILARITY_BLOCK_THRESHOLD"
+    )
+    rq_bypass_confidence_threshold: float = Field(
+        default=0.7, env="RQ_BYPASS_CONFIDENCE_THRESHOLD"
+    )
+    rq_postvalidate_margin: float = Field(
+        default=0.15, env="RQ_POSTVALIDATE_MARGIN"
+    )
+    rq_concentration_scale: float = Field(
+        default=0.3, env="RQ_CONCENTRATION_SCALE"
+    )
+    rq_length_norm: int = Field(
+        default=6, env="RQ_LENGTH_NORM"
+    )
+    rq_enable_bypass: bool = Field(
+        default=True, env="RQ_ENABLE_BYPASS"
+    )
 
     base_dir: Path = Path(__file__).resolve().parents[2]
     data_dir: Path = base_dir / "storage"
