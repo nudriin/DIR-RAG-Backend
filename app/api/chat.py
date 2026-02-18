@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 import asyncio
+import time
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -152,7 +153,9 @@ async def chat_endpoint(
             },
         )
     else:
+        t0 = time.perf_counter()
         rag_result = await asyncio.to_thread(run_rag_pipeline, query_text, effective_role)
+        response_time_ms = (time.perf_counter() - t0) * 1000.0
 
         trace_models = [
             DebugTrace(
@@ -254,6 +257,7 @@ async def chat_endpoint(
         conversation_id=conversation_id,
         trace=trace_models,
         debug_logs=debug_logs,
+        response_time_ms=response_time_ms if bypass_reason is None else None,
     )
 
 
