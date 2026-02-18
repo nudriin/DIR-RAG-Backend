@@ -108,12 +108,6 @@ def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
     # ======================================================================
     # PHASE 1 — RQ-RAG: Query Refinement
     # ======================================================================
-    broadcast_event(
-        stage="rq_rag",
-        action="start",
-        summary="Memulai Query Refinement",
-        details={"original_query": query},
-    )
     rq: RefinedQuery = refine_query(query, user_role=user_role)
     sub_queries: List[str] = rq.get("sub_queries", []) or []
     search_queries: List[str] = [rq["refined_query"]] + sub_queries

@@ -79,7 +79,7 @@ class Settings(BaseSettings):
     context_char_budget: int = Field(default=6000, env="CONTEXT_CHAR_BUDGET")
     max_generation_tokens: int = Field(default=512, env="MAX_GENERATION_TOKENS")
     rq_similarity_block_threshold: float = Field(
-        default=0.9, env="RQ_SIMILARITY_BLOCK_THRESHOLD"
+        default=0.7, env="RQ_SIMILARITY_BLOCK_THRESHOLD"
     )
     rq_bypass_confidence_threshold: float = Field(
         default=0.7, env="RQ_BYPASS_CONFIDENCE_THRESHOLD"
@@ -88,7 +88,7 @@ class Settings(BaseSettings):
         default=0.15, env="RQ_POSTVALIDATE_MARGIN"
     )
     rq_concentration_scale: float = Field(
-        default=0.3, env="RQ_CONCENTRATION_SCALE"
+        default=0.2, env="RQ_CONCENTRATION_SCALE"
     )
     rq_length_norm: int = Field(
         default=6, env="RQ_LENGTH_NORM"
