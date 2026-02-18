@@ -11,7 +11,7 @@ class ChatRequest(BaseModel):
     )
     user_role: str | None = Field(
         default=None,
-        description="Peran pengguna: siswa/pengajar/admin_sekolah/pengawas/dinas.",
+        description="Peran pengguna: siswa/pengajar/admin_sekolah/pengawas/dinas/umum.",
     )
     target_role: str | None = Field(
         default=None,

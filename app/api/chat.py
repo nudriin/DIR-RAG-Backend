@@ -71,6 +71,8 @@ def _is_low_signal(text: str) -> bool:
 
 def _infer_role_from_text(text: str) -> str | None:
     t = (text or "").lower()
+    if any(k in t for k in ["role umum", "peran umum", "umum", "publik", "general"]):
+        return "umum"
     if any(k in t for k in ["sebagai siswa", "untuk siswa", "dashboard siswa", "menu siswa", "murid", "peserta didik", "siswa"]):
         return "siswa"
     if any(k in t for k in ["sebagai guru", "untuk guru", "dashboard guru", "menu guru", "pengajar", "guru"]):

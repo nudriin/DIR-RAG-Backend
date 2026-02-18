@@ -254,14 +254,16 @@ def generate_with_dragin(
 
     role_section = ""
     if user_role:
-        role_section = (
-            "\nInformasi tentang pengguna:\n"
-            f"- Peran pengguna saat ini: {user_role}\n"
-            "- Jawab hanya untuk peran tersebut. Jika konteks menjelaskan "
-            "fitur yang hanya tersedia untuk peran lain, jelaskan bahwa "
-            "fitur tersebut tidak tersedia bagi peran pengguna dan jangan "
-            "menyesatkan.\n"
-        )
+        role_norm = (user_role or "").strip().lower()
+        if role_norm not in {"umum", "general", "public"}:
+            role_section = (
+                "\nInformasi tentang pengguna:\n"
+                f"- Peran pengguna saat ini: {user_role}\n"
+                "- Jawab hanya untuk peran tersebut. Jika konteks menjelaskan "
+                "fitur yang hanya tersedia untuk peran lain, jelaskan bahwa "
+                "fitur tersebut tidak tersedia bagi peran pengguna dan jangan "
+                "menyesatkan.\n"
+            )
 
     user_prompt = (
         "Berikut adalah konteks dari dokumen yang relevan:\n\n"
