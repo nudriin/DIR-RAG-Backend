@@ -9,6 +9,14 @@ class ChatRequest(BaseModel):
         default=None,
         description="ID percakapan sebelumnya (jika ingin melanjutkan).",
     )
+    user_role: str | None = Field(
+        default=None,
+        description="Peran pengguna: siswa/pengajar/admin_sekolah/pengawas/dinas.",
+    )
+    target_role: str | None = Field(
+        default=None,
+        description="Peran target jawaban jika berbeda dengan peran pengguna.",
+    )
 
 
 class SourceInfo(BaseModel):

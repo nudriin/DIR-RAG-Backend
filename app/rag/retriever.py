@@ -93,7 +93,6 @@ def rerank_documents(
         from sentence_transformers import CrossEncoder
 
         primary_model = settings.reranker_model
-        fallback_model = "cross-encoder/ms-marco-MiniLM-L6-v2"
         token = settings.hf_token
         if token:
             os.environ.setdefault("HUGGINGFACE_HUB_TOKEN", token)
@@ -112,11 +111,7 @@ def rerank_documents(
             cross_encoder = build_cross_encoder(primary_model)
             model_used = primary_model
         except Exception as init_exc:
-            if primary_model != fallback_model:
-                cross_encoder = build_cross_encoder(fallback_model)
-                model_used = fallback_model
-            else:
-                raise init_exc
+            raise init_exc
 
         pairs = [(query, d.page_content) for d in unique_docs]
         raw_scores = cross_encoder.predict(pairs)

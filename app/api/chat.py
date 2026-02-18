@@ -69,6 +69,21 @@ def _is_low_signal(text: str) -> bool:
     return False
 
 
+def _infer_role_from_text(text: str) -> str | None:
+    t = (text or "").lower()
+    if any(k in t for k in ["sebagai siswa", "untuk siswa", "dashboard siswa", "menu siswa", "murid", "peserta didik", "siswa"]):
+        return "siswa"
+    if any(k in t for k in ["sebagai guru", "untuk guru", "dashboard guru", "menu guru", "pengajar", "guru"]):
+        return "pengajar"
+    if any(k in t for k in ["admin sekolah", "operator sekolah"]):
+        return "admin_sekolah"
+    if "pengawas" in t:
+        return "pengawas"
+    if "dinas" in t:
+        return "dinas"
+    return None
+
+
 @router.post(
     "/chat",
     response_model=ChatResponseWithTrace,
@@ -79,6 +94,13 @@ async def chat_endpoint(
     session: AsyncSession = Depends(get_session),
 ) -> ChatResponseWithTrace:
     query_text = payload.query or ""
+    user_role = payload.user_role
+    target_role = payload.target_role
+    effective_role = target_role or user_role
+    if effective_role is None:
+        inferred = _infer_role_from_text(query_text)
+        if inferred:
+            effective_role = inferred
 
     bypass_reason: str | None = None
     if _is_greeting(query_text):
@@ -128,7 +150,7 @@ async def chat_endpoint(
             },
         )
     else:
-        rag_result = await asyncio.to_thread(run_rag_pipeline, query_text)
+        rag_result = await asyncio.to_thread(run_rag_pipeline, query_text, effective_role)
 
         trace_models = [
             DebugTrace(
