@@ -215,6 +215,7 @@ def generate_with_dragin(
     documents: List[Document],
     sub_queries: List[str] | None = None,
     user_role: str | None = None,
+    raw_query: str | None = None,
 ) -> DRAGINResult:
     """
     Generate jawaban DAN evaluasi uncertainty dalam SATU panggilan LLM.
@@ -265,18 +266,23 @@ def generate_with_dragin(
                 "menyesatkan.\n"
             )
 
+    original_query = raw_query or query
+
     user_prompt = (
         "Berikut adalah konteks dari dokumen yang relevan:\n\n"
         f"{context_text}\n\n"
-        "Pertanyaan utama:\n"
+        "Pertanyaan asli pengguna:\n"
+        f"{original_query}\n\n"
+        "Pertanyaan hasil refinement/optimalisasi (jika berbeda):\n"
         f"{query}\n"
         f"{sub_queries_section}"
         f"{role_section}\n"
         "Instruksi:\n"
-        "- Jawab pertanyaan utama DAN semua sub-pertanyaan secara lengkap\n"
-        "- Jawab secara terstruktur, jelas, dan ringkas\n"
-        "- Gunakan hanya informasi dari konteks\n"
-        "- Jika informasi dalam konteks kurang lengkap, tetap berikan jawaban terbaik berdasarkan apa yang tersedia\n"
+        "- Utamakan menjawab sesuai maksud pertanyaan asli pengguna.\n"
+        "- Gunakan pertanyaan hasil refinement hanya sebagai bantuan untuk menstrukturkan jawaban, bukan untuk mengubah maksud.\n"
+        "- Jika konteks hanya membahas entitas lain yang mirip tetapi berbeda (misalnya guru non induk vs kelas ajar non induk), jelaskan keterbatasan tersebut dan jangan mengganti topik pertanyaan.\n"
+        "- Jika informasi dalam konteks kurang lengkap untuk menjawab pertanyaan asli, jelaskan keterbatasannya secara eksplisit.\n"
+        "- Jawab secara terstruktur, jelas, dan ringkas menggunakan hanya informasi dari konteks.\n"
     )
 
     # --- 2. Panggil LLM dengan logprobs ---

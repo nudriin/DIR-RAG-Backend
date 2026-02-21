@@ -200,6 +200,7 @@ def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
             documents=all_documents,
             sub_queries=sub_queries,
             user_role=user_role,
+            raw_query=query,
         )
         entropy_history.append(dragin_result.entropy)
         broadcast_event(
