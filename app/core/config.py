@@ -74,6 +74,10 @@ class Settings(BaseSettings):
         env="RERANKER_MODEL",
     )
 
+    semantic_breakpoint_threshold_amount: int = Field(
+        default=80, env="SEMANTIC_BREAKPOINT_THRESHOLD_AMOUNT"
+    )
+
     # Context budgeting to avoid rate limit/token overflow
     context_max_docs: int = Field(default=5, env="CONTEXT_MAX_DOCS")
     context_char_budget: int = Field(default=6000, env="CONTEXT_CHAR_BUDGET")

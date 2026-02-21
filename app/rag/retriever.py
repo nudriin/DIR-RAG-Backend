@@ -43,19 +43,36 @@ def retrieve_documents_with_scores(
     k = top_k if top_k is not None else settings.similarity_top_k
     results = vector_store_manager.similarity_search_with_scores(query=query, top_k=k)
 
+    doc_infos = []
+    for doc, dist in results:
+        meta = getattr(doc, "metadata", {}) or {}
+        doc_infos.append(
+            {
+                "source": meta.get("source"),
+                "chunk_id": meta.get("chunk_id"),
+                "distance": float(dist),
+            }
+        )
+
     logger.info(
         "Retrieved documents with scores",
         extra={
             "query": query,
             "top_k": k,
             "num_results": len(results),
+            "results": doc_infos,
         },
     )
     broadcast_event(
         stage="retrieval",
         action="scored",
         summary="Retrieval dokumen dengan skor",
-        details={"query": query, "top_k": k, "num_results": len(results)},
+        details={
+            "query": query,
+            "top_k": k,
+            "num_results": len(results),
+            "results": doc_infos,
+        },
     )
     return results
 
