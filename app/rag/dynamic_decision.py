@@ -260,10 +260,9 @@ def generate_with_dragin(
             role_section = (
                 "\nInformasi tentang pengguna:\n"
                 f"- Peran pengguna saat ini: {user_role}\n"
-                "- Jawab hanya untuk peran tersebut. Jika konteks menjelaskan "
-                "fitur yang hanya tersedia untuk peran lain, jelaskan bahwa "
-                "fitur tersebut tidak tersedia bagi peran pengguna dan jangan "
-                "menyesatkan.\n"
+                "- Tentukan secara mandiri dari konteks dokumen seperti nama sumber konteks untuk peran siapa fitur tersebut berlaku.\n"
+                "- Jawab hanya untuk peran tersebut. Jika konteks menjelaskan \n"
+                "- Jika konteks menunjukkan fitur untuk peran lain, jelaskan keterbatasan akses bagi peran pengguna dan jangan menyesatkan.\n"
             )
 
     original_query = raw_query or query
@@ -280,6 +279,9 @@ def generate_with_dragin(
         "Instruksi:\n"
         "- Utamakan menjawab sesuai maksud pertanyaan asli pengguna.\n"
         "- Gunakan pertanyaan hasil refinement hanya sebagai bantuan untuk menstrukturkan jawaban, bukan untuk mengubah maksud.\n"
+        "- Tentukan dari konteks dokumen peran utama yang sedang dibahas (misalnya dinas, admin sekolah, pengajar, siswa, pengawas).\n"
+        "- Jika peran pada konteks berbeda dari peran pengguna, mulai jawaban dengan satu kalimat klarifikasi tentang perbedaan akses/fitur.\n"
+        "- Jangan menyatakan pengguna akan masuk ke dashboard/fitur peran lain; jelaskan sebagai informasi dari dokumen peran tersebut.\n"
         "- Jika konteks hanya membahas entitas lain yang mirip tetapi berbeda (misalnya guru non induk vs kelas ajar non induk), jelaskan keterbatasan tersebut dan jangan mengganti topik pertanyaan.\n"
         "- Jika informasi dalam konteks kurang lengkap untuk menjawab pertanyaan asli, jelaskan keterbatasannya secara eksplisit.\n"
         "- Jawab secara terstruktur, jelas, dan ringkas menggunakan hanya informasi dari konteks.\n"

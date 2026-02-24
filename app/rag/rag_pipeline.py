@@ -299,6 +299,7 @@ def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
         refined_next = refine_query(
             query=current_query,
             draft_answer=dragin_result.answer_text,
+            user_role=user_role,
         )
         expanded_queries = [refined_next["refined_query"]] + (
             refined_next.get("sub_queries", []) or []

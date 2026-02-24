@@ -201,9 +201,15 @@ def refine_query(query: str, draft_answer: Optional[str] = None, user_role: Opti
     3. Jika ada klaim tanpa sumber, buat sub_query untuk memverifikasinya.
     """
 
+    role_display = (user_role or "-").replace("_", " ").strip()
+
     prompt = f"""
     Kamu adalah pakar optimasi kueri RAG untuk sistem Kelas Digital Huma Betang.
-    Peran pengguna: {user_role or "-"}.
+    Peran pengguna: {role_display}.
+    Jika peran pengguna diketahui, gunakan peran tersebut sebagai konteks utama.
+    Jangan mengganti peran (misalnya menjadi "siswa") kecuali pertanyaan secara eksplisit menyebut peran lain.
+    Untuk pertanyaan ambigu seperti "cara login", buat kueri yang spesifik sesuai peran pengguna.
+    Gunakan frasa peran persis seperti yang diberikan (misalnya "Admin Sekolah"), jangan ubah ke format underscore/abreviasi.
     Gunakan hanya konteks berikut sebagai acuan domain:
     ---
     {anchor_context}
