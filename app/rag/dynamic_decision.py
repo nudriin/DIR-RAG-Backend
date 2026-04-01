@@ -216,6 +216,7 @@ def generate_with_dragin(
     sub_queries: List[str] | None = None,
     user_role: str | None = None,
     raw_query: str | None = None,
+    chat_history: str | None = None,
 ) -> DRAGINResult:
     """
     Generate jawaban DAN evaluasi uncertainty dalam SATU panggilan LLM.
@@ -267,7 +268,16 @@ def generate_with_dragin(
 
     original_query = raw_query or query
 
+    # --- Riwayat percakapan (short-term memory) ---
+    history_section = ""
+    if chat_history:
+        history_section = (
+            "Riwayat percakapan sebelumnya (gunakan untuk memahami konteks):\n"
+            f"{chat_history}\n\n"
+        )
+
     user_prompt = (
+        f"{history_section}"
         "Berikut adalah konteks dari dokumen yang relevan:\n\n"
         f"{context_text}\n\n"
         "Pertanyaan asli pengguna:\n"
@@ -279,6 +289,7 @@ def generate_with_dragin(
         "Instruksi:\n"
         "- Utamakan menjawab sesuai maksud pertanyaan asli pengguna.\n"
         "- Gunakan pertanyaan hasil refinement hanya sebagai bantuan untuk menstrukturkan jawaban, bukan untuk mengubah maksud.\n"
+        "- Jika ada riwayat percakapan sebelumnya, perhatikan konteks percakapan untuk memahami maksud pertanyaan saat ini (misalnya kata ganti 'itu', 'nya', 'tersebut' mungkin merujuk ke topik sebelumnya).\n"
         "- Tentukan dari konteks dokumen peran utama yang sedang dibahas (misalnya dinas, admin sekolah, pengajar, siswa, pengawas).\n"
         "- Jika peran pada konteks berbeda dari peran pengguna, mulai jawaban dengan satu kalimat klarifikasi tentang perbedaan akses/fitur.\n"
         "- Jangan menyatakan pengguna akan masuk ke dashboard/fitur peran lain; jelaskan sebagai informasi dari dokumen peran tersebut.\n"

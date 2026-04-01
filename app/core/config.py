@@ -106,6 +106,9 @@ class Settings(BaseSettings):
         default=True, env="RQ_ENABLE_BYPASS"
     )
 
+    # Short-term memory: jumlah pasangan (user+assistant) terakhir yang di-inject ke prompt
+    memory_max_turns: int = Field(default=5, env="MEMORY_MAX_TURNS")
+
     base_dir: Path = Path(__file__).resolve().parents[2]
     data_dir: Path = base_dir / "storage"
     vector_dir: Path = data_dir / "vectors"
