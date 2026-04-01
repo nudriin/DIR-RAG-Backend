@@ -18,7 +18,7 @@ from langchain_core.documents import Document
 
 from app.core.config import get_settings
 from app.core.logging import get_logger, broadcast_event
-from app.rag.dynamic_decision import DRAGINResult, generate_with_dragin
+from app.rag.dynamic_decision import DRAGINResult, generate_with_dragin, validate_role_consistency
 from app.rag.query_refinement import RefinedQuery, refine_query
 from app.rag.retriever import (
     retrieve_documents,
@@ -396,8 +396,11 @@ def run_rag_pipeline(
         details={"stop_reason": stop_reason, "iterations": len(traces)},
     )
 
+    # --- Layer 3: Post-generation role validation ---
+    validated_answer = validate_role_consistency(final_answer.strip(), user_role)
+
     return RAGResult(
-        answer=final_answer.strip(),
+        answer=validated_answer,
         sources=final_sources,
         iterations=len(traces),
         confidence=last_confidence,

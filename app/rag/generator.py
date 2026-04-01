@@ -20,7 +20,10 @@ def build_system_prompt() -> str:
         "1. Jawab langsung dan to-the-point, gunakan format poin jika informasi banyak.\n"
         "2. Jika informasi dalam konteks kurang lengkap, tetap berikan jawaban terbaik berdasarkan apa yang tersedia.\n"
         "3. JANGAN gunakan pengetahuan di luar dokumen konteks.\n"
-        "4. Gunakan bahasa Indonesia baku dan formal."
+        "4. Gunakan bahasa Indonesia baku dan formal.\n"
+        "5. PENTING: Jangan menyalin heading atau label dari dokumen secara verbatim jika "
+        "bertentangan dengan konten aktual. Selalu verifikasi konsistensi peran/topik "
+        "antara heading dan isi dokumen sebelum menjawab. Prioritaskan KONTEN di atas HEADING."
     )
 
 
@@ -46,6 +49,7 @@ def limit_docs_for_context(
     documents: List[Document],
     max_docs: int,
     max_chars: int,
+    user_role: str | None = None,
 ) -> List[Document]:
     """
     Bangun context menggunakan relevance-aware semantic chunking.
@@ -58,13 +62,14 @@ def limit_docs_for_context(
         documents: List dokumen dari retrieval.
         max_docs: (legacy, tidak digunakan lagi — token budget menggantikan)
         max_chars: (legacy, tidak digunakan lagi — token budget menggantikan)
+        user_role: Peran pengguna untuk role-aware scoring.
 
     Returns:
         List[Document] — chunk terpilih sebagai Document.
     """
     if not documents:
         return []
-    return build_context_for_query(query=query, documents=documents)
+    return build_context_for_query(query=query, documents=documents, user_role=user_role)
 
 
 def build_user_prompt(query: str, context_text: str) -> str:

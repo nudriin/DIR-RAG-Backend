@@ -244,11 +244,30 @@ def _head_tail_fallback(chunks: List[ScoredChunk]) -> List[ScoredChunk]:
     return result
 
 
+def _role_boost(chunk_text: str, user_role: str | None) -> float:
+    """Boost skor +0.1 jika chunk menyebut peran yang ditanyakan pengguna."""
+    if not user_role:
+        return 0.0
+    role_keywords = {
+        "pengajar": ["pengajar", "guru", "mengajar", "tenaga pendidik", "dashboard guru"],
+        "siswa": ["siswa", "murid", "peserta didik", "pelajar", "dashboard siswa"],
+        "admin_sekolah": ["admin sekolah", "operator", "tata usaha"],
+        "pengawas": ["pengawas"],
+        "dinas": ["dinas"],
+    }
+    keywords = role_keywords.get(user_role.strip().lower(), [user_role.strip().lower()])
+    text_lower = chunk_text.lower()
+    if any(k in text_lower for k in keywords):
+        return 0.1
+    return 0.0
+
+
 def score_chunks(
     query: str,
     chunks: List[ScoredChunk],
     semantic_weight: float | None = None,
     positional_weight: float | None = None,
+    user_role: str | None = None,
 ) -> List[ScoredChunk]:
     """
     Hitung hybrid score = semantic_weight * semantic + positional_weight * positional.
@@ -281,7 +300,7 @@ def score_chunks(
             else:
                 positional = 1.0
 
-            chunk.score = sw * semantic_scores[i] + pw * positional
+            chunk.score = sw * semantic_scores[i] + pw * positional + _role_boost(chunk.text, user_role)
 
         # Urutkan berdasarkan score (descending)
         chunks.sort(key=lambda c: c.score, reverse=True)
@@ -443,6 +462,7 @@ def build_context_for_query(
     documents: List[Document],
     token_budget: int | None = None,
     preserve_order: bool = True,
+    user_role: str | None = None,
 ) -> List[Document]:
     """
     Pipeline lengkap: chunk → score → select → assemble.
@@ -454,6 +474,6 @@ def build_context_for_query(
         return []
 
     chunks = split_into_chunks(documents)
-    scored = score_chunks(query, chunks)
+    scored = score_chunks(query, chunks, user_role=user_role)
     selected = select_top_chunks(scored, token_budget)
     return build_final_context(selected, preserve_order)
