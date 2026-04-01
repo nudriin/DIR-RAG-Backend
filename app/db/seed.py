@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.auth import generate_secure_password, hash_password
 from app.core.config import get_settings
 from app.core.logging import get_logger
-from app.db.models import AdminUser
+from app.db.models import AdminUser, SystemSetting
 
 
 logger = get_logger(__name__)
@@ -47,4 +47,17 @@ async def seed_default_admin(session: AsyncSession) -> None:
         created_at=datetime.now(timezone.utc),
     )
     session.add(user)
+    await session.commit()
+
+
+async def seed_default_settings(session: AsyncSession) -> None:
+    """Seed default system settings if not already present."""
+    defaults = {
+        "refinement_backend": "gemini",
+    }
+    for key, value in defaults.items():
+        existing = await session.get(SystemSetting, key)
+        if existing is None:
+            session.add(SystemSetting(key=key, value=value))
+            logger.info(f"Seeded default setting: {key}={value}")
     await session.commit()

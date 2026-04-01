@@ -89,6 +89,7 @@ def run_rag_pipeline(
     query: str,
     user_role: str | None = None,
     chat_history: str | None = None,
+    refinement_backend: str | None = None,
 ) -> RAGResult:
     """
     RAG Pipeline dengan RQ-RAG + DRAGIN Reasoning Loop.
@@ -112,7 +113,9 @@ def run_rag_pipeline(
     # ======================================================================
     # PHASE 1 — RQ-RAG: Query Refinement
     # ======================================================================
-    rq: RefinedQuery = refine_query(query, user_role=user_role)
+    rq: RefinedQuery = refine_query(
+        query, user_role=user_role, refinement_backend=refinement_backend,
+    )
     sub_queries: List[str] = rq.get("sub_queries", []) or []
     search_queries: List[str] = [rq["refined_query"]] + sub_queries
 
@@ -305,6 +308,7 @@ def run_rag_pipeline(
             query=current_query,
             draft_answer=dragin_result.answer_text,
             user_role=user_role,
+            refinement_backend=refinement_backend,
         )
         expanded_queries = [refined_next["refined_query"]] + (
             refined_next.get("sub_queries", []) or []

@@ -4,6 +4,8 @@ import replicate
 import numpy as np
 import re
 
+import google.generativeai as genai
+
 from app.core.config import get_settings
 from app.core.logging import get_logger, broadcast_event
 from app.data.vector_store import vector_store_manager
@@ -118,7 +120,55 @@ def _extract_json_candidates(text: str) -> List[str]:
     return uniq
 
 
-def refine_query(query: str, draft_answer: Optional[str] = None, user_role: Optional[str] = None) -> RefinedQuery:
+def _call_replicate(prompt: str, settings) -> str:
+    """Panggil LLM via Replicate API."""
+    client = replicate.Client(api_token=settings.replicate_api_token)
+    output = client.run(
+        settings.llm_model,
+        input={
+            "prompt": prompt,
+            "temperature": 0.1,
+        },
+    )
+    return (
+        "".join(str(part) for part in output)
+        if isinstance(output, list)
+        else str(output)
+    )
+
+
+def _call_gemini(prompt: str, settings) -> str:
+    """Panggil LLM via Google Gemini API."""
+    genai.configure(api_key=settings.google_api_key)
+    model = genai.GenerativeModel(
+        model_name=settings.gemini_model,
+    )
+    response = model.generate_content(
+        prompt,
+        generation_config={
+            "temperature": 0.1,
+            "max_output_tokens": 1024,
+        },
+    )
+    return response.text.strip()
+
+
+def _call_llm(prompt: str, settings, backend: str = "gemini") -> str:
+    """Dispatch ke backend LLM yang sesuai."""
+    backend = (backend or "gemini").lower()
+    logger.info(f"RQ-RAG using backend: {backend}")
+    if backend == "replicate":
+        return _call_replicate(prompt, settings)
+    else:
+        return _call_gemini(prompt, settings)
+
+
+def refine_query(
+    query: str,
+    draft_answer: Optional[str] = None,
+    user_role: Optional[str] = None,
+    refinement_backend: Optional[str] = None,
+) -> RefinedQuery:
     settings = get_settings()
     bypass_conf_threshold = settings.rq_bypass_confidence_threshold
     enable_bypass = getattr(settings, "rq_enable_bypass", True)
@@ -259,22 +309,8 @@ def refine_query(query: str, draft_answer: Optional[str] = None, user_role: Opti
     }}
     """
 
-    client = replicate.Client(api_token=settings.replicate_api_token)
-
     try:
-        output = client.run(
-            settings.llm_model,
-            input={
-                "prompt": prompt,
-                "temperature": 0.1,
-            },
-        )
-
-        text = (
-            "".join(str(part) for part in output)
-            if isinstance(output, list)
-            else str(output)
-        )
+        text = _call_llm(prompt, settings, backend=refinement_backend or "gemini")
 
         candidates = _extract_json_candidates(text)
         parsed = None
