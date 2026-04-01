@@ -81,6 +81,11 @@ class Settings(BaseSettings):
     # Context budgeting to avoid rate limit/token overflow
     context_max_docs: int = Field(default=5, env="CONTEXT_MAX_DOCS")
     context_char_budget: int = Field(default=6000, env="CONTEXT_CHAR_BUDGET")
+    context_token_budget: int = Field(default=2500, env="CONTEXT_TOKEN_BUDGET")
+    chunk_size_tokens: int = Field(default=150, env="CHUNK_SIZE_TOKENS")
+    chunk_overlap_tokens: int = Field(default=50, env="CHUNK_OVERLAP_TOKENS")
+    scoring_semantic_weight: float = Field(default=0.8, env="SCORING_SEMANTIC_WEIGHT")
+    scoring_positional_weight: float = Field(default=0.2, env="SCORING_POSITIONAL_WEIGHT")
     max_generation_tokens: int = Field(default=512, env="MAX_GENERATION_TOKENS")
     rq_similarity_block_threshold: float = Field(
         default=0.7, env="RQ_SIMILARITY_BLOCK_THRESHOLD"

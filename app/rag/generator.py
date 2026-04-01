@@ -6,7 +6,7 @@ from langchain_core.documents import Document
 
 from app.core.config import get_settings
 from app.core.logging import get_logger, broadcast_event
-from app.rag.retriever import rerank_documents
+from app.rag.context_builder import build_context_for_query
 
 logger = get_logger(__name__)
 
@@ -29,7 +29,14 @@ def format_context(docs: List[Document]) -> str:
     for i, doc in enumerate(docs):
         source = doc.metadata.get("source", f"doc-{i}")
         chunk_id = doc.metadata.get("chunk_id", "0")
-        header = f"[Sumber: {source} | Chunk: {chunk_id}]"
+        chunk_part = doc.metadata.get("chunk_part", "")
+        relevance = doc.metadata.get("relevance_score", "")
+        header = f"[Sumber: {source} | Chunk: {chunk_id}"
+        if chunk_part:
+            header += f" | Part: {chunk_part}"
+        if relevance:
+            header += f" | Skor: {relevance}"
+        header += "]"
         blocks.append(f"{header}\n{doc.page_content}")
     return "\n\n".join(blocks)
 
@@ -40,27 +47,24 @@ def limit_docs_for_context(
     max_docs: int,
     max_chars: int,
 ) -> List[Document]:
+    """
+    Bangun context menggunakan relevance-aware semantic chunking.
+
+    Fungsi ini sekarang mendelegasikan ke context_builder pipeline:
+    chunk → score (CrossEncoder + positional) → select (token budget) → assemble.
+
+    Args tetap sama untuk backward compatibility:
+        query: Query pengguna.
+        documents: List dokumen dari retrieval.
+        max_docs: (legacy, tidak digunakan lagi — token budget menggantikan)
+        max_chars: (legacy, tidak digunakan lagi — token budget menggantikan)
+
+    Returns:
+        List[Document] — chunk terpilih sebagai Document.
+    """
     if not documents:
         return []
-    top_docs = rerank_documents(query=query, documents=documents, top_n=max_docs)
-    limited: List[Document] = []
-    char_count = 0
-    for d in top_docs:
-        content_len = len(d.page_content or "")
-        if char_count + content_len > max_chars:
-            # Trim the last doc content to fit budget if useful
-            remaining = max(0, max_chars - char_count)
-            if remaining > 200:
-                d_trim = Document(
-                    page_content=(d.page_content or "")[:remaining], metadata=d.metadata
-                )
-                limited.append(d_trim)
-                break
-            else:
-                break
-        limited.append(d)
-        char_count += content_len
-    return limited
+    return build_context_for_query(query=query, documents=documents)
 
 
 def build_user_prompt(query: str, context_text: str) -> str:
