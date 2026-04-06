@@ -115,6 +115,7 @@ def run_rag_pipeline(
     # ======================================================================
     rq: RefinedQuery = refine_query(
         query, user_role=user_role, refinement_backend=refinement_backend,
+        chat_history=chat_history,
     )
     sub_queries: List[str] = rq.get("sub_queries", []) or []
     search_queries: List[str] = [rq["refined_query"]] + sub_queries
@@ -309,6 +310,7 @@ def run_rag_pipeline(
             draft_answer=dragin_result.answer_text,
             user_role=user_role,
             refinement_backend=refinement_backend,
+            chat_history=chat_history,
         )
         expanded_queries = [refined_next["refined_query"]] + (
             refined_next.get("sub_queries", []) or []
