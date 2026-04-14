@@ -4,6 +4,8 @@ import replicate
 import numpy as np
 import re
 
+import google.generativeai as genai
+
 from app.core.config import get_settings
 from app.core.logging import get_logger, broadcast_event
 from app.data.vector_store import vector_store_manager
@@ -118,7 +120,62 @@ def _extract_json_candidates(text: str) -> List[str]:
     return uniq
 
 
-def refine_query(query: str, draft_answer: Optional[str] = None, user_role: Optional[str] = None) -> RefinedQuery:
+def _call_replicate(prompt: str, settings) -> str:
+    """Panggil LLM via Replicate API."""
+    client = replicate.Client(api_token=settings.replicate_api_token)
+    output = client.run(
+        settings.llm_model,
+        input={
+            "prompt": prompt,
+            "temperature": 0.1,
+        },
+    )
+    return (
+        "".join(str(part) for part in output)
+        if isinstance(output, list)
+        else str(output)
+    )
+
+
+def _call_gemini(prompt: str, settings) -> str:
+    """Panggil LLM via Google Gemini API."""
+    genai.configure(api_key=settings.google_api_key)
+    model = genai.GenerativeModel(
+        model_name=settings.gemini_model,
+    )
+    response = model.generate_content(
+        prompt,
+        generation_config={
+            "temperature": 0.1,
+            "max_output_tokens": 1024,
+        },
+    )
+    return response.text.strip()
+
+
+def _call_llm(prompt: str, settings, backend: str = "gemini") -> str:
+    """Dispatch ke backend LLM yang sesuai."""
+    backend = (backend or "gemini").lower()
+    logger.info(f"RQ-RAG using backend: {backend}")
+    if backend == "replicate":
+        return _call_replicate(prompt, settings)
+    else:
+        return _call_gemini(prompt, settings)
+
+
+def refine_query(
+    query: str,
+    draft_answer: Optional[str] = None,
+    user_role: Optional[str] = None,
+    refinement_backend: Optional[str] = None,
+    chat_history: Optional[str] = None,
+) -> RefinedQuery:
+    # Normalize empty string → None
+    if chat_history is not None and not chat_history.strip():
+        chat_history = None
+
+    logger.info("refine_query called", extra={"query": query, "has_history": bool(chat_history)})
+
     settings = get_settings()
     bypass_conf_threshold = settings.rq_bypass_confidence_threshold
     enable_bypass = getattr(settings, "rq_enable_bypass", True)
@@ -166,25 +223,40 @@ def refine_query(query: str, draft_answer: Optional[str] = None, user_role: Opti
         top_d_orig, _ = _top_distance_and_sources(query, settings.similarity_top_k)
         conf_orig = _distance_to_conf(top_d_orig)
     if enable_bypass and conf_orig >= bypass_conf_threshold:
-        broadcast_event(
-            stage="rq_rag",
-            action="bypass",
-            summary="Bypass rewrite karena confidence tinggi",
-            details={
-                "confidence": conf_orig,
-                "sims_stats": {
-                    "top": float(max(sims) if sims else 0.0),
-                    "mean": float(np.mean(sims) if sims else 0.0),
-                    "std": float(np.std(sims) if sims else 0.0),
+        # Jika ada chat_history, SELALU paksa refinement agar LLM bisa
+        # resolve referensi implisit (misalnya "lebih detail", "itu apa", dll).
+        # LLM akan mengembalikan query apa adanya jika sudah cukup spesifik.
+        if chat_history:
+            logger.info(
+                "Chat history present, skip bypass to allow context-aware refinement",
+                extra={"query": query, "confidence": conf_orig},
+            )
+            broadcast_event(
+                stage="rq_rag",
+                action="bypass_skipped_history",
+                summary="Bypass dilewati karena ada riwayat percakapan",
+                details={"query": query, "confidence": conf_orig},
+            )
+        else:
+            broadcast_event(
+                stage="rq_rag",
+                action="bypass",
+                summary="Bypass rewrite karena confidence tinggi",
+                details={
+                    "confidence": conf_orig,
+                    "sims_stats": {
+                        "top": float(max(sims) if sims else 0.0),
+                        "mean": float(np.mean(sims) if sims else 0.0),
+                        "std": float(np.std(sims) if sims else 0.0),
+                    },
                 },
-            },
-        )
-        return {
-            "original_query": query,
-            "refined_query": query,
-            "sub_queries": [query],
-            "refinement_type": "BYPASS_HIGH_CONF",
-        }
+            )
+            return {
+                "original_query": query,
+                "refined_query": query,
+                "sub_queries": [query],
+                "refinement_type": "BYPASS_HIGH_CONF",
+            }
 
     context_instruction = ""
     if draft_answer:
@@ -201,9 +273,15 @@ def refine_query(query: str, draft_answer: Optional[str] = None, user_role: Opti
     3. Jika ada klaim tanpa sumber, buat sub_query untuk memverifikasinya.
     """
 
+    role_display = (user_role or "-").replace("_", " ").strip()
+
     prompt = f"""
     Kamu adalah pakar optimasi kueri RAG untuk sistem Kelas Digital Huma Betang.
-    Peran pengguna: {user_role or "-"}.
+    Peran pengguna: {role_display}.
+    Jika peran pengguna diketahui, gunakan peran tersebut sebagai konteks utama.
+    Jangan mengganti peran (misalnya menjadi "siswa") kecuali pertanyaan secara eksplisit menyebut peran lain.
+    Untuk pertanyaan ambigu seperti "cara login", buat kueri yang spesifik sesuai peran pengguna.
+    Gunakan frasa peran persis seperti yang diberikan (misalnya "Admin Sekolah"), jangan ubah ke format underscore/abreviasi.
     Gunakan hanya konteks berikut sebagai acuan domain:
     ---
     {anchor_context}
@@ -243,6 +321,14 @@ def refine_query(query: str, draft_answer: Optional[str] = None, user_role: Opti
 
     {context_instruction}
 
+    RIWAYAT PERCAKAPAN (jika ada):
+    {chat_history or '(tidak ada riwayat)'}
+
+    Jika kueri pengguna bersifat follow-up (misalnya "lebih detail", "jelaskan lagi",
+    "bagaimana dengan...", "contohnya?"), resolve-lah menjadi kueri lengkap dan mandiri
+    berdasarkan topik percakapan sebelumnya. Kueri hasil refinement HARUS bisa dipahami
+    tanpa membaca riwayat percakapan.
+
     Kueri Asli: "{query}"
 
     Berikan output dalam format JSON:
@@ -253,22 +339,8 @@ def refine_query(query: str, draft_answer: Optional[str] = None, user_role: Opti
     }}
     """
 
-    client = replicate.Client(api_token=settings.replicate_api_token)
-
     try:
-        output = client.run(
-            settings.llm_model,
-            input={
-                "prompt": prompt,
-                "temperature": 0.1,
-            },
-        )
-
-        text = (
-            "".join(str(part) for part in output)
-            if isinstance(output, list)
-            else str(output)
-        )
+        text = _call_llm(prompt, settings, backend=refinement_backend or "gemini")
 
         candidates = _extract_json_candidates(text)
         parsed = None
@@ -305,7 +377,12 @@ def refine_query(query: str, draft_answer: Optional[str] = None, user_role: Opti
 
         keep = True
         reason = "OK"
-        if sim < sim_block_threshold:
+        # Jika ada chat_history, skip validasi similarity/jaccard
+        # karena follow-up resolution sengaja menghasilkan query yang
+        # sangat berbeda dari original (e.g. "lebih detail" → "langkah login pengajar")
+        if chat_history:
+            reason = "OK_HISTORY_CONTEXT"
+        elif sim < sim_block_threshold:
             keep = False
             reason = "LOW_SIMILARITY"
         elif top_d_cand > top_d_orig + post_margin or jacc < 0.2:

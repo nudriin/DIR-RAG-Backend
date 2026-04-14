@@ -55,7 +55,7 @@ def is_answer_covering_subqueries(answer_text: str, sub_queries: List[str]) -> b
             satisfied += 1
     return satisfied >= len(sub_queries)
 
-def run_rag_pipeline(query: str) -> RAGResult:
+def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
     settings = get_settings()
     traces: List[IterationTrace] = []
     debug_logs: Dict[str, Any] = {
@@ -65,7 +65,7 @@ def run_rag_pipeline(query: str) -> RAGResult:
     }
 
     # Phase 1 — The Primer (RQ-RAG)
-    rq: RefinedQuery = refine_query(query)
+    rq: RefinedQuery = refine_query(query, user_role=user_role)
     sub_queries: List[str] = rq.get("sub_queries", []) or []
     instruction_queue: List[str] = [rq["refined_query"]] + sub_queries
 

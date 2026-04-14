@@ -18,7 +18,7 @@ from langchain_core.documents import Document
 
 from app.core.config import get_settings
 from app.core.logging import get_logger, broadcast_event
-from app.rag.dynamic_decision import DRAGINResult, generate_with_dragin
+from app.rag.dynamic_decision import DRAGINResult, generate_with_dragin, validate_role_consistency
 from app.rag.query_refinement import RefinedQuery, refine_query
 from app.rag.retriever import (
     retrieve_documents,
@@ -85,7 +85,12 @@ def _build_sources(documents: List[Document]) -> List[Dict[str, Any]]:
 # Pipeline utama
 # ---------------------------------------------------------------------------
 
-def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
+def run_rag_pipeline(
+    query: str,
+    user_role: str | None = None,
+    chat_history: str | None = None,
+    refinement_backend: str | None = None,
+) -> RAGResult:
     """
     RAG Pipeline dengan RQ-RAG + DRAGIN Reasoning Loop.
 
@@ -108,7 +113,10 @@ def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
     # ======================================================================
     # PHASE 1 — RQ-RAG: Query Refinement
     # ======================================================================
-    rq: RefinedQuery = refine_query(query, user_role=user_role)
+    rq: RefinedQuery = refine_query(
+        query, user_role=user_role, refinement_backend=refinement_backend,
+        chat_history=chat_history,
+    )
     sub_queries: List[str] = rq.get("sub_queries", []) or []
     search_queries: List[str] = [rq["refined_query"]] + sub_queries
 
@@ -200,6 +208,8 @@ def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
             documents=all_documents,
             sub_queries=sub_queries,
             user_role=user_role,
+            raw_query=query,
+            chat_history=chat_history,
         )
         entropy_history.append(dragin_result.entropy)
         broadcast_event(
@@ -298,6 +308,9 @@ def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
         refined_next = refine_query(
             query=current_query,
             draft_answer=dragin_result.answer_text,
+            user_role=user_role,
+            refinement_backend=refinement_backend,
+            chat_history=chat_history,
         )
         expanded_queries = [refined_next["refined_query"]] + (
             refined_next.get("sub_queries", []) or []
@@ -385,8 +398,11 @@ def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
         details={"stop_reason": stop_reason, "iterations": len(traces)},
     )
 
+    # --- Layer 3: Post-generation role validation ---
+    validated_answer = validate_role_consistency(final_answer.strip(), user_role)
+
     return RAGResult(
-        answer=final_answer.strip(),
+        answer=validated_answer,
         sources=final_sources,
         iterations=len(traces),
         confidence=last_confidence,

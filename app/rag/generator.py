@@ -6,7 +6,7 @@ from langchain_core.documents import Document
 
 from app.core.config import get_settings
 from app.core.logging import get_logger, broadcast_event
-from app.rag.retriever import rerank_documents
+from app.rag.context_builder import build_context_for_query
 
 logger = get_logger(__name__)
 
@@ -20,7 +20,10 @@ def build_system_prompt() -> str:
         "1. Jawab langsung dan to-the-point, gunakan format poin jika informasi banyak.\n"
         "2. Jika informasi dalam konteks kurang lengkap, tetap berikan jawaban terbaik berdasarkan apa yang tersedia.\n"
         "3. JANGAN gunakan pengetahuan di luar dokumen konteks.\n"
-        "4. Gunakan bahasa Indonesia baku dan formal."
+        "4. Gunakan bahasa Indonesia baku dan formal.\n"
+        "5. PENTING: Jangan menyalin heading atau label dari dokumen secara verbatim jika "
+        "bertentangan dengan konten aktual. Selalu verifikasi konsistensi peran/topik "
+        "antara heading dan isi dokumen sebelum menjawab. Prioritaskan KONTEN di atas HEADING."
     )
 
 
@@ -29,7 +32,14 @@ def format_context(docs: List[Document]) -> str:
     for i, doc in enumerate(docs):
         source = doc.metadata.get("source", f"doc-{i}")
         chunk_id = doc.metadata.get("chunk_id", "0")
-        header = f"[Sumber: {source} | Chunk: {chunk_id}]"
+        chunk_part = doc.metadata.get("chunk_part", "")
+        relevance = doc.metadata.get("relevance_score", "")
+        header = f"[Sumber: {source} | Chunk: {chunk_id}"
+        if chunk_part:
+            header += f" | Part: {chunk_part}"
+        if relevance:
+            header += f" | Skor: {relevance}"
+        header += "]"
         blocks.append(f"{header}\n{doc.page_content}")
     return "\n\n".join(blocks)
 
@@ -39,28 +49,27 @@ def limit_docs_for_context(
     documents: List[Document],
     max_docs: int,
     max_chars: int,
+    user_role: str | None = None,
 ) -> List[Document]:
+    """
+    Bangun context menggunakan relevance-aware semantic chunking.
+
+    Fungsi ini sekarang mendelegasikan ke context_builder pipeline:
+    chunk → score (CrossEncoder + positional) → select (token budget) → assemble.
+
+    Args tetap sama untuk backward compatibility:
+        query: Query pengguna.
+        documents: List dokumen dari retrieval.
+        max_docs: (legacy, tidak digunakan lagi — token budget menggantikan)
+        max_chars: (legacy, tidak digunakan lagi — token budget menggantikan)
+        user_role: Peran pengguna untuk role-aware scoring.
+
+    Returns:
+        List[Document] — chunk terpilih sebagai Document.
+    """
     if not documents:
         return []
-    top_docs = rerank_documents(query=query, documents=documents, top_n=max_docs)
-    limited: List[Document] = []
-    char_count = 0
-    for d in top_docs:
-        content_len = len(d.page_content or "")
-        if char_count + content_len > max_chars:
-            # Trim the last doc content to fit budget if useful
-            remaining = max(0, max_chars - char_count)
-            if remaining > 200:
-                d_trim = Document(
-                    page_content=(d.page_content or "")[:remaining], metadata=d.metadata
-                )
-                limited.append(d_trim)
-                break
-            else:
-                break
-        limited.append(d)
-        char_count += content_len
-    return limited
+    return build_context_for_query(query=query, documents=documents, user_role=user_role)
 
 
 def build_user_prompt(query: str, context_text: str) -> str:

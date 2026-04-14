@@ -15,6 +15,9 @@ from app.db.crud import (
     get_answer_contexts_for_messages,
     delete_conversation,
     delete_all_conversations,
+    get_all_system_settings,
+    get_system_setting,
+    set_system_setting,
 )
 from app.db.engine import get_session
 from app.db.models import Message
@@ -290,3 +293,44 @@ async def export_conversations(
             )
 
     return {"conversations": conversations}
+
+
+# ---------------------------------------------------------------------------
+# System Settings (model selection, etc.)
+# ---------------------------------------------------------------------------
+
+VALID_SETTINGS = {
+    "refinement_backend": ["replicate", "gemini"],
+}
+
+
+class SystemSettingUpdate(BaseModel):
+    key: str
+    value: str
+
+
+@router.get("/settings")
+async def get_settings_endpoint(
+    session: AsyncSession = Depends(get_session),
+):
+    """Get all system settings."""
+    settings = await get_all_system_settings(session)
+    return {"settings": settings}
+
+
+@router.put("/settings")
+async def update_setting(
+    payload: SystemSettingUpdate,
+    session: AsyncSession = Depends(get_session),
+):
+    """Update a system setting. Validates values for known keys."""
+    allowed_values = VALID_SETTINGS.get(payload.key)
+    if allowed_values is not None and payload.value not in allowed_values:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid value '{payload.value}' for '{payload.key}'. "
+                   f"Allowed: {allowed_values}",
+        )
+    await set_system_setting(session, payload.key, payload.value)
+    await session.commit()
+    return {"key": payload.key, "value": payload.value}

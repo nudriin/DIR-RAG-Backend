@@ -105,3 +105,14 @@ class AuthToken(Base):
     )
 
     user: Mapped[AdminUser] = relationship("AdminUser", back_populates="tokens")
+
+
+class SystemSetting(Base):
+    """Key-value store for admin-configurable system settings."""
+    __tablename__ = "system_settings"
+
+    key: Mapped[str] = mapped_column(String(100), primary_key=True)
+    value: Mapped[str] = mapped_column(Text)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow
+    )
