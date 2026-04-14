@@ -7,7 +7,7 @@ from langchain_core.documents import Document
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from app.core.config import get_settings
-from app.core.logging import get_logger
+from app.core.logging import get_logger, broadcast_event
 from app.rag.generator import build_system_prompt, format_context, limit_docs_for_context
 
 import google.generativeai as genai
@@ -216,6 +216,7 @@ def generate_with_dragin(
     sub_queries: List[str] | None = None,
     user_role: str | None = None,
     raw_query: str | None = None,
+    chat_history: str | None = None,
 ) -> DRAGINResult:
     """
     Generate jawaban DAN evaluasi uncertainty dalam SATU panggilan LLM.
@@ -241,6 +242,7 @@ def generate_with_dragin(
         documents=documents,
         max_docs=settings.context_max_docs,
         max_chars=settings.context_char_budget,
+        user_role=user_role,
     )
     context_text = format_context(docs_limited)
     system_prompt = build_system_prompt()
@@ -260,15 +262,28 @@ def generate_with_dragin(
             role_section = (
                 "\nInformasi tentang pengguna:\n"
                 f"- Peran pengguna saat ini: {user_role}\n"
-                "- Jawab hanya untuk peran tersebut. Jika konteks menjelaskan "
-                "fitur yang hanya tersedia untuk peran lain, jelaskan bahwa "
-                "fitur tersebut tidak tersedia bagi peran pengguna dan jangan "
-                "menyesatkan.\n"
+                "- PENTING: Jawab HANYA dari perspektif peran ini.\n"
+                "- Jika konten dokumen membahas prosedur untuk peran ini tapi heading/label "
+                "menyebut peran lain, ikuti KONTEN bukan HEADING.\n"
+                "- Jangan pernah mengatakan pengguna harus login/masuk sebagai peran lain, "
+                "kecuali konteks dokumen secara eksplisit menyatakan prosedur yang sama.\n"
+                "- Tentukan secara mandiri dari konteks dokumen untuk peran siapa fitur tersebut berlaku.\n"
+                "- Jika konteks menunjukkan fitur untuk peran lain, jelaskan keterbatasan akses "
+                "bagi peran pengguna dan jangan menyesatkan.\n"
             )
 
     original_query = raw_query or query
 
+    # --- Riwayat percakapan (short-term memory) ---
+    history_section = ""
+    if chat_history:
+        history_section = (
+            "Riwayat percakapan sebelumnya (gunakan untuk memahami konteks):\n"
+            f"{chat_history}\n\n"
+        )
+
     user_prompt = (
+        f"{history_section}"
         "Berikut adalah konteks dari dokumen yang relevan:\n\n"
         f"{context_text}\n\n"
         "Pertanyaan asli pengguna:\n"
@@ -280,6 +295,13 @@ def generate_with_dragin(
         "Instruksi:\n"
         "- Utamakan menjawab sesuai maksud pertanyaan asli pengguna.\n"
         "- Gunakan pertanyaan hasil refinement hanya sebagai bantuan untuk menstrukturkan jawaban, bukan untuk mengubah maksud.\n"
+        "- Jika ada riwayat percakapan sebelumnya, perhatikan konteks percakapan untuk memahami maksud pertanyaan saat ini (misalnya kata ganti 'itu', 'nya', 'tersebut' mungkin merujuk ke topik sebelumnya).\n"
+        "- KRITIS: Jangan menyalin heading/label dari dokumen secara mentah. Jika heading dokumen menyebutkan peran yang berbeda dari konten aktualnya (misalnya heading 'Login Siswa' tapi konten menjelaskan login Pengajar), gunakan KONTEN AKTUAL dan abaikan heading yang salah.\n"
+        "- Sebelum menulis jawaban, verifikasi bahwa setiap langkah yang kamu jelaskan konsisten dengan peran yang ditanyakan pengguna. Jangan menyebut peran lain kecuali untuk klarifikasi perbedaan.\n"
+        "- Jika dokumen konteks merupakan panduan untuk peran tertentu, sebutkan peran tersebut secara eksplisit berdasarkan konten aktual, bukan dari heading/judul dokumen.\n"
+        "- Tentukan dari konteks dokumen peran utama yang sedang dibahas (misalnya dinas, admin sekolah, pengajar, siswa, pengawas).\n"
+        "- Jika peran pada konteks berbeda dari peran pengguna, mulai jawaban dengan satu kalimat klarifikasi tentang perbedaan akses/fitur.\n"
+        "- Jangan menyatakan pengguna akan masuk ke dashboard/fitur peran lain; jelaskan sebagai informasi dari dokumen peran tersebut.\n"
         "- Jika konteks hanya membahas entitas lain yang mirip tetapi berbeda (misalnya guru non induk vs kelas ajar non induk), jelaskan keterbatasan tersebut dan jangan mengganti topik pertanyaan.\n"
         "- Jika informasi dalam konteks kurang lengkap untuk menjawab pertanyaan asli, jelaskan keterbatasannya secara eksplisit.\n"
         "- Jawab secara terstruktur, jelas, dan ringkas menggunakan hanya informasi dari konteks.\n"
@@ -398,3 +420,77 @@ def generate_with_dragin(
         token_entropies=token_entropies,
         llm_backend=backend,
     )
+
+
+# ---------------------------------------------------------------------------
+# Post-generation role validation (Layer 3)
+# ---------------------------------------------------------------------------
+
+_ROLE_CONTRADICTIONS = {
+    "pengajar": [
+        "login sebagai siswa", "masuk sebagai siswa", "pilih login sebagai siswa",
+        "pilih siswa", "klik siswa",
+    ],
+    "siswa": [
+        "login sebagai pengajar", "masuk sebagai pengajar", "pilih login sebagai pengajar",
+        "login sebagai guru", "masuk sebagai guru", "pilih pengajar", "klik pengajar",
+    ],
+    "admin_sekolah": [
+        "login sebagai siswa", "login sebagai pengajar", "pilih siswa", "pilih pengajar",
+    ],
+    "pengawas": [
+        "login sebagai siswa", "login sebagai pengajar", "pilih siswa", "pilih pengajar",
+    ],
+}
+
+
+def validate_role_consistency(
+    answer: str,
+    user_role: str | None,
+) -> str:
+    """
+    Validasi konsistensi peran pada jawaban yang digenerate.
+
+    Jika jawaban menyarankan login/aksi sebagai peran yang salah,
+    tambahkan disclaimer di awal jawaban.
+
+    Returns:
+        Jawaban yang sudah divalidasi (mungkin dengan disclaimer).
+    """
+    if not user_role or not answer:
+        return answer
+
+    role_norm = user_role.strip().lower()
+    checks = _ROLE_CONTRADICTIONS.get(role_norm, [])
+    answer_lower = answer.lower()
+
+    found_contradictions = [
+        c for c in checks if c in answer_lower
+    ]
+
+    if found_contradictions:
+        role_display = user_role.replace("_", " ").title()
+        logger.warning(
+            "Role contradiction detected in answer",
+            extra={
+                "user_role": user_role,
+                "contradictions": found_contradictions,
+            },
+        )
+        broadcast_event(
+            stage="generation",
+            action="role_validation_warning",
+            summary=f"Kontradiksi peran terdeteksi: {found_contradictions}",
+            details={
+                "user_role": user_role,
+                "contradictions": found_contradictions,
+            },
+        )
+        disclaimer = (
+            f"**Catatan:** Berikut adalah informasi untuk peran **{role_display}**. "
+            f"Beberapa bagian dokumen sumber mungkin mengandung label peran yang tidak sesuai, "
+            f"namun konten di bawah ini telah disesuaikan untuk peran Anda.\n\n"
+        )
+        return disclaimer + answer
+
+    return answer

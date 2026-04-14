@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from sqlalchemy import Select, func, select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import Conversation, Message, Feedback, AnswerContext
+from app.db.models import Conversation, Message, Feedback, AnswerContext, SystemSetting
 
 
 async def create_conversation(
@@ -155,3 +155,38 @@ async def add_feedback(
     await session.flush()
     await session.refresh(feedback)
     return feedback
+
+
+async def get_system_setting(
+    session: AsyncSession,
+    key: str,
+) -> Optional[str]:
+    """Get a single system setting value by key."""
+    setting = await session.get(SystemSetting, key)
+    return setting.value if setting else None
+
+
+async def set_system_setting(
+    session: AsyncSession,
+    key: str,
+    value: str,
+) -> SystemSetting:
+    """Upsert a system setting."""
+    setting = await session.get(SystemSetting, key)
+    if setting is None:
+        setting = SystemSetting(key=key, value=value)
+        session.add(setting)
+    else:
+        setting.value = value
+    await session.flush()
+    return setting
+
+
+async def get_all_system_settings(
+    session: AsyncSession,
+) -> Dict[str, str]:
+    """Get all system settings as a flat dict."""
+    stmt = select(SystemSetting)
+    result = await session.execute(stmt)
+    settings = result.scalars().all()
+    return {s.key: s.value for s in settings}

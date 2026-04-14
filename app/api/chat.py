@@ -8,7 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.logging import get_logger, broadcast_event
 from app.core.auth import optional_current_user
 from app.rag.rag_pipeline import run_rag_pipeline
-from app.db.crud import add_message, create_conversation
+from app.rag.memory import load_memory_from_db, format_chat_history
+from app.db.crud import add_message, create_conversation, get_system_setting
 from app.db.engine import get_session
 from app.db.models import Conversation, AnswerContext
 from app.data.vector_store import vector_store_manager
@@ -153,8 +154,31 @@ async def chat_endpoint(
             },
         )
     else:
+        # --- Short-term memory: muat riwayat percakapan ---
+        chat_history_text: str | None = None
+        if payload.conversation_id is not None:
+            try:
+                history_pairs = await load_memory_from_db(
+                    session=session,
+                    conversation_id=payload.conversation_id,
+                )
+                if history_pairs:
+                    chat_history_text = format_chat_history(history_pairs)
+            except Exception as exc:
+                logger.warning(f"Gagal memuat riwayat percakapan: {exc}")
+
+        # --- Load refinement backend from DB ---
+        refinement_backend: str | None = None
+        try:
+            refinement_backend = await get_system_setting(session, "refinement_backend")
+        except Exception as exc:
+            logger.warning(f"Gagal baca refinement_backend: {exc}")
+
         t0 = time.perf_counter()
-        rag_result = await asyncio.to_thread(run_rag_pipeline, query_text, effective_role)
+        rag_result = await asyncio.to_thread(
+            run_rag_pipeline, query_text, effective_role, chat_history_text,
+            refinement_backend,
+        )
         response_time_ms = (time.perf_counter() - t0) * 1000.0
 
         trace_models = [

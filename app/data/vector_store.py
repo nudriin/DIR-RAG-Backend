@@ -71,7 +71,7 @@ class VectorStoreManager:
         splitter = SemanticChunker(
             self.embedding_model,
             breakpoint_threshold_type="percentile",
-            breakpoint_threshold_amount=self.settings.semantic_breakpoint_threshold_amount,
+            # breakpoint_threshold_amount=self.settings.semantic_breakpoint_threshold_amount,
         )
         documents: List[Document] = []
 
