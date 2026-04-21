@@ -93,6 +93,9 @@ def run_rag_pipeline(
     refinement_model_override: str | None = None,
     generator_backend: str | None = None,
     generator_model_override: str | None = None,
+    gemini_mode_override: str | None = None,
+    vertex_project_override: str | None = None,
+    vertex_location_override: str | None = None,
 ) -> RAGResult:
     """
     RAG Pipeline dengan RQ-RAG + DRAGIN Reasoning Loop.
@@ -120,6 +123,9 @@ def run_rag_pipeline(
         query, user_role=user_role, refinement_backend=refinement_backend,
         refinement_model_override=refinement_model_override,
         chat_history=chat_history,
+        gemini_mode_override=gemini_mode_override,
+        vertex_project_override=vertex_project_override,
+        vertex_location_override=vertex_location_override,
     )
     sub_queries: List[str] = rq.get("sub_queries", []) or []
     search_queries: List[str] = [rq["refined_query"]] + sub_queries
@@ -216,6 +222,9 @@ def run_rag_pipeline(
             chat_history=chat_history,
             generator_backend=generator_backend,
             generator_model_override=generator_model_override,
+            gemini_mode_override=gemini_mode_override,
+            vertex_project_override=vertex_project_override,
+            vertex_location_override=vertex_location_override,
         )
         entropy_history.append(dragin_result.entropy)
         broadcast_event(
@@ -262,7 +271,7 @@ def run_rag_pipeline(
             },
             "rq_dragin": {
                 "iter_query": current_query,
-                "current_draft": dragin_result.answer_text[:200],
+                "current_draft": dragin_result.answer_text,
                 "new_docs_found": 0,
                 "pruning_discarded": 0,
                 "pruning_kept": len(all_documents),

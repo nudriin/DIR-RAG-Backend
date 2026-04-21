@@ -8,7 +8,11 @@ import google.generativeai as genai
 
 from app.core.config import get_settings
 from app.core.logging import get_logger, broadcast_event
-from app.core.gemini_client import configure_genai, get_gemini_model
+from app.core.gemini_client import (
+    configure_genai, 
+    get_gemini_model, 
+    get_google_genai_client
+)
 from app.data.vector_store import vector_store_manager
 
 logger = get_logger(__name__)
@@ -139,32 +143,85 @@ def _call_replicate(prompt: str, settings, model_override: Optional[str] = None)
     )
 
 
-def _call_gemini(prompt: str, settings, model_override: Optional[str] = None) -> str:
+def _call_gemini(
+    prompt: str, 
+    settings, 
+    model_override: Optional[str] = None,
+    gemini_mode_override: Optional[str] = None,
+    vertex_project_override: Optional[str] = None,
+    vertex_location_override: Optional[str] = None,
+) -> str:
     """Panggil LLM via Google Gemini API (mendukung api_key dan vertex_ai)."""
-    # Gunakan gemini_client sebagai satu titik konfigurasi SDK
-    configure_genai()
-    model_name = model_override or settings.gemini_model
-    model = get_gemini_model(
-        model_name=model_name,
-    )
-    response = model.generate_content(
-        prompt,
-        generation_config={
-            "temperature": 0.1,
-            "max_output_tokens": 1024,
-        },
-    )
-    return response.text.strip()
+    try:
+        # Gunakan SDK baru jika tersedia
+        client = get_google_genai_client(
+            mode_override=gemini_mode_override,
+            project_override=vertex_project_override,
+            location_override=vertex_location_override,
+        )
+        from google.genai.types import GenerateContentConfig
+        
+        model_name = model_override or settings.gemini_model
+        
+        response = client.models.generate_content(
+            model=model_name,
+            contents=prompt,
+            config=GenerateContentConfig(
+                temperature=0.1,
+                max_output_tokens=1024,
+            )
+        )
+        return response.text.strip()
+        
+    except Exception as e:
+        logger.warning(f"Gagal menggunakan SDK baru google-genai di RQ-RAG, fallback: {e}")
+        
+        # Fallback ke SDK lama
+        configure_genai(
+            mode_override=gemini_mode_override,
+            project_override=vertex_project_override,
+            location_override=vertex_location_override,
+        )
+        model_name = model_override or settings.gemini_model
+        model = get_gemini_model(
+            model_name=model_name,
+        )
+        response = model.generate_content(
+            prompt,
+            generation_config={
+                "temperature": 0.1,
+                "max_output_tokens": 1024,
+            },
+        )
+        return response.text.strip()
 
 
-def _call_llm(prompt: str, settings, backend: str = "gemini", model_override: Optional[str] = None) -> str:
+def _call_llm(
+    prompt: str, 
+    settings, 
+    backend: str = "gemini", 
+    model_override: Optional[str] = None,
+    gemini_mode_override: Optional[str] = None,
+    vertex_project_override: Optional[str] = None,
+    vertex_location_override: Optional[str] = None,
+) -> str:
     """Dispatch ke backend LLM yang sesuai."""
     backend = (backend or "gemini").lower()
     logger.info(f"RQ-RAG using backend: {backend}")
     if backend == "replicate":
         return _call_replicate(prompt, settings, model_override)
+    elif backend == "gemini":
+        return _call_gemini(
+            prompt, 
+            settings, 
+            model_override,
+            gemini_mode_override=gemini_mode_override,
+            vertex_project_override=vertex_project_override,
+            vertex_location_override=vertex_location_override,
+        )
     else:
-        return _call_gemini(prompt, settings, model_override)
+        # Fallback to OpenAI if configured
+        return _call_openai(prompt, settings, model_override)
 
 
 def refine_query(
@@ -174,6 +231,9 @@ def refine_query(
     refinement_backend: Optional[str] = None,
     refinement_model_override: Optional[str] = None,
     chat_history: Optional[str] = None,
+    gemini_mode_override: Optional[str] = None,
+    vertex_project_override: Optional[str] = None,
+    vertex_location_override: Optional[str] = None,
 ) -> RefinedQuery:
     # Normalize empty string → None
     if chat_history is not None and not chat_history.strip():
@@ -345,7 +405,15 @@ def refine_query(
     """
 
     try:
-        text = _call_llm(prompt, settings, backend=refinement_backend or "gemini", model_override=refinement_model_override)
+        text = _call_llm(
+            prompt, 
+            settings, 
+            backend=refinement_backend or "gemini", 
+            model_override=refinement_model_override,
+            gemini_mode_override=gemini_mode_override,
+            vertex_project_override=vertex_project_override,
+            vertex_location_override=vertex_location_override,
+        )
 
         candidates = _extract_json_candidates(text)
         parsed = None
@@ -361,7 +429,22 @@ def refine_query(
             raise ValueError("json_not_found")
 
         candidate = parsed.get("refined_query", query) or query
-        subqs = parsed.get("sub_queries", [candidate]) or [candidate]
+        subqs_raw = parsed.get("sub_queries", [candidate]) or [candidate]
+        
+        # Perbaikan: Pastikan sub_queries selalu List[str]
+        subqs = []
+        if isinstance(subqs_raw, list):
+            for item in subqs_raw:
+                if isinstance(item, str):
+                    subqs.append(item)
+                elif isinstance(item, dict):
+                    # Ambil field 'query' atau stringify jika model bandel
+                    subqs.append(item.get("query") or item.get("content") or str(item))
+                else:
+                    subqs.append(str(item))
+        else:
+            subqs = [str(subqs_raw)]
+
         rtype = parsed.get("refinement_type", "REWRITE")
         noop = _norm_text(candidate) == _norm_text(query)
         rtype_out = "NO_CHANGE" if noop else rtype

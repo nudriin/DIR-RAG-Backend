@@ -44,6 +44,7 @@ class Settings(BaseSettings):
     # DRAGIN LLM backend: "openai" atau "gemini"
     dragin_llm_backend: str = Field(default="gemini", env="DRAGIN_LLM_BACKEND")
     gemini_model: str = Field(default="gemini-2.0-flash", env="GEMINI_MODEL")
+    gemini_api_version: str = Field(default="v1beta", env="GEMINI_API_VERSION")
     google_api_key: str | None = Field(default=None, env="GOOGLE_API_KEY")
 
     # DB Overrides (di-set via Pydantic model dan environment)
@@ -106,7 +107,7 @@ class Settings(BaseSettings):
     chunk_overlap_tokens: int = Field(default=50, env="CHUNK_OVERLAP_TOKENS")
     scoring_semantic_weight: float = Field(default=0.8, env="SCORING_SEMANTIC_WEIGHT")
     scoring_positional_weight: float = Field(default=0.2, env="SCORING_POSITIONAL_WEIGHT")
-    max_generation_tokens: int = Field(default=512, env="MAX_GENERATION_TOKENS")
+    max_generation_tokens: int = Field(default=2048, env="MAX_GENERATION_TOKENS")
     rq_similarity_block_threshold: float = Field(
         default=0.7, env="RQ_SIMILARITY_BLOCK_THRESHOLD"
     )
@@ -142,6 +143,11 @@ class Settings(BaseSettings):
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     settings = Settings()
+    # Log mode load pertama kali
+    from app.core.logging import get_logger
+    _logger = get_logger("app.core.config")
+    _logger.info(f"Settings loaded for the first time. GEMINI_MODE: {settings.gemini_mode}")
+    
     settings.data_dir.mkdir(parents=True, exist_ok=True)
     settings.vector_dir.mkdir(parents=True, exist_ok=True)
     settings.log_dir.mkdir(parents=True, exist_ok=True)
