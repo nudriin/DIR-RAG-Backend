@@ -1,12 +1,15 @@
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import get_logger
 from app.core.auth import check_role
+from app.core.config import get_settings
+from app.core.gemini_client import validate_service_account_json, reset_configuration
 from app.db.crud import (
     get_all_conversations,
     get_conversation_history,
@@ -299,8 +302,12 @@ async def export_conversations(
 # System Settings (model selection, etc.)
 # ---------------------------------------------------------------------------
 
-VALID_SETTINGS = {
+VALID_SETTINGS: dict[str, list[str] | None] = {
     "refinement_backend": ["replicate", "gemini"],
+    "gemini_mode": ["api_key", "vertex_ai"],
+    # Free string settings (None = no whitelist validation)
+    "vertex_project": None,
+    "vertex_location": None,
 }
 
 
@@ -324,7 +331,14 @@ async def update_setting(
     session: AsyncSession = Depends(get_session),
 ):
     """Update a system setting. Validates values for known keys."""
-    allowed_values = VALID_SETTINGS.get(payload.key)
+    if payload.key not in VALID_SETTINGS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown setting key '{payload.key}'. "
+                   f"Allowed keys: {list(VALID_SETTINGS.keys())}",
+        )
+    allowed_values = VALID_SETTINGS[payload.key]
+    # None = free string (no whitelist check)
     if allowed_values is not None and payload.value not in allowed_values:
         raise HTTPException(
             status_code=400,
@@ -333,4 +347,97 @@ async def update_setting(
         )
     await set_system_setting(session, payload.key, payload.value)
     await session.commit()
+    # Jika gemini_mode berubah, reset konfigurasi SDK agar di-reinit saat request berikutnya
+    if payload.key == "gemini_mode":
+        reset_configuration()
     return {"key": payload.key, "value": payload.value}
+
+
+# ---------------------------------------------------------------------------
+# Gemini Service Account JSON Upload
+# ---------------------------------------------------------------------------
+
+SA_MAX_SIZE_BYTES = 1 * 1024 * 1024  # 1 MB
+
+
+@router.post("/settings/gemini-sa", status_code=200)
+async def upload_gemini_service_account(
+    file: UploadFile = File(...),
+):
+    """
+    Upload Service Account JSON untuk Vertex AI.
+
+    File disimpan ke storage/service_accounts/gemini_sa.json.
+    Endpoint memvalidasi struktur SA JSON sebelum menyimpan.
+    """
+    # Validasi MIME type
+    if file.content_type not in ("application/json", "text/plain", "application/octet-stream"):
+        # Beberapa browser mengirim application/octet-stream untuk .json
+        filename = file.filename or ""
+        if not filename.endswith(".json"):
+            raise HTTPException(
+                status_code=400,
+                detail="File harus berekstensi .json (Service Account JSON).",
+            )
+
+    content = await file.read()
+
+    # Validasi isi dan struktur SA JSON
+    try:
+        sa_data = validate_service_account_json(content)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+    # Simpan ke storage/service_accounts/
+    cfg = get_settings()
+    sa_dir: Path = cfg.data_dir / "service_accounts"
+    sa_dir.mkdir(parents=True, exist_ok=True)
+    sa_file: Path = sa_dir / "gemini_sa.json"
+
+    try:
+        sa_file.write_bytes(content)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Gagal menyimpan SA JSON: {exc}",
+        )
+
+    # Reset Gemini SDK config agar pakai credential baru
+    reset_configuration()
+
+    logger.info(
+        "Gemini Service Account JSON uploaded",
+        extra={"project_id": sa_data.get("project_id"), "client_email": sa_data.get("client_email")},
+    )
+
+    return {
+        "status": "ok",
+        "message": "Service Account JSON berhasil diunggah.",
+        "project_id": sa_data.get("project_id"),
+        "client_email": sa_data.get("client_email"),
+        "filename": sa_file.name,
+    }
+
+
+@router.get("/settings/gemini-sa")
+async def get_gemini_sa_status():
+    """
+    Cek apakah Service Account JSON sudah diunggah.
+    """
+    cfg = get_settings()
+    sa_file: Path = cfg.data_dir / "service_accounts" / "gemini_sa.json"
+
+    if not sa_file.exists():
+        return {"has_sa": False, "filename": None, "project_id": None}
+
+    try:
+        import json
+        data = json.loads(sa_file.read_bytes())
+        return {
+            "has_sa": True,
+            "filename": sa_file.name,
+            "project_id": data.get("project_id"),
+            "client_email": data.get("client_email"),
+        }
+    except Exception:
+        return {"has_sa": True, "filename": sa_file.name, "project_id": None}

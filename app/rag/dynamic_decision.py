@@ -8,6 +8,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 from app.core.config import get_settings
 from app.core.logging import get_logger, broadcast_event
+from app.core.gemini_client import configure_genai, get_gemini_model, get_langchain_chat_llm
 from app.rag.generator import build_system_prompt, format_context, limit_docs_for_context
 
 import google.generativeai as genai
@@ -143,9 +144,10 @@ def _call_gemini_direct(
     Returns:
         (answer_text, logprobs_content)
     """
-    genai.configure(api_key=settings.google_api_key)
+    # Gunakan gemini_client sebagai satu titik konfigurasi SDK
+    configure_genai()
 
-    model = genai.GenerativeModel(
+    model = get_gemini_model(
         model_name=settings.gemini_model,
         system_instruction=system_prompt,
     )
@@ -177,17 +179,15 @@ def _create_llm(settings):
     backend = settings.dragin_llm_backend.lower()
 
     if backend == "gemini":
-        from langchain_google_genai import ChatGoogleGenerativeAI
-
-        llm = ChatGoogleGenerativeAI(
-            model=settings.gemini_model,
-            google_api_key=settings.google_api_key,
+        # Gunakan get_langchain_chat_llm agar mode api_key / vertex_ai otomatis dipilih
+        llm = get_langchain_chat_llm(
+            model_name=settings.gemini_model,
             temperature=0.1,
             max_output_tokens=settings.max_generation_tokens,
             top_logprobs=settings.top_logprops,
             response_logprobs=True,
         )
-        logger.info(f"DRAGIN using Gemini backend: {settings.gemini_model}")
+        logger.info(f"DRAGIN using Gemini backend [{settings.gemini_mode}]: {settings.gemini_model}")
         return llm, "gemini"
 
     else:

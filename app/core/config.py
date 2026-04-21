@@ -1,6 +1,6 @@
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Literal
+from typing import List, Literal, Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings
@@ -45,6 +45,19 @@ class Settings(BaseSettings):
     dragin_llm_backend: str = Field(default="openai", env="DRAGIN_LLM_BACKEND")
     gemini_model: str = Field(default="gemini-2.0-flash", env="GEMINI_MODEL")
     google_api_key: str | None = Field(default=None, env="GOOGLE_API_KEY")
+
+    # --- Gemini Authentication Mode ---
+    # "api_key"  : Google AI Studio via GOOGLE_API_KEY
+    # "vertex_ai": Google Vertex AI via Service Account JSON
+    gemini_mode: Literal["api_key", "vertex_ai"] = Field(
+        default="api_key", env="GEMINI_MODE"
+    )
+    vertex_project: Optional[str] = Field(default=None, env="VERTEX_PROJECT")
+    vertex_location: str = Field(default="us-central1", env="VERTEX_LOCATION")
+    # Path ke file SA JSON; jika kosong, sistem akan mencari di storage/service_accounts/
+    google_service_account_path: Optional[str] = Field(
+        default=None, env="GOOGLE_SERVICE_ACCOUNT_PATH"
+    )
 
     max_iterations: int = Field(default=2, env="MAX_ITERATIONS")
     similarity_top_k: int = Field(default=5, env="SIMILARITY_TOP_K")

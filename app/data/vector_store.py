@@ -4,7 +4,6 @@ import shutil
 
 from langchain_core.documents import Document
 from langchain.embeddings.base import Embeddings
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_core.vectorstores import VectorStore
@@ -12,6 +11,7 @@ from pydantic import BaseModel
 from langchain_experimental.text_splitter import SemanticChunker
 
 from app.core.config import get_settings
+from app.core.gemini_client import get_langchain_embeddings
 
 
 class StoredVectorMetadata(BaseModel):
@@ -35,9 +35,10 @@ class VectorStoreManager:
                     model_name=self.settings.bge_model_name
                 )
             else:
-                self._embedding_model = GoogleGenerativeAIEmbeddings(
-                    model=self.settings.gemini_embedding_model,
-                    google_api_key=self.settings.google_api_key,
+                # get_langchain_embeddings otomatis memilih GoogleGenerativeAIEmbeddings
+                # (mode api_key) atau VertexAIEmbeddings (mode vertex_ai)
+                self._embedding_model = get_langchain_embeddings(
+                    model_name=self.settings.gemini_embedding_model,
                 )
         return self._embedding_model
 

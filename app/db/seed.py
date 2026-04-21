@@ -54,6 +54,9 @@ async def seed_default_settings(session: AsyncSession) -> None:
     """Seed default system settings if not already present."""
     defaults = {
         "refinement_backend": "gemini",
+        "gemini_mode": "api_key",
+        "vertex_project": "",
+        "vertex_location": "us-central1",
     }
     for key, value in defaults.items():
         existing = await session.get(SystemSetting, key)

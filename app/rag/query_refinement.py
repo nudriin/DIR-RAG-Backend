@@ -8,6 +8,7 @@ import google.generativeai as genai
 
 from app.core.config import get_settings
 from app.core.logging import get_logger, broadcast_event
+from app.core.gemini_client import configure_genai, get_gemini_model
 from app.data.vector_store import vector_store_manager
 
 logger = get_logger(__name__)
@@ -138,9 +139,10 @@ def _call_replicate(prompt: str, settings) -> str:
 
 
 def _call_gemini(prompt: str, settings) -> str:
-    """Panggil LLM via Google Gemini API."""
-    genai.configure(api_key=settings.google_api_key)
-    model = genai.GenerativeModel(
+    """Panggil LLM via Google Gemini API (mendukung api_key dan vertex_ai)."""
+    # Gunakan gemini_client sebagai satu titik konfigurasi SDK
+    configure_genai()
+    model = get_gemini_model(
         model_name=settings.gemini_model,
     )
     response = model.generate_content(
