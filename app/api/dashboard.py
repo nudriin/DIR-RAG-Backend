@@ -304,10 +304,16 @@ async def export_conversations(
 
 VALID_SETTINGS: dict[str, list[str] | None] = {
     "refinement_backend": ["replicate", "gemini"],
+    "refinement_model_gemini": None,
+    "refinement_model_replicate": None,
     "gemini_mode": ["api_key", "vertex_ai"],
     # Free string settings (None = no whitelist validation)
     "vertex_project": None,
     "vertex_location": None,
+    # Generator backend (DRAGIN) — model yang digunakan untuk generate jawaban + logprobs
+    "generator_backend": ["gemini", "openai"],
+    "generator_model_gemini": None,  # e.g. "gemini-2.0-flash"
+    "generator_model_openai": None,  # e.g. "gpt-4o"
 }
 
 

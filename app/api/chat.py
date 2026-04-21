@@ -169,15 +169,40 @@ async def chat_endpoint(
 
         # --- Load refinement backend from DB ---
         refinement_backend: str | None = None
+        refinement_model_override: str | None = None
         try:
             refinement_backend = await get_system_setting(session, "refinement_backend")
+            if refinement_backend == "gemini":
+                refinement_model_override = await get_system_setting(
+                    session, "refinement_model_gemini"
+                )
+            elif refinement_backend == "replicate":
+                refinement_model_override = await get_system_setting(
+                    session, "refinement_model_replicate"
+                )
         except Exception as exc:
             logger.warning(f"Gagal baca refinement_backend: {exc}")
+
+        # --- Load generator backend from DB ---
+        generator_backend: str | None = None
+        generator_model_override: str | None = None
+        try:
+            generator_backend = await get_system_setting(session, "generator_backend")
+            if generator_backend == "gemini":
+                generator_model_override = await get_system_setting(
+                    session, "generator_model_gemini"
+                )
+            elif generator_backend == "openai":
+                generator_model_override = await get_system_setting(
+                    session, "generator_model_openai"
+                )
+        except Exception as exc:
+            logger.warning(f"Gagal baca generator_backend: {exc}")
 
         t0 = time.perf_counter()
         rag_result = await asyncio.to_thread(
             run_rag_pipeline, query_text, effective_role, chat_history_text,
-            refinement_backend,
+            refinement_backend, refinement_model_override, generator_backend, generator_model_override,
         )
         response_time_ms = (time.perf_counter() - t0) * 1000.0
 

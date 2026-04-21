@@ -90,6 +90,9 @@ def run_rag_pipeline(
     user_role: str | None = None,
     chat_history: str | None = None,
     refinement_backend: str | None = None,
+    refinement_model_override: str | None = None,
+    generator_backend: str | None = None,
+    generator_model_override: str | None = None,
 ) -> RAGResult:
     """
     RAG Pipeline dengan RQ-RAG + DRAGIN Reasoning Loop.
@@ -115,6 +118,7 @@ def run_rag_pipeline(
     # ======================================================================
     rq: RefinedQuery = refine_query(
         query, user_role=user_role, refinement_backend=refinement_backend,
+        refinement_model_override=refinement_model_override,
         chat_history=chat_history,
     )
     sub_queries: List[str] = rq.get("sub_queries", []) or []
@@ -210,6 +214,8 @@ def run_rag_pipeline(
             user_role=user_role,
             raw_query=query,
             chat_history=chat_history,
+            generator_backend=generator_backend,
+            generator_model_override=generator_model_override,
         )
         entropy_history.append(dragin_result.entropy)
         broadcast_event(
@@ -310,6 +316,7 @@ def run_rag_pipeline(
             draft_answer=dragin_result.answer_text,
             user_role=user_role,
             refinement_backend=refinement_backend,
+            refinement_model_override=refinement_model_override,
             chat_history=chat_history,
         )
         expanded_queries = [refined_next["refined_query"]] + (

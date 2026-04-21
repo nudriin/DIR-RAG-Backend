@@ -121,11 +121,12 @@ def _extract_json_candidates(text: str) -> List[str]:
     return uniq
 
 
-def _call_replicate(prompt: str, settings) -> str:
+def _call_replicate(prompt: str, settings, model_override: Optional[str] = None) -> str:
     """Panggil LLM via Replicate API."""
     client = replicate.Client(api_token=settings.replicate_api_token)
+    model_name = model_override or settings.llm_model
     output = client.run(
-        settings.llm_model,
+        model_name,
         input={
             "prompt": prompt,
             "temperature": 0.1,
@@ -138,12 +139,13 @@ def _call_replicate(prompt: str, settings) -> str:
     )
 
 
-def _call_gemini(prompt: str, settings) -> str:
+def _call_gemini(prompt: str, settings, model_override: Optional[str] = None) -> str:
     """Panggil LLM via Google Gemini API (mendukung api_key dan vertex_ai)."""
     # Gunakan gemini_client sebagai satu titik konfigurasi SDK
     configure_genai()
+    model_name = model_override or settings.gemini_model
     model = get_gemini_model(
-        model_name=settings.gemini_model,
+        model_name=model_name,
     )
     response = model.generate_content(
         prompt,
@@ -155,14 +157,14 @@ def _call_gemini(prompt: str, settings) -> str:
     return response.text.strip()
 
 
-def _call_llm(prompt: str, settings, backend: str = "gemini") -> str:
+def _call_llm(prompt: str, settings, backend: str = "gemini", model_override: Optional[str] = None) -> str:
     """Dispatch ke backend LLM yang sesuai."""
     backend = (backend or "gemini").lower()
     logger.info(f"RQ-RAG using backend: {backend}")
     if backend == "replicate":
-        return _call_replicate(prompt, settings)
+        return _call_replicate(prompt, settings, model_override)
     else:
-        return _call_gemini(prompt, settings)
+        return _call_gemini(prompt, settings, model_override)
 
 
 def refine_query(
@@ -170,6 +172,7 @@ def refine_query(
     draft_answer: Optional[str] = None,
     user_role: Optional[str] = None,
     refinement_backend: Optional[str] = None,
+    refinement_model_override: Optional[str] = None,
     chat_history: Optional[str] = None,
 ) -> RefinedQuery:
     # Normalize empty string → None
@@ -342,7 +345,7 @@ def refine_query(
     """
 
     try:
-        text = _call_llm(prompt, settings, backend=refinement_backend or "gemini")
+        text = _call_llm(prompt, settings, backend=refinement_backend or "gemini", model_override=refinement_model_override)
 
         candidates = _extract_json_candidates(text)
         parsed = None

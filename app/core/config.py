@@ -42,9 +42,16 @@ class Settings(BaseSettings):
     database_url: str | None = Field(default=None, env="DATABASE_URL")
 
     # DRAGIN LLM backend: "openai" atau "gemini"
-    dragin_llm_backend: str = Field(default="openai", env="DRAGIN_LLM_BACKEND")
+    dragin_llm_backend: str = Field(default="gemini", env="DRAGIN_LLM_BACKEND")
     gemini_model: str = Field(default="gemini-2.0-flash", env="GEMINI_MODEL")
     google_api_key: str | None = Field(default=None, env="GOOGLE_API_KEY")
+
+    # DB Overrides (di-set via Pydantic model dan environment)
+    generator_backend: str | None = Field(default=None)
+    generator_model_gemini: str | None = Field(default=None)
+    generator_model_openai: str | None = Field(default=None)
+    refinement_model_gemini: str | None = Field(default=None)
+    refinement_model_replicate: str | None = Field(default=None)
 
     # --- Gemini Authentication Mode ---
     # "api_key"  : Google AI Studio via GOOGLE_API_KEY

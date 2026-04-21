@@ -13,6 +13,7 @@ from app.rag.generator import build_system_prompt, format_context, limit_docs_fo
 
 import google.generativeai as genai
 from google.ai.generativelanguage_v1beta.types import GenerationConfig as ProtoGenerationConfig
+from google.api_core.exceptions import ResourceExhausted
 
 logger = get_logger(__name__)
 
@@ -174,35 +175,39 @@ def _call_gemini_direct(
 # LLM factory
 # ---------------------------------------------------------------------------
 
-def _create_llm(settings):
-    """Buat LLM instance berdasarkan setting DRAGIN_LLM_BACKEND."""
-    backend = settings.dragin_llm_backend.lower()
+def _create_llm(settings, backend: str | None = None, model_override: str | None = None):
+    """Buat LLM instance berdasarkan backend (dari DB atau env DRAGIN_LLM_BACKEND)."""
+    resolved_backend = (backend or settings.dragin_llm_backend or "gemini").lower()
 
-    if backend == "gemini":
+    if resolved_backend == "gemini":
+        model_name = model_override or settings.gemini_model
         # Gunakan get_langchain_chat_llm agar mode api_key / vertex_ai otomatis dipilih
         llm = get_langchain_chat_llm(
-            model_name=settings.gemini_model,
+            model_name=model_name,
             temperature=0.1,
             max_output_tokens=settings.max_generation_tokens,
             top_logprobs=settings.top_logprops,
             response_logprobs=True,
         )
-        logger.info(f"DRAGIN using Gemini backend [{settings.gemini_mode}]: {settings.gemini_model}")
+        logger.info(
+            f"DRAGIN using Gemini backend [{settings.gemini_mode}]: {model_name}"
+        )
         return llm, "gemini"
 
     else:
         # Default: OpenAI
         from langchain_openai import ChatOpenAI
 
+        model_name = model_override or settings.gpt_model
         llm = ChatOpenAI(
-            model=settings.gpt_model,
+            model=model_name,
             api_key=settings.openai_api_key,
             temperature=0.1,
             logprobs=True,
             top_logprobs=settings.top_logprops,
             max_tokens=settings.max_generation_tokens,
         )
-        logger.info(f"DRAGIN using OpenAI backend: {settings.gpt_model}")
+        logger.info(f"DRAGIN using OpenAI backend: {model_name}")
         return llm, "openai"
 
 
@@ -217,6 +222,8 @@ def generate_with_dragin(
     user_role: str | None = None,
     raw_query: str | None = None,
     chat_history: str | None = None,
+    generator_backend: str | None = None,
+    generator_model_override: str | None = None,
 ) -> DRAGINResult:
     """
     Generate jawaban DAN evaluasi uncertainty dalam SATU panggilan LLM.
@@ -308,28 +315,63 @@ def generate_with_dragin(
     )
 
     # --- 2. Panggil LLM dengan logprobs ---
-    backend = settings.dragin_llm_backend.lower()
+    # Prioritas: generator_backend (dari DB) > settings.dragin_llm_backend (env)
+    resolved_backend = (generator_backend or settings.dragin_llm_backend or "gemini").lower()
+    backend_used = resolved_backend
 
     try:
-        if backend == "gemini":
+        if resolved_backend == "gemini":
             # Bypass LangChain: langchain-google-genai tidak meneruskan logprobs
-            logger.info(f"DRAGIN using Gemini direct SDK: {settings.gemini_model}")
-            answer_text, logprobs_content = _call_gemini_direct(
-                system_prompt=system_prompt,
-                user_prompt=user_prompt,
-                settings=settings,
-            )
+            model_to_use = generator_model_override or settings.gemini_model
+            logger.info(f"DRAGIN using Gemini direct SDK: {model_to_use}")
+            # Sementara override gemini_model di settings jika berbeda
+            original_model = settings.gemini_model
+            settings.__dict__["gemini_model"] = model_to_use  # temp override (thread-safe: per-request)
+            try:
+                answer_text, logprobs_content = _call_gemini_direct(
+                    system_prompt=system_prompt,
+                    user_prompt=user_prompt,
+                    settings=settings,
+                )
+            finally:
+                settings.__dict__["gemini_model"] = original_model
+            backend_used = "gemini"
         else:
             # OpenAI via LangChain (logprobs didukung penuh)
-            llm, backend = _create_llm(settings)
+            llm, backend_name = _create_llm(
+                settings,
+                backend=resolved_backend,
+                model_override=generator_model_override,
+            )
+            backend_used = backend_name
             response = llm.invoke([
                 SystemMessage(content=system_prompt),
                 HumanMessage(content=user_prompt),
             ])
             answer_text = response.content.strip()
             logprobs_content = _extract_logprobs_openai(response)
+    except ResourceExhausted as exc:
+        logger.warning(f"DRAGIN quota exhausted ({backend_used}): {exc}")
+        broadcast_event(
+            stage="dragin",
+            action="rate_limit",
+            summary="LLM rate limit/kuota tercapai",
+            details={"backend": backend_used, "error": str(exc)},
+        )
+        return DRAGINResult(
+            answer_text=(
+                "Layanan model sedang padat (rate limit/kuota tercapai). "
+                "Silakan coba lagi beberapa saat."
+            ),
+            entropy=1.0,
+            confidence=0.0,
+            should_retry=False,
+            reason=f"LLM rate limit ({backend_used}): {exc}",
+            token_count=0,
+            llm_backend=backend_used,
+        )
     except Exception as exc:
-        logger.error(f"DRAGIN generation failed ({backend}): {exc}")
+        logger.error(f"DRAGIN generation failed ({backend_used}): {exc}")
         return DRAGINResult(
             answer_text=(
                 "Maaf, terjadi kesalahan teknis saat menghasilkan jawaban. "
@@ -338,21 +380,21 @@ def generate_with_dragin(
             entropy=1.0,
             confidence=0.0,
             should_retry=False,
-            reason=f"LLM error ({backend}): {exc}",
+            reason=f"LLM error ({backend_used}): {exc}",
             token_count=0,
-            llm_backend=backend,
+            llm_backend=backend_used,
         )
 
     if not logprobs_content:
-        logger.warning(f"Logprobs tidak tersedia dari {backend}, anggap entropy tinggi")
+        logger.warning(f"Logprobs tidak tersedia dari {backend_used}, anggap entropy tinggi")
         return DRAGINResult(
             answer_text=answer_text,
             entropy=1.0,
             confidence=0.0,
             should_retry=True,
-            reason=f"Logprobs missing dari response ({backend})",
+            reason=f"Logprobs missing dari response ({backend_used})",
             token_count=0,
-            llm_backend=backend,
+            llm_backend=backend_used,
         )
 
     token_entropies = [
@@ -390,19 +432,19 @@ def generate_with_dragin(
 
     if should_retry:
         reason = (
-            f"[{backend}] Entropy tinggi ({avg_entropy:.4f} > {THRESHOLD}), "
+            f"[{backend_used}] Entropy tinggi ({avg_entropy:.4f} > {THRESHOLD}), "
             f"confidence rendah ({confidence:.2f}). Perlu re-refine."
         )
     else:
         reason = (
-            f"[{backend}] Entropy rendah ({avg_entropy:.4f} ≤ {THRESHOLD}), "
+            f"[{backend_used}] Entropy rendah ({avg_entropy:.4f} ≤ {THRESHOLD}), "
             f"confidence tinggi ({confidence:.2f}). Jawaban cukup."
         )
 
     logger.info(
         "DRAGIN evaluation",
         extra={
-            "backend": backend,
+            "backend": backend_used,
             "entropy": round(avg_entropy, 4),
             "confidence": round(confidence, 2),
             "should_retry": should_retry,
@@ -418,7 +460,7 @@ def generate_with_dragin(
         reason=reason,
         token_count=token_count,
         token_entropies=token_entropies,
-        llm_backend=backend,
+        llm_backend=backend_used,
     )
 
 
