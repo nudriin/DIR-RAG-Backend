@@ -299,6 +299,11 @@ def run_rag_pipeline(
                 details={"num_sources": len(final_sources)},
             )
             break
+        
+        # JIKA model gagal (misal kena filter atau error), tapi should_retry=True,
+        # kita biarkan loop berjalan sampai max_iterations atau sampai dapet jawaban.
+        # Namun, jika jawaban mengandung pesan error "Maaf, terjadi kesalahan", 
+        # dan ini iterasi terakhir, biarkan dia return jawaban tersebut.
 
         # Entropy tinggi → cek apakah masih bisa iterasi
         if iteration >= max_dragin_iter:

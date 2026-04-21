@@ -158,9 +158,12 @@ def _call_gemini_direct(
         )
         
         if response.candidates and response.candidates[0].finish_reason:
-            logger.info(f"Gemini finish reason: {response.candidates[0].finish_reason}")
-
-        answer_text = response.text.strip()
+            reason_code = response.candidates[0].finish_reason
+            logger.info(f"Gemini finish reason: {reason_code}")
+            
+            # Jika terpotong karena SAFETY atau RECITATION, berikan warning di answer_text
+            if reason_code in ["SAFETY", "RECITATION", "OTHER"]:
+                 answer_text += "\n\n[Peringatan: Jawaban terhenti secara otomatis oleh filter keamanan/hak cipta Google. Silakan coba pertanyaan yang lebih spesifik.]"
         logprobs_content = _extract_logprobs_gemini(response)
         return answer_text, logprobs_content
 
@@ -270,22 +273,6 @@ def generate_with_dragin(
     vertex_project_override: str | None = None,
     vertex_location_override: str | None = None,
 ) -> DRAGINResult:
-    """
-    Generate jawaban DAN evaluasi uncertainty dalam SATU panggilan LLM.
-
-    Mendukung dua backend:
-    - OpenAI (ChatOpenAI) — default
-    - Gemini (ChatGoogleGenerativeAI) — aktifkan via DRAGIN_LLM_BACKEND=gemini
-
-    Cara kerja:
-    1. Bangun prompt dari query + context documents.
-    2. Panggil LLM dengan logprobs enabled.
-    3. Hitung Shannon Entropy rata-rata dari logprobs seluruh token jawaban.
-    4. Jika entropy > threshold → should_retry = True (perlu re-refine).
-
-    Returns:
-        DRAGINResult berisi answer_text, entropy, confidence, dan should_retry.
-    """
     settings = get_settings()
 
     # --- 1. Siapkan dokumen & prompt ---
@@ -356,7 +343,7 @@ def generate_with_dragin(
         "- Jangan menyatakan pengguna akan masuk ke dashboard/fitur peran lain; jelaskan sebagai informasi dari dokumen peran tersebut.\n"
         "- Jika konteks hanya membahas entitas lain yang mirip tetapi berbeda (misalnya guru non induk vs kelas ajar non induk), jelaskan keterbatasan tersebut dan jangan mengganti topik pertanyaan.\n"
         "- Jika informasi dalam konteks kurang lengkap untuk menjawab pertanyaan asli, jelaskan keterbatasannya secara eksplisit.\n"
-        "- Jawab secara terstruktur, jelas, dan informatif.\n"
+        "- Jawab secara terstruktur, jelas, dan informatif menggunakan hanya informasi dari konteks.\n"
         "- Jika kamu menemukan informasi yang relevan meskipun tidak memberikan definisi formal yang tepat, sintesiskan informasi tersebut untuk memberikan gambaran yang membantu kepada pengguna.\n"
         "- Gunakan bahasa yang ramah dan membantu (Humbet AI Assistant style).\n"
         "- PENTING: Jawab secara lengkap dan tuntas. Jangan memotong jawaban di tengah kalimat.\n"
@@ -419,7 +406,7 @@ def generate_with_dragin(
             ),
             entropy=1.0,
             confidence=0.0,
-            should_retry=False,
+            should_retry=True,  # Ubah jadi True agar sistem mau mencoba lagi/fallback
             reason=f"LLM rate limit ({backend_used}): {exc}",
             token_count=0,
             llm_backend=backend_used,
@@ -433,7 +420,7 @@ def generate_with_dragin(
             ),
             entropy=1.0,
             confidence=0.0,
-            should_retry=False,
+            should_retry=True,  # Ubah jadi True
             reason=f"LLM error ({backend_used}): {exc}",
             token_count=0,
             llm_backend=backend_used,
