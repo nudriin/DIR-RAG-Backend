@@ -162,15 +162,30 @@ def _call_gemini(
         from google.genai.types import GenerateContentConfig
         
         model_name = model_override or settings.gemini_model
-        
+
+        # Gunakan token yang lebih besar untuk model reasoning (gemini-2.5-*)
+        # dan paksa output JSON langsung agar tidak terpotong oleh reasoning tokens
         response = client.models.generate_content(
             model=model_name,
             contents=prompt,
             config=GenerateContentConfig(
                 temperature=0.1,
-                max_output_tokens=1024,
+                max_output_tokens=4096,
+                response_mime_type="application/json",
             )
         )
+
+        if response.text is None:
+            finish = (
+                response.candidates[0].finish_reason.name
+                if response.candidates
+                else "UNKNOWN"
+            )
+            raise RuntimeError(
+                f"Gemini returned empty text (finish_reason={finish}). "
+                "Kemungkinan response terpotong oleh token limit."
+            )
+
         return response.text.strip()
         
     except Exception as e:
@@ -190,9 +205,11 @@ def _call_gemini(
             prompt,
             generation_config={
                 "temperature": 0.1,
-                "max_output_tokens": 1024,
+                "max_output_tokens": 4096,
             },
         )
+        if response.text is None:
+            raise RuntimeError("Gemini legacy SDK returned empty text.")
         return response.text.strip()
 
 

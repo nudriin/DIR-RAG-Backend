@@ -156,14 +156,19 @@ def _call_gemini_direct(
                 safety_settings=safety_settings,
             )
         )
-        
+
+        # Ekstrak teks jawaban terlebih dahulu
+        answer_text = response.text.strip() if response.text else ""
+
         if response.candidates and response.candidates[0].finish_reason:
             reason_code = response.candidates[0].finish_reason
-            logger.info(f"Gemini finish reason: {reason_code}")
+            reason_name = reason_code.name if hasattr(reason_code, "name") else str(reason_code)
+            logger.info(f"Gemini finish reason: {reason_name}")
             
             # Jika terpotong karena SAFETY atau RECITATION, berikan warning di answer_text
-            if reason_code in ["SAFETY", "RECITATION", "OTHER"]:
-                 answer_text += "\n\n[Peringatan: Jawaban terhenti secara otomatis oleh filter keamanan/hak cipta Google. Silakan coba pertanyaan yang lebih spesifik.]"
+            if reason_name in ["SAFETY", "RECITATION", "OTHER"]:
+                answer_text += "\n\n[Peringatan: Jawaban terhenti secara otomatis oleh filter keamanan/hak cipta Google. Silakan coba pertanyaan yang lebih spesifik.]"
+
         logprobs_content = _extract_logprobs_gemini(response)
         return answer_text, logprobs_content
 

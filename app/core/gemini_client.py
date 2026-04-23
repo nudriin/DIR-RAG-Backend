@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 import threading
 from pathlib import Path
-from typing import Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 import google.generativeai as genai
 
@@ -94,13 +94,8 @@ def _configure_api_key(settings) -> None:
             "Tambahkan GOOGLE_API_KEY ke file .env."
         )
     
-    # Perbaikan: api_version diteruskan via client_options di SDK google-generativeai
-    from google.api_core import client_options
-    api_version = settings.gemini_api_version or "v1beta"
-    opts = client_options.ClientOptions(api_version=api_version)
-    
-    genai.configure(api_key=api_key, client_options=opts)
-    logger.info(f"Gemini SDK configured via api_key (Google AI Studio) - version: {api_version}")
+    genai.configure(api_key=api_key)
+    logger.info("Gemini SDK configured via api_key (Google AI Studio)")
 
 
 def _configure_vertex_ai(
@@ -152,15 +147,10 @@ def _configure_vertex_ai(
             credentials=credentials,
         )
         
-        # Perbaikan: api_version diteruskan via client_options
-        from google.api_core import client_options
-        api_version = settings.gemini_api_version or "v1beta"
-        opts = client_options.ClientOptions(api_version=api_version)
-        
-        genai.configure(client_options=opts)
+        genai.configure()
         
         logger.info(
-            f"Gemini SDK configured via vertexai.init() - version: {api_version}",
+            "Gemini SDK configured via vertexai.init()",
             extra={"sa_file": sa_path.name, "project": project, "location": location},
         )
     except ImportError as exc:
