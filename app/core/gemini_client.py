@@ -2,11 +2,15 @@
 from __future__ import annotations
 
 import json
+import logging
 import threading
 from pathlib import Path
 from typing import Any, Optional, TYPE_CHECKING
 
 import google.generativeai as genai
+
+# Disable AFC log dari google-genai SDK
+logging.getLogger("google_genai.models").setLevel(logging.WARNING)
 
 if TYPE_CHECKING:
     from google import genai as new_genai_type

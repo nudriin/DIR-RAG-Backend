@@ -86,6 +86,9 @@ def rerank_documents(
     if not documents:
         return []
 
+    import time
+    t0 = time.perf_counter()
+
     from app.core.config import get_settings
     settings = get_settings()
     if min_score is None:
@@ -109,6 +112,7 @@ def rerank_documents(
         import numpy as np
         from sentence_transformers import CrossEncoder
 
+        t_load_start = time.perf_counter()
         primary_model = settings.reranker_model
         token = settings.hf_token
         if token:
@@ -130,8 +134,15 @@ def rerank_documents(
         except Exception as init_exc:
             raise init_exc
 
+        t_load_end = time.perf_counter()
+        logger.info(f"Reranker model loaded in {(t_load_end - t_load_start):.2f}s")
+
+        t_predict_start = time.perf_counter()
         pairs = [(query, d.page_content) for d in unique_docs]
         raw_scores = cross_encoder.predict(pairs)
+        t_predict_end = time.perf_counter()
+        logger.info(f"Reranker prediction done in {(t_predict_end - t_predict_start):.2f}s for {len(pairs)} pairs")
+
         scores: List[float] = []
         for s in raw_scores:
             if hasattr(s, "shape"):
@@ -156,6 +167,7 @@ def rerank_documents(
         if not reranked and scored:
             reranked = [scored[0][0]]
 
+        t_total = time.perf_counter() - t0
         logger.info(
             "Reranked documents (multilingual)",
             extra={
@@ -166,6 +178,7 @@ def rerank_documents(
                 "num_unique": len(unique_docs),
                 "num_after_rerank": len(reranked),
                 "min_score": min_score,
+                "total_time_sec": round(t_total, 2),
             },
         )
         broadcast_event(

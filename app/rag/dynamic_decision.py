@@ -137,11 +137,13 @@ def _call_gemini_direct(
         logger.info(f"Calling Gemini via google-genai client. Model: {model_name}, Mode: {mode_display}")
         
         # Disable safety filters to prevent truncation
+        # Gunakan threshold OFF (paling permisif) untuk menghindari false positive
+        from google.genai.types import HarmCategory, HarmBlockThreshold
         safety_settings = [
-            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+            {"category": HarmCategory.HARM_CATEGORY_HARASSMENT, "threshold": HarmBlockThreshold.OFF},
+            {"category": HarmCategory.HARM_CATEGORY_HATE_SPEECH, "threshold": HarmBlockThreshold.OFF},
+            {"category": HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, "threshold": HarmBlockThreshold.OFF},
+            {"category": HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, "threshold": HarmBlockThreshold.OFF},
         ]
 
         response = client.models.generate_content(
@@ -154,20 +156,61 @@ def _call_gemini_direct(
                 response_logprobs=True,
                 logprobs=settings.top_logprops,
                 safety_settings=safety_settings,
+                # Tambahan untuk mencegah premature stopping
+                candidate_count=1,
+                stop_sequences=None,  # Jangan stop di sequence tertentu
             )
         )
 
         # Ekstrak teks jawaban terlebih dahulu
         answer_text = response.text.strip() if response.text else ""
 
+        # Log safety ratings untuk debugging
+        if response.candidates and response.candidates[0].safety_ratings:
+            safety_info = []
+            for rating in response.candidates[0].safety_ratings:
+                cat = rating.category.name if hasattr(rating.category, 'name') else str(rating.category)
+                prob = rating.probability.name if hasattr(rating.probability, 'name') else str(rating.probability)
+                safety_info.append(f"{cat}={prob}")
+            logger.debug(f"Safety ratings: {', '.join(safety_info)}")
+
+        # Log token usage untuk debugging truncation
+        if hasattr(response, 'usage_metadata') and response.usage_metadata:
+            usage = response.usage_metadata
+            logger.info(
+                f"Token usage: prompt={getattr(usage, 'prompt_token_count', 'N/A')}, "
+                f"candidates={getattr(usage, 'candidates_token_count', 'N/A')}, "
+                f"total={getattr(usage, 'total_token_count', 'N/A')}"
+            )
+
         if response.candidates and response.candidates[0].finish_reason:
             reason_code = response.candidates[0].finish_reason
             reason_name = reason_code.name if hasattr(reason_code, "name") else str(reason_code)
-            logger.info(f"Gemini finish reason: {reason_name}")
             
-            # Jika terpotong karena SAFETY atau RECITATION, berikan warning di answer_text
-            if reason_name in ["SAFETY", "RECITATION", "OTHER"]:
-                answer_text += "\n\n[Peringatan: Jawaban terhenti secara otomatis oleh filter keamanan/hak cipta Google. Silakan coba pertanyaan yang lebih spesifik.]"
+            # Log finish_reason untuk debugging
+            logger.info(
+                f"Gemini finish_reason: {reason_name}",
+                extra={
+                    "finish_reason": reason_name,
+                    "answer_length": len(answer_text),
+                    "model": model_name,
+                }
+            )
+            
+            # Handle berbagai finish_reason
+            if reason_name == "MAX_TOKENS":
+                answer_text += "\n\n[Peringatan: Jawaban terpotong karena mencapai batas token. Coba kurangi panjang pertanyaan atau konteks.]"
+                logger.warning(f"Response truncated due to MAX_TOKENS. Answer length: {len(answer_text)}")
+            elif reason_name in ["SAFETY", "RECITATION"]:
+                answer_text += "\n\n[Peringatan: Jawaban terhenti karena filter keamanan/hak cipta Google. Silakan coba pertanyaan yang lebih spesifik.]"
+                logger.warning(f"Response blocked by {reason_name} filter")
+            elif reason_name == "OTHER":
+                answer_text += "\n\n[Peringatan: Jawaban terhenti karena alasan tidak diketahui. Silakan coba lagi.]"
+                logger.warning("Response stopped with finish_reason=OTHER")
+            elif reason_name != "STOP":
+                # Finish reason tidak dikenal
+                logger.warning(f"Unexpected finish_reason: {reason_name}")
+                answer_text += f"\n\n[Peringatan: Jawaban terhenti dengan status '{reason_name}']"
 
         logprobs_content = _extract_logprobs_gemini(response)
         return answer_text, logprobs_content

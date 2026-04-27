@@ -196,20 +196,8 @@ async def chat_endpoint(
                 generator_model_override = await get_system_setting(
                     session, "generator_model_gemini"
                 )
-                # Ambil mode auth Gemini dari DB, tapi validasi terhadap .env
-                # agar perubahan .env tidak diam-diam di-override oleh nilai DB lama
-                from app.core.config import get_settings as _get_settings
-                _env_mode = _get_settings().gemini_mode
-                _db_mode = await get_system_setting(session, "gemini_mode")
-                if _db_mode and _db_mode != _env_mode:
-                    logger.warning(
-                        f"DB gemini_mode='{_db_mode}' berbeda dari .env GEMINI_MODE='{_env_mode}'. "
-                        f"Menggunakan nilai .env. Update setting via dashboard jika ingin pakai DB."
-                    )
-                    gemini_mode_override = None  # biarkan pipeline pakai .env
-                else:
-                    gemini_mode_override = _db_mode  # sama atau DB kosong → aman
-
+                # Ambil mode auth Gemini dari DB — DB selalu override .env
+                gemini_mode_override = await get_system_setting(session, "gemini_mode")
                 vertex_project_override = await get_system_setting(
                     session, "vertex_project"
                 )
