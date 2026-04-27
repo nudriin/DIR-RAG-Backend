@@ -176,7 +176,9 @@ def _call_gemini_direct(
         logger.warning(f"Gagal menggunakan SDK baru google-genai, fallback ke legacy: {e}")
         
         # Fallback ke SDK lama (google-generativeai)
+        # Paksa re-configure karena SDK baru mungkin sudah init dengan mode berbeda
         configure_genai(
+            force=True,
             mode_override=gemini_mode_override,
             project_override=vertex_project_override,
             location_override=vertex_location_override,

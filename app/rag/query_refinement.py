@@ -192,12 +192,14 @@ def _call_gemini(
         logger.warning(f"Gagal menggunakan SDK baru google-genai di RQ-RAG, fallback: {e}")
         
         # Fallback ke SDK lama
+        # Paksa re-configure karena SDK baru mungkin sudah init dengan mode berbeda
         configure_genai(
+            force=True,
             mode_override=gemini_mode_override,
             project_override=vertex_project_override,
             location_override=vertex_location_override,
         )
-        model_name = model_override or settings.gemini_model
+        model_name = model_override or settings.refinement_gemini_model
         model = get_gemini_model(
             model_name=model_name,
         )
