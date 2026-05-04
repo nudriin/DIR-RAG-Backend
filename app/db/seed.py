@@ -51,7 +51,6 @@ async def seed_default_admin(session: AsyncSession) -> None:
 
 
 async def seed_default_settings(session: AsyncSession) -> None:
-    """Seed default system settings if not already present."""
     defaults = {
         "refinement_backend": "gemini",
         "refinement_model_gemini": "gemini-2.5-pro",
@@ -59,7 +58,6 @@ async def seed_default_settings(session: AsyncSession) -> None:
         "gemini_mode": "api_key",
         "vertex_project": "",
         "vertex_location": "us-central1",
-        # Generator backend (DRAGIN) defaults
         "generator_backend": "gemini",
         "generator_model_gemini": "gemini-2.0-flash",
         "generator_model_openai": "gpt-4o",

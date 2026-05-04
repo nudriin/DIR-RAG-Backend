@@ -161,7 +161,6 @@ async def get_system_setting(
     session: AsyncSession,
     key: str,
 ) -> Optional[str]:
-    """Get a single system setting value by key."""
     setting = await session.get(SystemSetting, key)
     return setting.value if setting else None
 
@@ -171,7 +170,6 @@ async def set_system_setting(
     key: str,
     value: str,
 ) -> SystemSetting:
-    """Upsert a system setting."""
     setting = await session.get(SystemSetting, key)
     if setting is None:
         setting = SystemSetting(key=key, value=value)
@@ -185,7 +183,6 @@ async def set_system_setting(
 async def get_all_system_settings(
     session: AsyncSession,
 ) -> Dict[str, str]:
-    """Get all system settings as a flat dict."""
     stmt = select(SystemSetting)
     result = await session.execute(stmt)
     settings = result.scalars().all()

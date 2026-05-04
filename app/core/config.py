@@ -41,28 +41,22 @@ class Settings(BaseSettings):
 
     database_url: str | None = Field(default=None, env="DATABASE_URL")
 
-    # DRAGIN LLM backend: "openai" atau "gemini"
     dragin_llm_backend: str = Field(default="gemini", env="DRAGIN_LLM_BACKEND")
     gemini_model: str = Field(default="gemini-2.0-flash", env="GEMINI_MODEL")
     gemini_api_version: str = Field(default="v1beta", env="GEMINI_API_VERSION")
     google_api_key: str | None = Field(default=None, env="GOOGLE_API_KEY")
 
-    # DB Overrides (di-set via Pydantic model dan environment)
     generator_backend: str | None = Field(default=None)
     generator_model_gemini: str | None = Field(default=None)
     generator_model_openai: str | None = Field(default=None)
     refinement_model_gemini: str | None = Field(default=None)
     refinement_model_replicate: str | None = Field(default=None)
 
-    # --- Gemini Authentication Mode ---
-    # "api_key"  : Google AI Studio via GOOGLE_API_KEY
-    # "vertex_ai": Google Vertex AI via Service Account JSON
     gemini_mode: Literal["api_key", "vertex_ai"] = Field(
         default="api_key", env="GEMINI_MODE"
     )
     vertex_project: Optional[str] = Field(default=None, env="VERTEX_PROJECT")
     vertex_location: str = Field(default="us-central1", env="VERTEX_LOCATION")
-    # Path ke file SA JSON; jika kosong, sistem akan mencari di storage/service_accounts/
     google_service_account_path: Optional[str] = Field(
         default=None, env="GOOGLE_SERVICE_ACCOUNT_PATH"
     )
@@ -99,7 +93,6 @@ class Settings(BaseSettings):
         default=80, env="SEMANTIC_BREAKPOINT_THRESHOLD_AMOUNT"
     )
 
-    # Context budgeting to avoid rate limit/token overflow
     context_max_docs: int = Field(default=5, env="CONTEXT_MAX_DOCS")
     context_char_budget: int = Field(default=6000, env="CONTEXT_CHAR_BUDGET")
     context_token_budget: int = Field(default=2500, env="CONTEXT_TOKEN_BUDGET")
@@ -127,7 +120,6 @@ class Settings(BaseSettings):
         default=True, env="RQ_ENABLE_BYPASS"
     )
 
-    # Short-term memory: jumlah pasangan (user+assistant) terakhir yang di-inject ke prompt
     memory_max_turns: int = Field(default=5, env="MEMORY_MAX_TURNS")
 
     base_dir: Path = Path(__file__).resolve().parents[2]
@@ -143,7 +135,6 @@ class Settings(BaseSettings):
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     settings = Settings()
-    # Log mode load pertama kali
     from app.core.logging import get_logger
     _logger = get_logger("app.core.config")
     _logger.info(f"Settings loaded for the first time. GEMINI_MODE: {settings.gemini_mode}")

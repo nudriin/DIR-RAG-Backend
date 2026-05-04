@@ -9,7 +9,6 @@ from typing import Any, Optional, TYPE_CHECKING
 
 import google.generativeai as genai
 
-# Disable AFC log dari google-genai SDK
 logging.getLogger("google_genai.models").setLevel(logging.WARNING)
 
 if TYPE_CHECKING:
@@ -22,20 +21,17 @@ logger = get_logger(__name__)
 
 
 _lock = threading.Lock()
-_configured_mode: Optional[str] = None  # track mode saat ini agar tidak re-init
+_configured_mode: Optional[str] = None
 _new_client: Optional["new_genai_type.Client"] = None
 
 
 def _sa_json_path() -> Optional[Path]:
-    """Kembalikan path file Service Account JSON jika ada."""
     from app.core.config import get_settings
     settings = get_settings()
-    # Prioritas 1: env var GOOGLE_SERVICE_ACCOUNT_PATH
     if settings.google_service_account_path:
         p = Path(settings.google_service_account_path)
         if p.exists():
             return p
-    # Prioritas 2: file default hasil upload dari dashboard
     default = settings.data_dir / "service_accounts" / "gemini_sa.json"
     if default.exists():
         return default
@@ -48,21 +44,6 @@ def configure_genai(
     project_override: Optional[str] = None,
     location_override: Optional[str] = None,
 ) -> str:
-    """
-    Inisialisasi SDK Gemini sesuai GEMINI_MODE di settings atau override.
-
-    Args:
-        force: Paksa re-init meski sudah pernah dikonfigurasi.
-        mode_override: "api_key" atau "vertex_ai".
-        project_override: ID Proyek Vertex AI.
-        location_override: Lokasi Vertex AI.
-
-    Returns:
-        Mode yang aktif: "api_key" atau "vertex_ai"
-
-    Raises:
-        RuntimeError: Jika kredensial tidak tersedia.
-    """
     global _configured_mode
 
     settings = get_settings()
@@ -89,7 +70,6 @@ def configure_genai(
 
 
 def _configure_api_key(settings) -> None:
-    """Konfigurasi Gemini via Google AI Studio API Key."""
     api_key = settings.google_api_key
     logger.debug(f"Configuring API Key mode. Key present: {bool(api_key)}")
     if not api_key:
@@ -97,7 +77,6 @@ def _configure_api_key(settings) -> None:
             "GEMINI_MODE=api_key tetapi GOOGLE_API_KEY tidak ditemukan di environment. "
             "Tambahkan GOOGLE_API_KEY ke file .env."
         )
-    
     genai.configure(api_key=api_key)
     logger.info("Gemini SDK configured via api_key (Google AI Studio)")
 
@@ -107,7 +86,6 @@ def _configure_vertex_ai(
     project_override: Optional[str] = None, 
     location_override: Optional[str] = None
 ) -> None:
-    """Konfigurasi Gemini via Vertex AI Service Account."""
     sa_path = _sa_json_path()
     logger.debug(f"Configuring Vertex AI mode. SA Path: {sa_path}")
     if sa_path is None:
@@ -120,7 +98,6 @@ def _configure_vertex_ai(
     location = location_override or settings.vertex_location or "us-central1"
     logger.debug(f"Vertex AI initial config - project: {project}, location: {location}")
 
-    # Baca project dari SA JSON jika tidak ada di config
     if not project:
         try:
             with open(sa_path, "r", encoding="utf-8") as f:
@@ -136,21 +113,15 @@ def _configure_vertex_ai(
         )
 
     try:
-        from google.oauth2 import service_account  # type: ignore
+        from google.oauth2 import service_account
 
         credentials = service_account.Credentials.from_service_account_file(
             str(sa_path),
             scopes=["https://www.googleapis.com/auth/cloud-platform"],
         )
         
-        # Konfigurasi Vertex AI menggunakan google-cloud-aiplatform
         import vertexai
-        vertexai.init(
-            project=project,
-            location=location,
-            credentials=credentials,
-        )
-        
+        vertexai.init(project=project, location=location, credentials=credentials)
         genai.configure()
         
         logger.info(
@@ -166,18 +137,7 @@ def _configure_vertex_ai(
         raise RuntimeError(f"Gagal konfigurasi Vertex AI: {exc}") from exc
 
 
-# ---------------------------------------------------------------------------
-# Public helpers
-# ---------------------------------------------------------------------------
-
-def get_gemini_model(
-    model_name: str,
-    system_instruction: Optional[str] = None,
-) -> Any:
-    """
-    Kembalikan GenerativeModel yang sudah dikonfigurasi.
-    Mendukung API Key (google.generativeai) dan Vertex AI (vertexai).
-    """
+def get_gemini_model(model_name: str, system_instruction: Optional[str] = None) -> Any:
     settings = get_settings()
     mode = configure_genai()
     
@@ -203,12 +163,6 @@ def get_langchain_chat_llm(
     location_override: Optional[str] = None,
     **kwargs
 ):
-    """
-    Kembalikan LangChain Chat LLM yang sesuai dengan mode aktif atau override.
-
-    - api_key   → ChatGoogleGenerativeAI
-    - vertex_ai → ChatVertexAI
-    """
     from app.core.config import get_settings
     settings = get_settings()
     mode = (mode_override or settings.gemini_mode or "api_key").lower()
@@ -217,7 +171,7 @@ def get_langchain_chat_llm(
 
     if mode == "vertex_ai":
         try:
-            from langchain_google_vertexai import ChatVertexAI  # type: ignore
+            from langchain_google_vertexai import ChatVertexAI
         except ImportError as exc:
             raise RuntimeError(
                 "Paket 'langchain-google-vertexai' belum terpasang. "
@@ -229,7 +183,6 @@ def get_langchain_chat_llm(
         location = location_override or settings.vertex_location or "us-central1"
         logger.debug(f"LangChain Vertex AI: project={project}, location={location}, SA={sa_path}")
 
-        # Baca project dari SA JSON jika belum ada
         if not project and sa_path:
             try:
                 with open(sa_path, "r", encoding="utf-8") as f:
@@ -260,19 +213,13 @@ def get_langchain_chat_llm(
 
 
 def get_langchain_embeddings(model_name: str):
-    """
-    Kembalikan LangChain Embeddings yang sesuai dengan mode aktif.
-
-    - api_key   → GoogleGenerativeAIEmbeddings
-    - vertex_ai → VertexAIEmbeddings
-    """
     from app.core.config import get_settings
     settings = get_settings()
     mode = (settings.gemini_mode or "api_key").lower()
 
     if mode == "vertex_ai":
         try:
-            from langchain_google_vertexai import VertexAIEmbeddings  # type: ignore
+            from langchain_google_vertexai import VertexAIEmbeddings
         except ImportError as exc:
             raise RuntimeError(
                 "Paket 'langchain-google-vertexai' belum terpasang. "
@@ -288,7 +235,6 @@ def get_langchain_embeddings(model_name: str):
 
 
 def reset_configuration() -> None:
-    """Reset state konfigurasi (berguna untuk testing atau hot-reload mode)."""
     global _configured_mode, _new_client
     with _lock:
         _configured_mode = None
@@ -301,10 +247,6 @@ def get_google_genai_client(
     project_override: Optional[str] = None,
     location_override: Optional[str] = None,
 ) -> "new_genai_type.Client":
-    """
-    Inisialisasi dan kembalikan client dari SDK baru 'google-genai'.
-    Mendukung logprobs pada Gemini 2.0+ via Vertex AI.
-    """
     global _new_client, _configured_mode
     from google import genai as new_genai
     
@@ -312,9 +254,7 @@ def get_google_genai_client(
         settings = get_settings()
         mode = (mode_override or settings.gemini_mode or "api_key").lower()
         
-        # Jika client sudah ada, pastikan mode-nya sama
         if _new_client:
-            # Jika mode berbeda dari _configured_mode, kita reset.
             if _configured_mode and _configured_mode != mode:
                 logger.info(f"Detected mode change from {_configured_mode} to {mode}. Resetting GenAI client.")
                 _new_client = None
@@ -329,7 +269,6 @@ def get_google_genai_client(
             sa_path = _sa_json_path()
             logger.debug(f"Google GenAI Vertex Config: project={project}, location={location}, SA={sa_path}")
             
-            # Auto-read project from SA if missing
             if not project and sa_path:
                 try:
                     with open(sa_path, "r", encoding="utf-8") as f:
@@ -348,7 +287,6 @@ def get_google_genai_client(
                 "location": location,
             }
             
-            # If using Service Account JSON, we need to pass credentials
             if sa_path:
                 try:
                     from google.oauth2 import service_account
@@ -362,7 +300,7 @@ def get_google_genai_client(
                     logger.warning("google-auth not installed, skipping SA credentials for new client")
                     
             _new_client = new_genai.Client(**client_config)
-            _configured_mode = mode # Update state
+            _configured_mode = mode
             logger.info(f"Google GenAI Client initialized via Vertex AI (project={project})")
         else:
             api_key = settings.google_api_key
@@ -370,26 +308,14 @@ def get_google_genai_client(
             if not api_key:
                 raise RuntimeError("GOOGLE_API_KEY is required for google-genai client in api_key mode.")
             _new_client = new_genai.Client(api_key=api_key)
-            _configured_mode = mode # Update state
+            _configured_mode = mode
             logger.info("Google GenAI Client initialized via API Key")
             
         return _new_client
 
 
 def validate_service_account_json(content: bytes) -> dict:
-    """
-    Validasi isi file Service Account JSON.
-
-    Args:
-        content: Isi raw file JSON (bytes).
-
-    Returns:
-        dict SA data jika valid.
-
-    Raises:
-        ValueError: Jika file tidak valid.
-    """
-    if len(content) > 1 * 1024 * 1024:  # 1 MB
+    if len(content) > 1 * 1024 * 1024:
         raise ValueError("File SA JSON terlalu besar (maks 1 MB).")
 
     try:

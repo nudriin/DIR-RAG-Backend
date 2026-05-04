@@ -108,7 +108,6 @@ class AuthToken(Base):
 
 
 class SystemSetting(Base):
-    """Key-value store for admin-configurable system settings."""
     __tablename__ = "system_settings"
 
     key: Mapped[str] = mapped_column(String(100), primary_key=True)

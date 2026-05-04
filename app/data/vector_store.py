@@ -35,8 +35,6 @@ class VectorStoreManager:
                     model_name=self.settings.bge_model_name
                 )
             else:
-                # get_langchain_embeddings otomatis memilih GoogleGenerativeAIEmbeddings
-                # (mode api_key) atau VertexAIEmbeddings (mode vertex_ai)
                 self._embedding_model = get_langchain_embeddings(
                     model_name=self.settings.gemini_embedding_model,
                 )
@@ -44,7 +42,6 @@ class VectorStoreManager:
 
     @property
     def vector_store_path(self) -> Path:
-        # ChromaDB persistence directory
         return self.settings.vector_dir / "chroma_db"
 
     @property
@@ -89,7 +86,6 @@ class VectorStoreManager:
         if not documents:
             return 0
 
-        # Simpan ke ChromaDB
         self.vector_store.add_documents(documents)
         return len(documents)
 
@@ -98,31 +94,17 @@ class VectorStoreManager:
         query: str,
         top_k: int,
     ) -> List[Tuple[Document, float]]:
-        # Chroma returns distance by default for cosine space (lower is better)
-        # We might want to convert to similarity score if needed, but standard RAG often uses distance directly or converts 1-distance.
-        # LangChain's similarity_search_with_score returns the raw score from the backend.
-        # For Chroma with "cosine", it returns cosine distance (0 to 2). 0 means identical.
+
         return self.vector_store.similarity_search_with_score(query, k=top_k)
 
     def reset_vectors(self) -> None:
         self._vector_store = None
         if self.vector_store_path.exists():
-            # Delete the entire directory for Chroma
             shutil.rmtree(self.vector_store_path, ignore_errors=True)
 
     def delete_by_source(self, source: str) -> int:
         store = self.metadata_store()
-        # We need to find how many documents to delete first to return the count,
-        # or just delete and return unknown count?
-        # The user interface expects a count.
-
-        # Get ids to delete first
         try:
-            # Chroma specific method to get data
-            # Note: store is a langchain wrapper around chroma client
-            # Accessing internal client might be needed for complex queries or use get()
-
-            # Using get() with filter
             results = store.get(where={"source": source})
             ids_to_delete = results["ids"]
 
@@ -132,13 +114,11 @@ class VectorStoreManager:
             store.delete(ids=ids_to_delete)
             return len(ids_to_delete)
         except Exception:
-            # Fallback if get/delete fails
             return 0
 
     def list_sources(self) -> List[tuple[str, int]]:
         store = self.metadata_store()
         try:
-            # Get all metadata
             results = store.get(include=["metadatas"])
             metadatas = results["metadatas"]
 
@@ -165,7 +145,6 @@ class VectorStoreManager:
             docs = results["documents"]
 
             for i, doc_id in enumerate(ids):
-                # Reconstruct Document
                 doc = Document(
                     page_content=docs[i], metadata=metadatas[i] if metadatas[i] else {}
                 )

@@ -126,7 +126,6 @@ def _extract_json_candidates(text: str) -> List[str]:
 
 
 def _call_replicate(prompt: str, settings, model_override: Optional[str] = None) -> str:
-    """Panggil LLM via Replicate API."""
     client = replicate.Client(api_token=settings.replicate_api_token)
     model_name = model_override or settings.llm_model
     output = client.run(
@@ -151,9 +150,7 @@ def _call_gemini(
     vertex_project_override: Optional[str] = None,
     vertex_location_override: Optional[str] = None,
 ) -> str:
-    """Panggil LLM via Google Gemini API (mendukung api_key dan vertex_ai)."""
     try:
-        # Gunakan SDK baru jika tersedia
         client = get_google_genai_client(
             mode_override=gemini_mode_override,
             project_override=vertex_project_override,
@@ -163,8 +160,6 @@ def _call_gemini(
         
         model_name = model_override or settings.gemini_model
 
-        # Gunakan token yang lebih besar untuk model reasoning (gemini-2.5-*)
-        # dan paksa output JSON langsung agar tidak terpotong oleh reasoning tokens
         response = client.models.generate_content(
             model=model_name,
             contents=prompt,
@@ -191,8 +186,6 @@ def _call_gemini(
     except Exception as e:
         logger.warning(f"Gagal menggunakan SDK baru google-genai di RQ-RAG, fallback: {e}")
         
-        # Fallback ke SDK lama
-        # Paksa re-configure karena SDK baru mungkin sudah init dengan mode berbeda
         configure_genai(
             force=True,
             mode_override=gemini_mode_override,
@@ -224,7 +217,6 @@ def _call_llm(
     vertex_project_override: Optional[str] = None,
     vertex_location_override: Optional[str] = None,
 ) -> str:
-    """Dispatch ke backend LLM yang sesuai."""
     backend = (backend or "gemini").lower()
     logger.info(f"RQ-RAG using backend: {backend}")
     if backend == "replicate":
@@ -239,7 +231,6 @@ def _call_llm(
             vertex_location_override=vertex_location_override,
         )
     else:
-        # Fallback to OpenAI if configured
         return _call_openai(prompt, settings, model_override)
 
 
@@ -254,7 +245,6 @@ def refine_query(
     vertex_project_override: Optional[str] = None,
     vertex_location_override: Optional[str] = None,
 ) -> RefinedQuery:
-    # Normalize empty string → None
     if chat_history is not None and not chat_history.strip():
         chat_history = None
 
@@ -307,9 +297,6 @@ def refine_query(
         top_d_orig, _ = _top_distance_and_sources(query, settings.similarity_top_k)
         conf_orig = _distance_to_conf(top_d_orig)
     if enable_bypass and conf_orig >= bypass_conf_threshold:
-        # Jika ada chat_history, SELALU paksa refinement agar LLM bisa
-        # resolve referensi implisit (misalnya "lebih detail", "itu apa", dll).
-        # LLM akan mengembalikan query apa adanya jika sudah cukup spesifik.
         if chat_history:
             logger.info(
                 "Chat history present, skip bypass to allow context-aware refinement",
@@ -449,15 +436,12 @@ def refine_query(
 
         candidate = parsed.get("refined_query", query) or query
         subqs_raw = parsed.get("sub_queries", [candidate]) or [candidate]
-        
-        # Perbaikan: Pastikan sub_queries selalu List[str]
         subqs = []
         if isinstance(subqs_raw, list):
             for item in subqs_raw:
                 if isinstance(item, str):
                     subqs.append(item)
                 elif isinstance(item, dict):
-                    # Ambil field 'query' atau stringify jika model bandel
                     subqs.append(item.get("query") or item.get("content") or str(item))
                 else:
                     subqs.append(str(item))
@@ -484,9 +468,6 @@ def refine_query(
 
         keep = True
         reason = "OK"
-        # Jika ada chat_history, skip validasi similarity/jaccard
-        # karena follow-up resolution sengaja menghasilkan query yang
-        # sangat berbeda dari original (e.g. "lebih detail" → "langkah login pengajar")
         if chat_history:
             reason = "OK_HISTORY_CONTEXT"
         elif sim < sim_block_threshold:

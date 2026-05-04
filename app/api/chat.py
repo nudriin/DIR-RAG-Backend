@@ -154,7 +154,6 @@ async def chat_endpoint(
             },
         )
     else:
-        # --- Short-term memory: muat riwayat percakapan ---
         chat_history_text: str | None = None
         if payload.conversation_id is not None:
             try:
@@ -167,7 +166,6 @@ async def chat_endpoint(
             except Exception as exc:
                 logger.warning(f"Gagal memuat riwayat percakapan: {exc}")
 
-        # --- Load refinement backend from DB ---
         refinement_backend: str | None = None
         refinement_model_override: str | None = None
         try:
@@ -183,7 +181,6 @@ async def chat_endpoint(
         except Exception as exc:
             logger.warning(f"Gagal baca refinement_backend: {exc}")
 
-        # --- Load generator backend from DB ---
         generator_backend: str | None = None
         generator_model_override: str | None = None
         gemini_mode_override: str | None = None
@@ -196,7 +193,6 @@ async def chat_endpoint(
                 generator_model_override = await get_system_setting(
                     session, "generator_model_gemini"
                 )
-                # Ambil mode auth Gemini dari DB — DB selalu override .env
                 gemini_mode_override = await get_system_setting(session, "gemini_mode")
                 vertex_project_override = await get_system_setting(
                     session, "vertex_project"
@@ -342,7 +338,6 @@ async def logs_stream() -> StreamingResponse:
                     msg = await asyncio.wait_for(queue.get(), timeout=15.0)
                     yield f"data: {msg}\n\n"
                 except asyncio.TimeoutError:
-                    # Heartbeat to keep connection alive behind proxies
                     yield ": ping\n\n"
         except asyncio.CancelledError:
             unsubscribe_from_logs(queue)

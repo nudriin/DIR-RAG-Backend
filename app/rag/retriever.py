@@ -94,7 +94,6 @@ def rerank_documents(
     if min_score is None:
         min_score = settings.reranker_min_score
 
-    # --- Deduplikasi berdasarkan konten ---
     seen_hashes: set = set()
     unique_docs: List[Document] = []
     for doc in documents:
@@ -157,13 +156,11 @@ def rerank_documents(
         scored = list(zip(unique_docs, scores))
         scored.sort(key=lambda x: x[1], reverse=True)
 
-        # Filter berdasarkan skor minimum
         reranked = [
             doc for doc, score in scored[:max(1, top_n)]
             if score >= min_score
         ]
 
-        # Jika semua difilter, tetap kembalikan top-1
         if not reranked and scored:
             reranked = [scored[0][0]]
 

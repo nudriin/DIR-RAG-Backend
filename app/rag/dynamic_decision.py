@@ -23,13 +23,8 @@ from google.api_core.exceptions import ResourceExhausted
 logger = get_logger(__name__)
 
 
-# ---------------------------------------------------------------------------
-# Data classes
-# ---------------------------------------------------------------------------
-
 @dataclass
 class DRAGINResult:
-    """Hasil dari satu panggilan DRAGIN: jawaban + evaluasi uncertainty."""
     answer_text: str
     entropy: float
     confidence: float
@@ -40,12 +35,9 @@ class DRAGINResult:
     llm_backend: str = "openai"
 
 
-# ---------------------------------------------------------------------------
 # Entropy helpers
-# ---------------------------------------------------------------------------
 
 def calculate_token_entropy(top_logprobs: list) -> float:
-    """Menghitung Shannon Entropy untuk satu token: H = -Σ p·log(p)"""
     probs = [math.exp(lp.get("logprob", -100)) for lp in top_logprobs]
     total = sum(probs)
     if total == 0:
@@ -55,7 +47,6 @@ def calculate_token_entropy(top_logprobs: list) -> float:
 
 
 def _extract_logprobs_openai(response) -> List[dict]:
-    """Ekstrak logprobs dari response OpenAI (ChatOpenAI)."""
     return (
         response.response_metadata
         .get("logprobs", {})
@@ -64,19 +55,9 @@ def _extract_logprobs_openai(response) -> List[dict]:
 
 
 def _extract_logprobs_gemini(gemini_response) -> List[dict]:
-    """
-    Ekstrak logprobs dari response Gemini.
-    Mendukung dua SDK:
-    - google-generativeai (Legacy SDK)
-    - google-genai (New SDK for Vertex AI logprobs)
-    """
     try:
-        # --- Case 1: google-genai (New SDK) ---
-        # Structure: response.candidates[0].logprobs_result
         if hasattr(gemini_response, 'candidates') and gemini_response.candidates:
             candidate = gemini_response.candidates[0]
-            
-            # Check for new SDK structure
             logprobs_result = getattr(candidate, "logprobs_result", None)
             if logprobs_result:
                 top_candidates_list = getattr(logprobs_result, "top_candidates", None)
@@ -94,13 +75,7 @@ def _extract_logprobs_gemini(gemini_response) -> List[dict]:
                         if top_logprobs:
                             normalized.append({"top_logprobs": top_logprobs})
                     return normalized
-
-        # --- Case 2: google-generativeai (Legacy SDK) ---
-        # The structure is similar but might be accessed differently depending on version
-        # (This is already covered by the logic above if attributes match)
-        
         return []
-
     except Exception as exc:
         logger.warning(f"Gagal mengekstrak logprobs dari Gemini response: {exc}")
         return []
@@ -114,15 +89,7 @@ def _call_gemini_direct(
     vertex_project_override: Optional[str] = None,
     vertex_location_override: Optional[str] = None,
 ) -> tuple:
-    """
-    Panggil Gemini API langsung via SDK.
-    Menggunakan SDK baru 'google-genai' untuk dukungan logprobs Vertex AI yang lebih baik.
-
-    Returns:
-        (answer_text, logprobs_content)
-    """
     try:
-        # Gunakan SDK baru jika tersedia
         client = get_google_genai_client(
             mode_override=gemini_mode_override,
             project_override=vertex_project_override,
@@ -131,13 +98,9 @@ def _call_gemini_direct(
         from google.genai.types import GenerateContentConfig
         
         model_name = settings.gemini_model
-        # Vertex AI SDK usually expects full model name or just ID
-        
         mode_display = gemini_mode_override or settings.gemini_mode
         logger.info(f"Calling Gemini via google-genai client. Model: {model_name}, Mode: {mode_display}")
         
-        # Disable safety filters to prevent truncation
-        # Gunakan threshold OFF (paling permisif) untuk menghindari false positive
         from google.genai.types import HarmCategory, HarmBlockThreshold
         safety_settings = [
             {"category": HarmCategory.HARM_CATEGORY_HARASSMENT, "threshold": HarmBlockThreshold.OFF},
@@ -156,16 +119,13 @@ def _call_gemini_direct(
                 response_logprobs=True,
                 logprobs=settings.top_logprops,
                 safety_settings=safety_settings,
-                # Tambahan untuk mencegah premature stopping
                 candidate_count=1,
-                stop_sequences=None,  # Jangan stop di sequence tertentu
+                stop_sequences=None,
             )
         )
 
-        # Ekstrak teks jawaban terlebih dahulu
         answer_text = response.text.strip() if response.text else ""
 
-        # Log safety ratings untuk debugging
         if response.candidates and response.candidates[0].safety_ratings:
             safety_info = []
             for rating in response.candidates[0].safety_ratings:
@@ -174,7 +134,6 @@ def _call_gemini_direct(
                 safety_info.append(f"{cat}={prob}")
             logger.debug(f"Safety ratings: {', '.join(safety_info)}")
 
-        # Log token usage untuk debugging truncation
         if hasattr(response, 'usage_metadata') and response.usage_metadata:
             usage = response.usage_metadata
             logger.info(
@@ -186,18 +145,9 @@ def _call_gemini_direct(
         if response.candidates and response.candidates[0].finish_reason:
             reason_code = response.candidates[0].finish_reason
             reason_name = reason_code.name if hasattr(reason_code, "name") else str(reason_code)
-            
-            # Log finish_reason untuk debugging
-            logger.info(
-                f"Gemini finish_reason: {reason_name}",
-                extra={
-                    "finish_reason": reason_name,
-                    "answer_length": len(answer_text),
-                    "model": model_name,
-                }
-            )
-            
-            # Handle berbagai finish_reason
+            logger.info(f"Gemini finish_reason: {reason_name}", extra={
+                "finish_reason": reason_name, "answer_length": len(answer_text), "model": model_name,
+            })
             if reason_name == "MAX_TOKENS":
                 answer_text += "\n\n[Peringatan: Jawaban terpotong karena mencapai batas token. Coba kurangi panjang pertanyaan atau konteks.]"
                 logger.warning(f"Response truncated due to MAX_TOKENS. Answer length: {len(answer_text)}")
@@ -208,7 +158,6 @@ def _call_gemini_direct(
                 answer_text += "\n\n[Peringatan: Jawaban terhenti karena alasan tidak diketahui. Silakan coba lagi.]"
                 logger.warning("Response stopped with finish_reason=OTHER")
             elif reason_name != "STOP":
-                # Finish reason tidak dikenal
                 logger.warning(f"Unexpected finish_reason: {reason_name}")
                 answer_text += f"\n\n[Peringatan: Jawaban terhenti dengan status '{reason_name}']"
 
@@ -218,8 +167,6 @@ def _call_gemini_direct(
     except Exception as e:
         logger.warning(f"Gagal menggunakan SDK baru google-genai, fallback ke legacy: {e}")
         
-        # Fallback ke SDK lama (google-generativeai)
-        # Paksa re-configure karena SDK baru mungkin sudah init dengan mode berbeda
         configure_genai(
             force=True,
             mode_override=gemini_mode_override,
@@ -231,7 +178,6 @@ def _call_gemini_direct(
             system_instruction=system_prompt,
         )
         
-        # Legacy safety settings
         safety_settings_legacy = [
             {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
             {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
@@ -255,9 +201,7 @@ def _call_gemini_direct(
         return answer_text, logprobs_content
 
 
-# ---------------------------------------------------------------------------
 # LLM factory
-# ---------------------------------------------------------------------------
 
 def _create_llm(
     settings, 
@@ -267,12 +211,10 @@ def _create_llm(
     vertex_project_override: str | None = None,
     vertex_location_override: str | None = None,
 ):
-    """Buat LLM instance berdasarkan backend (dari DB atau env DRAGIN_LLM_BACKEND)."""
     resolved_backend = (backend or settings.dragin_llm_backend or "gemini").lower()
 
     if resolved_backend == "gemini":
         model_name = model_override or settings.gemini_model
-        # Gunakan get_langchain_chat_llm agar mode api_key / vertex_ai otomatis dipilih
         llm = get_langchain_chat_llm(
             model_name=model_name,
             temperature=0.1,
@@ -284,15 +226,10 @@ def _create_llm(
             location_override=vertex_location_override,
         )
         mode_display = gemini_mode_override or settings.gemini_mode
-        logger.info(
-            f"DRAGIN using Gemini backend [{mode_display}]: {model_name}"
-        )
+        logger.info(f"DRAGIN using Gemini backend [{mode_display}]: {model_name}")
         return llm, "gemini"
-
     else:
-        # Default: OpenAI
         from langchain_openai import ChatOpenAI
-
         model_name = model_override or settings.gpt_model
         llm = ChatOpenAI(
             model=model_name,
@@ -306,9 +243,7 @@ def _create_llm(
         return llm, "openai"
 
 
-# ---------------------------------------------------------------------------
 # DRAGIN: unified generator + evaluator
-# ---------------------------------------------------------------------------
 
 def generate_with_dragin(
     query: str,
@@ -325,12 +260,9 @@ def generate_with_dragin(
 ) -> DRAGINResult:
     settings = get_settings()
 
-    # --- 1. Siapkan dokumen & prompt ---
     docs_limited = limit_docs_for_context(
-        query=query,
-        documents=documents,
-        max_docs=settings.context_max_docs,
-        max_chars=settings.context_char_budget,
+        query=query, documents=documents,
+        max_docs=settings.context_max_docs, max_chars=settings.context_char_budget,
         user_role=user_role,
     )
     context_text = format_context(docs_limited)
@@ -363,7 +295,6 @@ def generate_with_dragin(
 
     original_query = raw_query or query
 
-    # --- Riwayat percakapan (short-term memory) ---
     history_section = ""
     if chat_history:
         history_section = (
@@ -399,24 +330,18 @@ def generate_with_dragin(
         "- PENTING: Jawab secara lengkap dan tuntas. Jangan memotong jawaban di tengah kalimat.\n"
     )
 
-    # --- 2. Panggil LLM dengan logprobs ---
-    # Prioritas: generator_backend (dari DB) > settings.dragin_llm_backend (env)
     resolved_backend = (generator_backend or settings.dragin_llm_backend or "gemini").lower()
     backend_used = resolved_backend
 
     try:
         if resolved_backend == "gemini":
-            # Bypass LangChain: langchain-google-genai tidak meneruskan logprobs
             model_to_use = generator_model_override or settings.gemini_model
             logger.info(f"DRAGIN using Gemini direct SDK: {model_to_use}")
-            # Sementara override gemini_model di settings jika berbeda
             original_model = settings.gemini_model
-            settings.__dict__["gemini_model"] = model_to_use  # temp override (thread-safe: per-request)
+            settings.__dict__["gemini_model"] = model_to_use
             try:
                 answer_text, logprobs_content = _call_gemini_direct(
-                    system_prompt=system_prompt,
-                    user_prompt=user_prompt,
-                    settings=settings,
+                    system_prompt=system_prompt, user_prompt=user_prompt, settings=settings,
                     gemini_mode_override=gemini_mode_override,
                     vertex_project_override=vertex_project_override,
                     vertex_location_override=vertex_location_override,
@@ -425,11 +350,8 @@ def generate_with_dragin(
                 settings.__dict__["gemini_model"] = original_model
             backend_used = "gemini"
         else:
-            # OpenAI via LangChain (logprobs didukung penuh)
             llm, backend_name = _create_llm(
-                settings,
-                backend=resolved_backend,
-                model_override=generator_model_override,
+                settings, backend=resolved_backend, model_override=generator_model_override,
                 gemini_mode_override=gemini_mode_override,
                 vertex_project_override=vertex_project_override,
                 vertex_location_override=vertex_location_override,
@@ -443,72 +365,47 @@ def generate_with_dragin(
             logprobs_content = _extract_logprobs_openai(response)
     except ResourceExhausted as exc:
         logger.warning(f"DRAGIN quota exhausted ({backend_used}): {exc}")
-        broadcast_event(
-            stage="dragin",
-            action="rate_limit",
+        broadcast_event(stage="dragin", action="rate_limit",
             summary="LLM rate limit/kuota tercapai",
-            details={"backend": backend_used, "error": str(exc)},
-        )
+            details={"backend": backend_used, "error": str(exc)})
         return DRAGINResult(
-            answer_text=(
-                "Layanan model sedang padat (rate limit/kuota tercapai). "
-                "Silakan coba lagi beberapa saat."
-            ),
-            entropy=1.0,
-            confidence=0.0,
-            should_retry=True,  # Ubah jadi True agar sistem mau mencoba lagi/fallback
+            answer_text="Layanan model sedang padat (rate limit/kuota tercapai). Silakan coba lagi beberapa saat.",
+            entropy=1.0, confidence=0.0, should_retry=True,
             reason=f"LLM rate limit ({backend_used}): {exc}",
-            token_count=0,
-            llm_backend=backend_used,
+            token_count=0, llm_backend=backend_used,
         )
     except Exception as exc:
         logger.error(f"DRAGIN generation failed ({backend_used}): {exc}")
         return DRAGINResult(
-            answer_text=(
-                "Maaf, terjadi kesalahan teknis saat menghasilkan jawaban. "
-                "Silakan coba kembali beberapa saat lagi."
-            ),
-            entropy=1.0,
-            confidence=0.0,
-            should_retry=True,  # Ubah jadi True
+            answer_text="Maaf, terjadi kesalahan teknis saat menghasilkan jawaban. Silakan coba kembali beberapa saat lagi.",
+            entropy=1.0, confidence=0.0, should_retry=True,
             reason=f"LLM error ({backend_used}): {exc}",
-            token_count=0,
-            llm_backend=backend_used,
+            token_count=0, llm_backend=backend_used,
         )
 
     if not logprobs_content:
         logger.warning(f"Logprobs tidak tersedia dari {backend_used}, anggap entropy tinggi")
         return DRAGINResult(
-            answer_text=answer_text,
-            entropy=1.0,
-            confidence=0.0,
-            should_retry=True,
+            answer_text=answer_text, entropy=1.0, confidence=0.0, should_retry=True,
             reason=f"Logprobs missing dari response ({backend_used})",
-            token_count=0,
-            llm_backend=backend_used,
+            token_count=0, llm_backend=backend_used,
         )
 
     token_entropies = [
         calculate_token_entropy(t.get("top_logprobs", []))
-        for t in logprobs_content
-        if t.get("top_logprobs")
+        for t in logprobs_content if t.get("top_logprobs")
     ]
     token_count = len(token_entropies)
 
     if token_count == 0:
         avg_entropy = 1.0
     else:
-        # DRAGIN: fokus pada token-token PALING UNCERTAIN (top-K%)
-        # Token boilerplate (kata sambung, tanda baca) memiliki entropy
-        # rendah dan mendilusi sinyal uncertainty dari token informatif.
-        # Kita ambil top 20% token dengan entropy tertinggi.
         TOP_K_PERCENT = 0.20
         sorted_entropies = sorted(token_entropies, reverse=True)
         top_k_count = max(1, int(len(sorted_entropies) * TOP_K_PERCENT))
         top_k_entropies = sorted_entropies[:top_k_count]
         avg_entropy = float(np.mean(top_k_entropies))
 
-        # Log perbandingan untuk analisis
         full_mean = float(np.mean(token_entropies))
         logger.debug(
             f"Entropy comparison: full_mean={full_mean:.4f}, "
@@ -516,7 +413,6 @@ def generate_with_dragin(
             f"(top {top_k_count}/{token_count} tokens)"
         )
 
-    # --- 4. Keputusan: retry atau tidak ---
     THRESHOLD = settings.dragin_threshold
     should_retry = avg_entropy > THRESHOLD
     confidence = max(0.0, 1.0 - (avg_entropy / max(math.log(settings.top_logprops), 1.0)))
@@ -532,32 +428,19 @@ def generate_with_dragin(
             f"confidence tinggi ({confidence:.2f}). Jawaban cukup."
         )
 
-    logger.info(
-        "DRAGIN evaluation",
-        extra={
-            "backend": backend_used,
-            "entropy": round(avg_entropy, 4),
-            "confidence": round(confidence, 2),
-            "should_retry": should_retry,
-            "token_count": token_count,
-        },
-    )
+    logger.info("DRAGIN evaluation", extra={
+        "backend": backend_used, "entropy": round(avg_entropy, 4),
+        "confidence": round(confidence, 2), "should_retry": should_retry, "token_count": token_count,
+    })
 
     return DRAGINResult(
-        answer_text=answer_text,
-        entropy=float(avg_entropy),
-        confidence=float(confidence),
-        should_retry=should_retry,
-        reason=reason,
-        token_count=token_count,
-        token_entropies=token_entropies,
-        llm_backend=backend_used,
+        answer_text=answer_text, entropy=float(avg_entropy), confidence=float(confidence),
+        should_retry=should_retry, reason=reason, token_count=token_count,
+        token_entropies=token_entropies, llm_backend=backend_used,
     )
 
 
-# ---------------------------------------------------------------------------
-# Post-generation role validation (Layer 3)
-# ---------------------------------------------------------------------------
+# Post-generation role validation
 
 _ROLE_CONTRADICTIONS = {
     "pengajar": [
@@ -577,19 +460,7 @@ _ROLE_CONTRADICTIONS = {
 }
 
 
-def validate_role_consistency(
-    answer: str,
-    user_role: str | None,
-) -> str:
-    """
-    Validasi konsistensi peran pada jawaban yang digenerate.
-
-    Jika jawaban menyarankan login/aksi sebagai peran yang salah,
-    tambahkan disclaimer di awal jawaban.
-
-    Returns:
-        Jawaban yang sudah divalidasi (mungkin dengan disclaimer).
-    """
+def validate_role_consistency(answer: str, user_role: str | None) -> str:
     if not user_role or not answer:
         return answer
 
@@ -597,28 +468,16 @@ def validate_role_consistency(
     checks = _ROLE_CONTRADICTIONS.get(role_norm, [])
     answer_lower = answer.lower()
 
-    found_contradictions = [
-        c for c in checks if c in answer_lower
-    ]
+    found_contradictions = [c for c in checks if c in answer_lower]
 
     if found_contradictions:
         role_display = user_role.replace("_", " ").title()
-        logger.warning(
-            "Role contradiction detected in answer",
-            extra={
-                "user_role": user_role,
-                "contradictions": found_contradictions,
-            },
-        )
-        broadcast_event(
-            stage="generation",
-            action="role_validation_warning",
+        logger.warning("Role contradiction detected in answer", extra={
+            "user_role": user_role, "contradictions": found_contradictions,
+        })
+        broadcast_event(stage="generation", action="role_validation_warning",
             summary=f"Kontradiksi peran terdeteksi: {found_contradictions}",
-            details={
-                "user_role": user_role,
-                "contradictions": found_contradictions,
-            },
-        )
+            details={"user_role": user_role, "contradictions": found_contradictions})
         disclaimer = (
             f"**Catatan:** Berikut adalah informasi untuk peran **{role_display}**. "
             f"Beberapa bagian dokumen sumber mungkin mengandung label peran yang tidak sesuai, "
