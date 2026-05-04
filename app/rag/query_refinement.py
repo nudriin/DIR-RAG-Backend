@@ -8,6 +8,11 @@ import google.generativeai as genai
 
 from app.core.config import get_settings
 from app.core.logging import get_logger, broadcast_event
+from app.core.gemini_client import (
+    configure_genai, 
+    get_gemini_model, 
+    get_google_genai_client
+)
 from app.data.vector_store import vector_store_manager
 
 logger = get_logger(__name__)
@@ -120,11 +125,11 @@ def _extract_json_candidates(text: str) -> List[str]:
     return uniq
 
 
-def _call_replicate(prompt: str, settings) -> str:
-    """Panggil LLM via Replicate API."""
+def _call_replicate(prompt: str, settings, model_override: Optional[str] = None) -> str:
     client = replicate.Client(api_token=settings.replicate_api_token)
+    model_name = model_override or settings.llm_model
     output = client.run(
-        settings.llm_model,
+        model_name,
         input={
             "prompt": prompt,
             "temperature": 0.1,
@@ -137,30 +142,96 @@ def _call_replicate(prompt: str, settings) -> str:
     )
 
 
-def _call_gemini(prompt: str, settings) -> str:
-    """Panggil LLM via Google Gemini API."""
-    genai.configure(api_key=settings.google_api_key)
-    model = genai.GenerativeModel(
-        model_name=settings.gemini_model,
-    )
-    response = model.generate_content(
-        prompt,
-        generation_config={
-            "temperature": 0.1,
-            "max_output_tokens": 1024,
-        },
-    )
-    return response.text.strip()
+def _call_gemini(
+    prompt: str, 
+    settings, 
+    model_override: Optional[str] = None,
+    gemini_mode_override: Optional[str] = None,
+    vertex_project_override: Optional[str] = None,
+    vertex_location_override: Optional[str] = None,
+) -> str:
+    try:
+        client = get_google_genai_client(
+            mode_override=gemini_mode_override,
+            project_override=vertex_project_override,
+            location_override=vertex_location_override,
+        )
+        from google.genai.types import GenerateContentConfig
+        
+        model_name = model_override or settings.gemini_model
+
+        response = client.models.generate_content(
+            model=model_name,
+            contents=prompt,
+            config=GenerateContentConfig(
+                temperature=0.1,
+                max_output_tokens=4096,
+                response_mime_type="application/json",
+            )
+        )
+
+        if response.text is None:
+            finish = (
+                response.candidates[0].finish_reason.name
+                if response.candidates
+                else "UNKNOWN"
+            )
+            raise RuntimeError(
+                f"Gemini returned empty text (finish_reason={finish}). "
+                "Kemungkinan response terpotong oleh token limit."
+            )
+
+        return response.text.strip()
+        
+    except Exception as e:
+        logger.warning(f"Gagal menggunakan SDK baru google-genai di RQ-RAG, fallback: {e}")
+        
+        configure_genai(
+            force=True,
+            mode_override=gemini_mode_override,
+            project_override=vertex_project_override,
+            location_override=vertex_location_override,
+        )
+        model_name = model_override or settings.refinement_gemini_model
+        model = get_gemini_model(
+            model_name=model_name,
+        )
+        response = model.generate_content(
+            prompt,
+            generation_config={
+                "temperature": 0.1,
+                "max_output_tokens": 4096,
+            },
+        )
+        if response.text is None:
+            raise RuntimeError("Gemini legacy SDK returned empty text.")
+        return response.text.strip()
 
 
-def _call_llm(prompt: str, settings, backend: str = "gemini") -> str:
-    """Dispatch ke backend LLM yang sesuai."""
+def _call_llm(
+    prompt: str, 
+    settings, 
+    backend: str = "gemini", 
+    model_override: Optional[str] = None,
+    gemini_mode_override: Optional[str] = None,
+    vertex_project_override: Optional[str] = None,
+    vertex_location_override: Optional[str] = None,
+) -> str:
     backend = (backend or "gemini").lower()
     logger.info(f"RQ-RAG using backend: {backend}")
     if backend == "replicate":
-        return _call_replicate(prompt, settings)
+        return _call_replicate(prompt, settings, model_override)
+    elif backend == "gemini":
+        return _call_gemini(
+            prompt, 
+            settings, 
+            model_override,
+            gemini_mode_override=gemini_mode_override,
+            vertex_project_override=vertex_project_override,
+            vertex_location_override=vertex_location_override,
+        )
     else:
-        return _call_gemini(prompt, settings)
+        return _call_openai(prompt, settings, model_override)
 
 
 def refine_query(
@@ -168,9 +239,12 @@ def refine_query(
     draft_answer: Optional[str] = None,
     user_role: Optional[str] = None,
     refinement_backend: Optional[str] = None,
+    refinement_model_override: Optional[str] = None,
     chat_history: Optional[str] = None,
+    gemini_mode_override: Optional[str] = None,
+    vertex_project_override: Optional[str] = None,
+    vertex_location_override: Optional[str] = None,
 ) -> RefinedQuery:
-    # Normalize empty string → None
     if chat_history is not None and not chat_history.strip():
         chat_history = None
 
@@ -223,9 +297,6 @@ def refine_query(
         top_d_orig, _ = _top_distance_and_sources(query, settings.similarity_top_k)
         conf_orig = _distance_to_conf(top_d_orig)
     if enable_bypass and conf_orig >= bypass_conf_threshold:
-        # Jika ada chat_history, SELALU paksa refinement agar LLM bisa
-        # resolve referensi implisit (misalnya "lebih detail", "itu apa", dll).
-        # LLM akan mengembalikan query apa adanya jika sudah cukup spesifik.
         if chat_history:
             logger.info(
                 "Chat history present, skip bypass to allow context-aware refinement",
@@ -340,7 +411,15 @@ def refine_query(
     """
 
     try:
-        text = _call_llm(prompt, settings, backend=refinement_backend or "gemini")
+        text = _call_llm(
+            prompt, 
+            settings, 
+            backend=refinement_backend or "gemini", 
+            model_override=refinement_model_override,
+            gemini_mode_override=gemini_mode_override,
+            vertex_project_override=vertex_project_override,
+            vertex_location_override=vertex_location_override,
+        )
 
         candidates = _extract_json_candidates(text)
         parsed = None
@@ -356,7 +435,19 @@ def refine_query(
             raise ValueError("json_not_found")
 
         candidate = parsed.get("refined_query", query) or query
-        subqs = parsed.get("sub_queries", [candidate]) or [candidate]
+        subqs_raw = parsed.get("sub_queries", [candidate]) or [candidate]
+        subqs = []
+        if isinstance(subqs_raw, list):
+            for item in subqs_raw:
+                if isinstance(item, str):
+                    subqs.append(item)
+                elif isinstance(item, dict):
+                    subqs.append(item.get("query") or item.get("content") or str(item))
+                else:
+                    subqs.append(str(item))
+        else:
+            subqs = [str(subqs_raw)]
+
         rtype = parsed.get("refinement_type", "REWRITE")
         noop = _norm_text(candidate) == _norm_text(query)
         rtype_out = "NO_CHANGE" if noop else rtype
@@ -377,9 +468,6 @@ def refine_query(
 
         keep = True
         reason = "OK"
-        # Jika ada chat_history, skip validasi similarity/jaccard
-        # karena follow-up resolution sengaja menghasilkan query yang
-        # sangat berbeda dari original (e.g. "lebih detail" → "langkah login pengajar")
         if chat_history:
             reason = "OK_HISTORY_CONTEXT"
         elif sim < sim_block_threshold:

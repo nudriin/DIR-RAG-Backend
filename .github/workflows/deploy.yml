@@ -1,0 +1,154 @@
+# ============================================================
+# CI/CD Pipeline - Auto Deploy DIR-RAG Backend ke VPS
+# ============================================================
+# Trigger: Push ke branch 'main'
+# Alur: SSH ke VPS → git pull → docker build → docker up → health check
+# ============================================================
+
+name: "\U0001F680 Deploy to VPS"
+
+on:
+  push:
+    branches:
+      - main
+    # Hanya trigger jika file-file berikut berubah
+    # (hapus bagian 'paths' jika ingin trigger untuk semua perubahan)
+    paths:
+      - 'app/**'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - 'requirements.txt'
+
+  # Memungkinkan trigger manual dari GitHub UI
+  workflow_dispatch:
+
+# Hanya izinkan 1 deployment berjalan pada satu waktu
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: "\U0001F5A5️ Deploy ke VPS"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # ── Step 1: Tampilkan info deployment ──
+      - name: "\U0001F4CB Info Deployment"
+        run: |
+          echo "🚀 Deployment dipicu oleh: ${{ github.actor }}"
+          echo "📦 Commit: ${{ github.sha }}"
+          echo "📝 Pesan: ${{ github.event.head_commit.message }}"
+          echo "🕐 Waktu: $(date +'%Y-%m-%d %H:%M:%S UTC')"
+
+      # ── Step 2: Deploy via SSH ──
+      - name: "\U0001F511 Deploy ke VPS via SSH"
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          timeout: 300s
+          command_timeout: 600s
+          script: |
+            set -e
+
+            echo "=========================================="
+            echo "🚀 Memulai deployment..."
+            echo "=========================================="
+
+            # Masuk ke direktori project
+            cd ${{ secrets.DEPLOY_PATH }}
+
+            # ── Simpan commit saat ini untuk rollback ──
+            PREVIOUS_COMMIT=$(git rev-parse HEAD)
+            echo "📌 Commit sebelumnya: $PREVIOUS_COMMIT"
+
+            # ── Pull perubahan terbaru ──
+            echo ""
+            echo "📥 Pull perubahan terbaru dari GitHub..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            CURRENT_COMMIT=$(git rev-parse HEAD)
+            echo "📌 Commit terbaru: $CURRENT_COMMIT"
+
+            # ── Cek apakah ada perubahan ──
+            if [ "$PREVIOUS_COMMIT" = "$CURRENT_COMMIT" ]; then
+              echo "✅ Tidak ada perubahan. Deployment dilewati."
+              exit 0
+            fi
+
+            # ── Build ulang Docker image ──
+            echo ""
+            echo "🔨 Building Docker image..."
+            docker compose build --no-cache
+
+            # ── Stop container lama ──
+            echo ""
+            echo "⏹️  Menghentikan container lama..."
+            docker compose down
+
+            # ── Jalankan container baru ──
+            echo ""
+            echo "▶️  Menjalankan container baru..."
+            docker compose up -d
+
+            # ── Tunggu container ready ──
+            echo ""
+            echo "⏳ Menunggu container ready..."
+            sleep 15
+
+            # ── Health check ──
+            echo ""
+            echo "🏥 Health check..."
+            RETRY=0
+            MAX_RETRY=5
+
+            until curl -sf http://localhost:8080/health > /dev/null 2>&1; do
+              RETRY=$((RETRY + 1))
+              if [ $RETRY -ge $MAX_RETRY ]; then
+                echo "❌ Health check gagal setelah $MAX_RETRY percobaan!"
+                echo ""
+                echo "🔄 Rollback ke commit sebelumnya..."
+                git reset --hard $PREVIOUS_COMMIT
+                docker compose build --no-cache
+                docker compose down
+                docker compose up -d
+                echo "⚠️  Rollback selesai. Deployment GAGAL."
+                exit 1
+              fi
+              echo "   Percobaan $RETRY/$MAX_RETRY - Menunggu 10 detik..."
+              sleep 10
+            done
+
+            HEALTH_RESPONSE=$(curl -s http://localhost:8080/health)
+            echo "✅ Health check berhasil: $HEALTH_RESPONSE"
+
+            # ── Bersihkan Docker resources lama ──
+            echo ""
+            echo "🧹 Membersihkan image lama..."
+            docker image prune -f
+
+            echo ""
+            echo "=========================================="
+            echo "✅ Deployment BERHASIL!"
+            echo "   Commit: $CURRENT_COMMIT"
+            echo "   Waktu : $(date +'%Y-%m-%d %H:%M:%S')"
+            echo "=========================================="
+
+      # ── Step 3: Tampilkan hasil ──
+      - name: "✅ Deployment Selesai"
+        if: success()
+        run: |
+          echo "🎉 Deployment ke VPS berhasil!"
+          echo "📦 Commit: ${{ github.sha }}"
+
+      - name: "❌ Deployment Gagal"
+        if: failure()
+        run: |
+          echo "⚠️ Deployment GAGAL!"
+          echo "📦 Commit: ${{ github.sha }}"
+          echo "Silakan cek log di atas untuk detail error."

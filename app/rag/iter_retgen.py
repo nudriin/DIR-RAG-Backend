@@ -64,7 +64,6 @@ def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
         "final_status": {},
     }
 
-    # Phase 1 — The Primer (RQ-RAG)
     rq: RefinedQuery = refine_query(query, user_role=user_role)
     sub_queries: List[str] = rq.get("sub_queries", []) or []
     instruction_queue: List[str] = [rq["refined_query"]] + sub_queries
@@ -78,7 +77,6 @@ def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
     source_names = [doc.metadata.get("source") for doc, _ in anchor_results if doc.metadata.get("source")]
     unique_source_names = sorted(set(source_names))
 
-    # Closed-domain guardrail will use these scores
     RELEVANCE_DISTANCE_THRESHOLD = 1.2  # for cosine distance in Chroma (lower is better)
     has_valid_anchor = bool(anchor_results) and any(score <= RELEVANCE_DISTANCE_THRESHOLD for _, score in anchor_results)
 
@@ -100,7 +98,6 @@ def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
         },
     )
 
-    # Controller state (non-iterative)
     entropy_history: List[float] = []
     current_instruction = rq["refined_query"]
     before_prune = len(semantic_anchor_docs)
@@ -111,7 +108,6 @@ def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
     final_sources: List[Dict[str, Any]] = []
     stop_reason = "Direct Answer"
 
-    # DRAGIN gate logged for visibility only (no iterative RETGEN)
     if settings.enable_dragin:
         gate_decision = decide_retrieval_dragin(rq["refined_query"])
         entropy_history.append(gate_decision.entropy)
@@ -176,9 +172,7 @@ def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
         }
     )
 
-    # Final assembly already built (non-iterative)
 
-    # Final Guardrail (Closed-Domain)
     if not has_valid_anchor or not final_answer or "Tidak ada informasi tersedia untuk pertanyaan tersebut" in final_answer:
         fallback_text = "Tidak ada informasi tersedia untuk pertanyaan tersebut"
         debug_logs["final_status"] = {
@@ -200,8 +194,6 @@ def run_rag_pipeline(query: str, user_role: str | None = None) -> RAGResult:
             traces=traces or [IterationTrace(1, rq["refined_query"], 0, RetrievalDecision(True, 0.0, "No valid context", 1.0, None), query)],
             debug_logs=debug_logs,
         )
-
-    # Sources already built from generate_answer when applicable
 
     last_confidence = traces[-1].decision.confidence if traces else 0.0
     debug_logs["final_status"] = {

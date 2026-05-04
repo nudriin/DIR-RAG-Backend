@@ -1,2 +1,4 @@
 .env
 storage/
+storage/service_accounts/
+*.json.bak

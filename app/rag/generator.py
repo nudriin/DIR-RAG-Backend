@@ -51,22 +51,6 @@ def limit_docs_for_context(
     max_chars: int,
     user_role: str | None = None,
 ) -> List[Document]:
-    """
-    Bangun context menggunakan relevance-aware semantic chunking.
-
-    Fungsi ini sekarang mendelegasikan ke context_builder pipeline:
-    chunk → score (CrossEncoder + positional) → select (token budget) → assemble.
-
-    Args tetap sama untuk backward compatibility:
-        query: Query pengguna.
-        documents: List dokumen dari retrieval.
-        max_docs: (legacy, tidak digunakan lagi — token budget menggantikan)
-        max_chars: (legacy, tidak digunakan lagi — token budget menggantikan)
-        user_role: Peran pengguna untuk role-aware scoring.
-
-    Returns:
-        List[Document] — chunk terpilih sebagai Document.
-    """
     if not documents:
         return []
     return build_context_for_query(query=query, documents=documents, user_role=user_role)
@@ -92,10 +76,8 @@ def generate_answer(
     settings = get_settings()
 
     docs_limited = limit_docs_for_context(
-        query=query,
-        documents=documents,
-        max_docs=settings.context_max_docs,
-        max_chars=settings.context_char_budget,
+        query=query, documents=documents,
+        max_docs=settings.context_max_docs, max_chars=settings.context_char_budget,
     )
     context_text = format_context(docs_limited)
     system_prompt = build_system_prompt()
@@ -110,10 +92,7 @@ def generate_answer(
     try:
         output = client.run(
             settings.llm_model,
-            input={
-                "prompt": full_prompt,
-                "temperature": 0.1,
-            },
+            input={"prompt": full_prompt, "temperature": 0.1},
         )
         text = (
             "".join(str(part) for part in output)
@@ -121,17 +100,11 @@ def generate_answer(
             else str(output)
         )
         answer_text = text
-
     except Exception as exc:
         last_exception = exc
-        logger.error(
-            f"LLM generation failed {str(exc)}",
-            extra={
-                "error": str(exc),
-                "llm_backend": "replicate",
-                "model": settings.llm_model,
-            },
-        )
+        logger.error(f"LLM generation failed {str(exc)}", extra={
+            "error": str(exc), "llm_backend": "replicate", "model": settings.llm_model,
+        })
 
     if last_exception is not None and "answer_text" not in locals():
         answer_text = (
@@ -141,29 +114,18 @@ def generate_answer(
 
     sources: List[Dict[str, Any]] = []
     for i, doc in enumerate(documents):
-        sources.append(
-            {
-                "id": i,
-                "source": doc.metadata.get("source"),
-                "chunk_id": doc.metadata.get("chunk_id"),
-            }
-        )
+        sources.append({
+            "id": i,
+            "source": doc.metadata.get("source"),
+            "chunk_id": doc.metadata.get("chunk_id"),
+        })
 
-    logger.info(
-        "Generated answer",
-        extra={
-            "query": query,
-            "num_sources": len(sources),
-            "llm_backend": "replicate",
-            "model": settings.llm_model,
-        },
-    )
-    broadcast_event(
-        stage="generation",
-        action="answer",
-        summary="Jawaban akhir digenerate",
-        details={"num_sources": len(sources)},
-    )
+    logger.info("Generated answer", extra={
+        "query": query, "num_sources": len(sources),
+        "llm_backend": "replicate", "model": settings.llm_model,
+    })
+    broadcast_event(stage="generation", action="answer",
+        summary="Jawaban akhir digenerate", details={"num_sources": len(sources)})
 
     return answer_text, sources
 
@@ -200,10 +162,8 @@ def generate_paragraph(
     settings = get_settings()
 
     docs_limited = limit_docs_for_context(
-        query=query,
-        documents=documents,
-        max_docs=settings.context_max_docs,
-        max_chars=settings.context_char_budget,
+        query=query, documents=documents,
+        max_docs=settings.context_max_docs, max_chars=settings.context_char_budget,
     )
     context_text = format_context(docs_limited)
     system_prompt = build_system_prompt()
@@ -219,10 +179,7 @@ def generate_paragraph(
     try:
         output = client.run(
             settings.llm_model,
-            input={
-                "prompt": full_prompt,
-                "temperature": 0.1,
-            },
+            input={"prompt": full_prompt, "temperature": 0.1},
         )
         text = (
             "".join(str(part) for part in output)
@@ -232,42 +189,27 @@ def generate_paragraph(
         paragraph_text = text
     except Exception as exc:
         last_exception = exc
-        logger.error(
-            f"LLM generation failed {str(exc)}",
-            extra={
-                "error": str(exc),
-                "llm_backend": "replicate",
-                "model": settings.llm_model,
-            },
-        )
+        logger.error(f"LLM generation failed {str(exc)}", extra={
+            "error": str(exc), "llm_backend": "replicate", "model": settings.llm_model,
+        })
 
     if last_exception is not None and "paragraph_text" not in locals():
         paragraph_text = "Tidak ada informasi tersedia untuk pertanyaan tersebut"
 
     sources: List[Dict[str, Any]] = []
     for i, doc in enumerate(documents):
-        sources.append(
-            {
-                "id": i,
-                "source": doc.metadata.get("source"),
-                "chunk_id": doc.metadata.get("chunk_id"),
-            }
-        )
+        sources.append({
+            "id": i,
+            "source": doc.metadata.get("source"),
+            "chunk_id": doc.metadata.get("chunk_id"),
+        })
 
-    logger.info(
-        "Generated paragraph",
-        extra={
-            "query": query,
-            "num_sources": len(sources),
-            "llm_backend": "replicate",
-            "model": settings.llm_model,
-        },
-    )
-    broadcast_event(
-        stage="generation",
-        action="paragraph",
+    logger.info("Generated paragraph", extra={
+        "query": query, "num_sources": len(sources),
+        "llm_backend": "replicate", "model": settings.llm_model,
+    })
+    broadcast_event(stage="generation", action="paragraph",
         summary="Paragraf digenerate",
-        details={"preview": paragraph_text[:120], "num_sources": len(sources)},
-    )
+        details={"preview": paragraph_text[:120], "num_sources": len(sources)})
 
     return paragraph_text, sources

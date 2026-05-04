@@ -1,6 +1,6 @@
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Literal
+from typing import List, Literal, Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings
@@ -41,10 +41,25 @@ class Settings(BaseSettings):
 
     database_url: str | None = Field(default=None, env="DATABASE_URL")
 
-    # DRAGIN LLM backend: "openai" atau "gemini"
-    dragin_llm_backend: str = Field(default="openai", env="DRAGIN_LLM_BACKEND")
+    dragin_llm_backend: str = Field(default="gemini", env="DRAGIN_LLM_BACKEND")
     gemini_model: str = Field(default="gemini-2.0-flash", env="GEMINI_MODEL")
+    gemini_api_version: str = Field(default="v1beta", env="GEMINI_API_VERSION")
     google_api_key: str | None = Field(default=None, env="GOOGLE_API_KEY")
+
+    generator_backend: str | None = Field(default=None)
+    generator_model_gemini: str | None = Field(default=None)
+    generator_model_openai: str | None = Field(default=None)
+    refinement_model_gemini: str | None = Field(default=None)
+    refinement_model_replicate: str | None = Field(default=None)
+
+    gemini_mode: Literal["api_key", "vertex_ai"] = Field(
+        default="api_key", env="GEMINI_MODE"
+    )
+    vertex_project: Optional[str] = Field(default=None, env="VERTEX_PROJECT")
+    vertex_location: str = Field(default="us-central1", env="VERTEX_LOCATION")
+    google_service_account_path: Optional[str] = Field(
+        default=None, env="GOOGLE_SERVICE_ACCOUNT_PATH"
+    )
 
     max_iterations: int = Field(default=2, env="MAX_ITERATIONS")
     similarity_top_k: int = Field(default=5, env="SIMILARITY_TOP_K")
@@ -78,7 +93,6 @@ class Settings(BaseSettings):
         default=80, env="SEMANTIC_BREAKPOINT_THRESHOLD_AMOUNT"
     )
 
-    # Context budgeting to avoid rate limit/token overflow
     context_max_docs: int = Field(default=5, env="CONTEXT_MAX_DOCS")
     context_char_budget: int = Field(default=6000, env="CONTEXT_CHAR_BUDGET")
     context_token_budget: int = Field(default=2500, env="CONTEXT_TOKEN_BUDGET")
@@ -86,7 +100,7 @@ class Settings(BaseSettings):
     chunk_overlap_tokens: int = Field(default=50, env="CHUNK_OVERLAP_TOKENS")
     scoring_semantic_weight: float = Field(default=0.8, env="SCORING_SEMANTIC_WEIGHT")
     scoring_positional_weight: float = Field(default=0.2, env="SCORING_POSITIONAL_WEIGHT")
-    max_generation_tokens: int = Field(default=512, env="MAX_GENERATION_TOKENS")
+    max_generation_tokens: int = Field(default=2048, env="MAX_GENERATION_TOKENS")
     rq_similarity_block_threshold: float = Field(
         default=0.7, env="RQ_SIMILARITY_BLOCK_THRESHOLD"
     )
@@ -106,7 +120,6 @@ class Settings(BaseSettings):
         default=True, env="RQ_ENABLE_BYPASS"
     )
 
-    # Short-term memory: jumlah pasangan (user+assistant) terakhir yang di-inject ke prompt
     memory_max_turns: int = Field(default=5, env="MEMORY_MAX_TURNS")
 
     base_dir: Path = Path(__file__).resolve().parents[2]
@@ -122,6 +135,10 @@ class Settings(BaseSettings):
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     settings = Settings()
+    from app.core.logging import get_logger
+    _logger = get_logger("app.core.config")
+    _logger.info(f"Settings loaded for the first time. GEMINI_MODE: {settings.gemini_mode}")
+    
     settings.data_dir.mkdir(parents=True, exist_ok=True)
     settings.vector_dir.mkdir(parents=True, exist_ok=True)
     settings.log_dir.mkdir(parents=True, exist_ok=True)

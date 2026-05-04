@@ -8,7 +8,6 @@ from datetime import datetime, timezone
 
 from .config import get_settings
 
-# Simple broadcaster for log streaming (SSE/WebSocket subscribers)
 _log_subscribers: Set[asyncio.Queue] = set()
 
 def subscribe_to_logs() -> asyncio.Queue:
@@ -28,11 +27,9 @@ class StreamBroadcastHandler(logging.Handler):
         try:
             msg = self._formatter.format(record)
             for q in list(_log_subscribers):
-                # best-effort: don't block logging pipeline
                 if not q.full():
                     q.put_nowait(msg)
         except Exception:
-            # never raise in logging handler
             pass
 
 def broadcast_event(stage: str, action: str, summary: str, details: Dict[str, Any] | None = None) -> None:
@@ -82,7 +79,6 @@ def configure_logging() -> None:
     root_logger.addHandler(console_handler)
     root_logger.addHandler(broadcast_handler)
 
-    # Ensure httpx client logs are visible (for Replicate HTTP calls)
     logging.getLogger("httpx").setLevel(logging.INFO)
 
 

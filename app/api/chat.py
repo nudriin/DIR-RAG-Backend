@@ -154,7 +154,6 @@ async def chat_endpoint(
             },
         )
     else:
-        # --- Short-term memory: muat riwayat percakapan ---
         chat_history_text: str | None = None
         if payload.conversation_id is not None:
             try:
@@ -167,17 +166,60 @@ async def chat_endpoint(
             except Exception as exc:
                 logger.warning(f"Gagal memuat riwayat percakapan: {exc}")
 
-        # --- Load refinement backend from DB ---
         refinement_backend: str | None = None
+        refinement_model_override: str | None = None
         try:
             refinement_backend = await get_system_setting(session, "refinement_backend")
+            if refinement_backend == "gemini":
+                refinement_model_override = await get_system_setting(
+                    session, "refinement_model_gemini"
+                )
+            elif refinement_backend == "replicate":
+                refinement_model_override = await get_system_setting(
+                    session, "refinement_model_replicate"
+                )
         except Exception as exc:
             logger.warning(f"Gagal baca refinement_backend: {exc}")
 
+        generator_backend: str | None = None
+        generator_model_override: str | None = None
+        gemini_mode_override: str | None = None
+        vertex_project_override: str | None = None
+        vertex_location_override: str | None = None
+        
+        try:
+            generator_backend = await get_system_setting(session, "generator_backend")
+            if generator_backend == "gemini":
+                generator_model_override = await get_system_setting(
+                    session, "generator_model_gemini"
+                )
+                gemini_mode_override = await get_system_setting(session, "gemini_mode")
+                vertex_project_override = await get_system_setting(
+                    session, "vertex_project"
+                )
+                vertex_location_override = await get_system_setting(
+                    session, "vertex_location"
+                )
+            elif generator_backend == "openai":
+                generator_model_override = await get_system_setting(
+                    session, "generator_model_openai"
+                )
+        except Exception as exc:
+            logger.warning(f"Gagal baca generator_backend/mode: {exc}")
+
         t0 = time.perf_counter()
         rag_result = await asyncio.to_thread(
-            run_rag_pipeline, query_text, effective_role, chat_history_text,
-            refinement_backend,
+            run_rag_pipeline, 
+            query_text, 
+            effective_role, 
+            chat_history_text,
+            refinement_backend, 
+            refinement_model_override, 
+            generator_backend, 
+            generator_model_override,
+            gemini_mode_override,
+            vertex_project_override,
+            vertex_location_override,
         )
         response_time_ms = (time.perf_counter() - t0) * 1000.0
 
@@ -296,7 +338,6 @@ async def logs_stream() -> StreamingResponse:
                     msg = await asyncio.wait_for(queue.get(), timeout=15.0)
                     yield f"data: {msg}\n\n"
                 except asyncio.TimeoutError:
-                    # Heartbeat to keep connection alive behind proxies
                     yield ": ping\n\n"
         except asyncio.CancelledError:
             unsubscribe_from_logs(queue)
